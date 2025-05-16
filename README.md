@@ -3,7 +3,16 @@
 - 👀 I'm currently working on [PFConnect](https://pfconnect.online/developers)
 - 🌱 I’m currently learning Java and web development.
 - 💞️ I’m looking to collaborate on open source or any other projects!
-- 📫 How to reach me: [bananensammler_ on Discord](https://discord.com/users/798485492621770792)
+
+<h3 align="left">Connect with me</h3>
+<p align="left">
+<a href="https://instagram.com/_jakob09" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="_jakob09" height="30" width="40" /></a>
+<a href="https://discord.gg/798485492621770792" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/discord.svg" alt="798485492621770792" height="30" width="40" /></a>
+<a href="https://open.spotify.com/user/31pqvbbf3v2vaiictlvpz6dy4yye?si=d4059a18b49141f7" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/spotify.svg" alt="spotify" height="30" width="40" /></a>
+<a href="https://steamcommunity.com/profiles/76561199061188081/" target="blank">
+  <img align="center" src="https://cdn.simpleicons.org/steam/ffffff" alt="steam" height="30" width="40" />
+</a>
+</p>
 
 <details>
   <summary><b>💡 My Skillset</b></summary>
