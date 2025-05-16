@@ -3,7 +3,7 @@
 
 - 👀 I'm currently working on [PFConnect](https://pfconnect.online/developers)
 - 🌱 I’m currently learning Java and web-development.
-- 💞️ I’m looking to collaborate on open source projects or any other projects!
+- 💞️ I’m looking to collaborate on open source or any other projects!
 - 📫 How to reach me: [bananensammler_ on Discord](https://discord.com/users/798485492621770792)
 
 <details>
