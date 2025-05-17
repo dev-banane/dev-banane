@@ -1,6 +1,6 @@
 ## Hi there, I'm Jakob 👋
 
-- 👀 I'm currently working on [PFConnect](https://pfconnect.online/developers)
+- 👀 I'm currently working on [PFConnect](https://pfconnect.online/)
 - 🌱 I’m currently learning Java and web development.
 - 💞️ I’m looking to collaborate on open source or any other projects!
 
