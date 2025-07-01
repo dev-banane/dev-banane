@@ -14,6 +14,13 @@
 </a>
 </p>
 
+<h3 align="left">My npm packages</h3>
+
+**pfc-footer** – A reusable footer component used across all PFConnect websites.
+
+[![npm version](https://img.shields.io/npm/v/pfc-footer)](https://www.npmjs.com/package/pfc-footer)
+[![npm downloads](https://img.shields.io/npm/dm/pfc-footer)](https://www.npmjs.com/package/pfc-footer)
+
 <details>
   <summary><b>💡 My Skillset</b></summary>
   <br>
