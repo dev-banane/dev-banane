@@ -42,5 +42,3 @@
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"/>
   <br>
 </details>
-
-![Description](https://cd.pfconnect.online/uploads/53159787153408160000.png)
