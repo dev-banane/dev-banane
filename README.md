@@ -1,7 +1,7 @@
 ## Hi there, I'm Jakob 👋
 
 - 👀 I'm currently working on [PFConnect](https://pfconnect.online/)
-- 🌱 I’m currently learning Go and C.
+- 🌱 I’m currently learning Go and C
 - 💞️ I’m looking to collaborate on open source or any other projects!
 
 <h3 align="left">Connect with me</h3>
