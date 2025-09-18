@@ -59,15 +59,15 @@
                             free to reach out!
                         </p>
                         <div class="w-28 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-10 mx-auto md:mx-0" />
-                        <a
-                            href="/projects"
-                            class="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white font-medium transition-all duration-300 hover:bg-white/15 hover:border-white/30 cursor-pointer"
+                        <router-link
+                            to="/projects"
+                            class="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white font-medium transition-all duration-300 hover:bg-white/15 hover:border-white/30 cursor-pointer inline-block"
                         >
                             <div class="flex items-center justify-between">
                                 <span>Explore my projects</span>
                                 <PersonStanding class="ml-2" :size="22" />
                             </div>
-                        </a>
+                        </router-link>
                     </div>
                     <div class="flex flex-col items-center">
                         <div class="flex flex-col items-center gap-y-4 w-full max-w-2xl">
@@ -259,7 +259,7 @@
                                         rel="noopener noreferrer"
                                         class="text-white/60 hover:text-white transition-colors"
                                     >
-                                        <Github class="w-4 h-4" />
+                                        <siGithub class="w-4 h-4" />
                                     </a>
                                     <a
                                         :href="project.url"
@@ -418,8 +418,7 @@ import {
     Loader2,
     Send,
     ExternalLink,
-    PersonStanding,
-    Github
+    PersonStanding
 } from 'lucide-vue-next'
 import { siGithub } from 'simple-icons';
 import { projects } from '../../data/projects'
