@@ -437,13 +437,6 @@ const homepageProjects = computed(() => {
     return projects.filter(project => project.showOnHomepage)
 })
 
-const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-    }
-}
-
 const getTypeColorClass = (typeColor: string) => {
     const colorClasses = {
         'purple': 'bg-purple-500/20 text-purple-200 border-purple-400/30',
