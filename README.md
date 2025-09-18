@@ -1,8 +1,8 @@
 ## Hi there, I'm Jakob 👋
 
-- 👀 I'm currently working on [PFConnect](https://pfconnect.online/)
-- 🌱 I’m currently learning Go and C
-- 💞️ I’m looking to collaborate on open source or any other projects!
+-   👀 I'm currently working on [PFConnect](https://pfconnect.online/)
+-   🌱 I’m currently learning Go and C
+-   💞️ I’m looking to collaborate on open source or any other projects!
 
 <h3 align="left">Connect with me</h3>
 <p align="left">
@@ -33,7 +33,6 @@
   <img src="https://img.shields.io/badge/React-20232a?style=for-the-badge&logo=react&logoColor=61dafb"/>
   <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
   <img src="https://img.shields.io/badge/discord.js-5865F2?style=for-the-badge&logo=discord&logoColor=white"/>
-  <!-- Add additional frameworks/libraries as needed -->
   <br><br>
   <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"/>
   <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
