@@ -36,7 +36,7 @@ export const projects: Project[] = [
         typeColor: 'purple',
         url: 'https://pfconnect.online',
         github: null,
-        technologies: ['Discord.js', 'JavaScript', 'Node.js', 'MongoDB'],
+        technologies: ['Discord.js', 'JavaScript', 'Node.js', 'SQLite'],
         featured: true,
         stats: '250+ servers',
         showOnHomepage: true

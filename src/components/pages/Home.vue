@@ -5,7 +5,7 @@
                 id="hero"
                 class="pt-16 pb-8 md:pt-48 md:pb-32 flex flex-col md:flex-row items-center justify-center w-full bg-gradient-to-br from-blue-200 via-indigo-300 to-rose-300 min-h-screen md:min-h-0"
             >
-                <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left px-6 md:px-8 md:ml-12 order-2 md:order-1 max-w-5xl">
+                <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left px-6 md:px-8 md:ml-0 lg:ml-24 xl:ml-32 order-2 md:order-1 max-w-5xl">
                     <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold text-gray-900 mb-4 md:mb-6 drop-shadow-lg leading-tight">
                         Hi, I'm Jakob <span class="text-4xl sm:text-5xl md:text-6xl">👋</span>
                     </h1>

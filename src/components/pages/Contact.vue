@@ -171,6 +171,16 @@
                                     </template>
                                 </button>
                                 
+                                <p class="hidden sm:block text-white/50 text-sm text-center sm:text-right w-full sm:w-auto ml-auto mr-2">
+                                    You can also reach me directly at
+                                    <a
+                                        href="mailto:jakob@uplift.de"
+                                        class="text-white/70 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white/70"
+                                    >
+                                        jakob@uplift.de
+                                    </a>
+                                </p>
+                                
                                 <div v-if="success" class="flex items-center gap-2 text-green-400">
                                     <CheckCircle class="w-5 h-5" />
                                     <span class="text-sm">Message sent successfully!</span>
