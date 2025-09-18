@@ -1,2 +1,6 @@
 @import url('https://fonts.cdnfonts.com/css/Michroma');
 @import "tailwindcss";
+
+html, body {
+    background-color: black;
+}
