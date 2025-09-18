@@ -462,15 +462,15 @@ const handleSubmit = async (e: Event) => {
         const emailjs = await import('emailjs-com')
 
         await emailjs.send(
-            import.meta.env.VUE_APP_SERVICE_ID,
-            import.meta.env.VUE_APP_TEMPLATE_ID,
+            import.meta.env.VITE_SERVICE_ID,
+            import.meta.env.VITE_TEMPLATE_ID,
             {
                 from_name: form.value.name,
                 from_email: form.value.email,
                 message: form.value.message,
                 to_email: 'jakob@uplift.de'
             },
-            import.meta.env.VUE_APP_PUBLIC_KEY
+            import.meta.env.VITE_PUBLIC_KEY
         )
 
         success.value = true
