@@ -214,7 +214,7 @@
 
                 <div class="max-w-6xl mx-auto px-4 pt-12">
                     <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-                        <div class="flex-1 text-left">
+                        <div class="flex-1 text-center md:text-left">
                             <h2
                             class="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent mb-4 drop-shadow"
                             style="line-height: 1.15; padding-bottom: 0.15em"
