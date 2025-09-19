@@ -29,11 +29,11 @@
                         </div>
                         <div class="flex flex-col justify-center">
                             <h2 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent mb-6" style="line-height: 115%;">
-                                Hi, I'm Jakob!👋
+                                Hi, I'm Jakob!<span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
                             </h2>
                             <div class="space-y-4 text-gray-300 text-lg leading-relaxed">
                                 <p>
-                                    I'm a 16-year-old developer from Germany with a passion for creating digital experiences that matter.
+                                    I'm a 16-year-old <span class="font-bold italic">full-stack developer</span> from Germany with a passion for creating digital experiences that matter.
                                     What started as curiosity about how websites work has evolved into a deep love for programming and technology.
                                 </p>
                                 <p>

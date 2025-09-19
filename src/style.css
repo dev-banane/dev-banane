@@ -4,3 +4,9 @@
 html, body {
     background-color: black;
 }
+
+button {
+    &:hover {
+        cursor: pointer;
+    }
+}

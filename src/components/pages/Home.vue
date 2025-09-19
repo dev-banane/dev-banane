@@ -7,7 +7,7 @@
             >
                 <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left px-6 md:px-8 md:ml-0 lg:ml-24 xl:ml-32 order-2 md:order-1 max-w-5xl">
                     <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold text-gray-900 mb-4 md:mb-6 drop-shadow-lg leading-tight">
-                        Hi, I'm Jakob <span class="text-4xl sm:text-5xl md:text-6xl">👋</span>
+                        Hi, I'm Jakob <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
                     </h1>
                     <p class="text-gray-700 text-lg sm:text-xl md:text-2xl lg:text-3xl mb-3 md:mb-4 font-semibold leading-relaxed max-w-5xl" style="font-family: 'Michroma', sans-serif;">
                         16 y/o developer from Germany, currently learning
@@ -229,6 +229,8 @@
                         <div class="mt-6 md:mt-0">
                             <a
                                 href="https://github.com/dev-banane"
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-base bg-white text-gray-900 shadow-lg shadow-white/20 transition-all duration-300 hover:bg-white/90 hover:scale-105"
                             >
                                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -401,7 +403,20 @@
                         </form>
                     </div>
                 </div>
-                <p class="text-center text-white/50 text-sm pt-6 pb-12" style="font-family: 'Michroma', sans-serif;">Website built with Vue.js</p>
+                <p class="text-center text-white/50 text-sm pt-6 pb-6 space-y-2" style="font-family: 'Michroma', sans-serif;">
+                    <span>
+                        Website built with Vue.js |
+                        <a
+                            class="text-white/70 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white/70 ml-1"
+                            href="https://github.com/dev-banane/dev-banane"
+                            target="_blank"
+                        >
+                            See the code
+                        </a>
+                    </span>
+                    <br />
+                    <span class="block mt-2">&copy; 2025 devbanane.com</span>
+                </p>
             </section>
         </main>
     </div>
