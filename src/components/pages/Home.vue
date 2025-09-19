@@ -10,7 +10,7 @@
                         Hi, I'm Jakob <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
                     </h1>
                     <p class="text-gray-700 text-lg sm:text-xl md:text-2xl lg:text-3xl mb-3 md:mb-4 font-semibold leading-relaxed max-w-5xl" style="font-family: 'Michroma', sans-serif;">
-                        16 y/o developer from Germany, currently learning
+                        16 y/o <span class="italic">full-stack</span> developer from Germany, learning
                         Go, C, and building cool things.
                     </p>
                     <p class="text-gray-500 text-base sm:text-lg md:text-xl lg:text-2xl max-w-4xl leading-relaxed" >

@@ -17,7 +17,7 @@
                 {{ notes.length > 9 ? '9+' : notes.length }}
             </div>
             
-            <div class="absolute bottom-full right-0 mb-2 px-3 py-1 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none" style="font-family: 'Michroma', sans-serif;">
+            <div class="absolute bottom-full right-0 mb-2 px-3 py-1 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none" style="font-family: 'Michroma', sans-serif;">
                 Quick Notes
                 <div class="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
             </div>
