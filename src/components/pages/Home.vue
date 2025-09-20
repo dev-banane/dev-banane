@@ -235,6 +235,8 @@
                                     </svg>
                                 </a>
                             </div>
+
+                            <p class="text-left text-sm text-zinc-400">&copy;2025 devbanane.com All rights reserved.</p>
                         </div>
                         
                         <div class="bg-zinc-800/30 border border-zinc-700/50 rounded-2xl p-8 shadow-xl">
