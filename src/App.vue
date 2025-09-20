@@ -1,10 +1,10 @@
 <script setup>
 import Navbar from './components/Navbar.vue';
-import NotesWidget from './components/NotesWidget.vue';
+import Terminal from './components/Terminal.vue';
 </script>
 
 <template>
     <Navbar />
     <router-view />
-    <!--<NotesWidget />-->
+    <Terminal />
 </template>

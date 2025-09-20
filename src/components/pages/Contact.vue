@@ -88,33 +88,33 @@
                             </div>
                         </div>
                         
-                        <div class="bg-zinc-800/30 border border-zinc-700/50 rounded-2xl p-8">
+                        <div class="bg-zinc-800/30 border border-zinc-700/50 rounded-2xl p-8 shadow-xl">
                             <form @submit="handleSubmit" class="space-y-6">
                                 <input
                                     type="text"
                                     v-model="form.name"
                                     placeholder="Your name"
-                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all"
+                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all shadow-xl"
                                     required
                                 />
                                 <input
                                     type="email"
                                     v-model="form.email"
                                     placeholder="your@email.com"
-                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all"
+                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all shadow-xl"
                                     required
                                 />
                                 <textarea
                                     v-model="form.message"
                                     placeholder="Tell me about your project..."
                                     rows="4"
-                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all resize-none"
+                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all resize-none shadow-xl"
                                     required
                                 />
                                 <button
                                     type="submit"
                                     :disabled="loading"
-                                    class="w-full py-4 bg-white text-zinc-900 font-bold rounded-xl hover:bg-zinc-100 transition-colors disabled:opacity-70"
+                                    class="w-full py-4 bg-white text-zinc-900 font-bold rounded-xl hover:bg-zinc-100 transition-colors disabled:opacity-70 shadow-xl"
                                 >
                                     <span v-if="loading" class="flex items-center justify-center gap-2">
                                         <Loader2 class="w-5 h-5 animate-spin" />

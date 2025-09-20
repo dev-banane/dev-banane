@@ -18,7 +18,7 @@
                         v-for="link in navLinks"
                         :key="link.path"
                         :to="link.path"
-                        class="px-4 py-2 rounded-xl text-md font-medium transition-all duration-200"
+                        class="px-4 py-2 rounded-full text-md font-medium transition-all duration-200"
                         :class="isActive(link.path)
                             ? 'text-white bg-white/15'
                             : 'text-white/70 hover:text-white hover:bg-white/15'"
