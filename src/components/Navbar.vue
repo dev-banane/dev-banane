@@ -1,5 +1,5 @@
 <template>
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-b border-white/10">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <router-link to="/" class="flex items-center space-x-3">
@@ -20,8 +20,8 @@
                         :to="link.path"
                         class="px-4 py-2 rounded-xl text-md font-medium transition-all duration-200"
                         :class="isActive(link.path)
-                            ? 'text-white bg-white/10'
-                            : 'text-white/70 hover:text-white hover:bg-white/5'"
+                            ? 'text-white bg-white/15'
+                            : 'text-white/70 hover:text-white hover:bg-white/15'"
                     >
                         {{ link.label }}
                     </router-link>

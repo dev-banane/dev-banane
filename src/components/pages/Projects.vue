@@ -1,33 +1,30 @@
 <template>
-    <div class="min-h-screen bg-black">
+    <div class="min-h-screen bg-zinc-900">
         <main class="pt-0 max-w-none mx-0 px-0">
-            <section
-                id="projects-hero"
-                class="pt-16 pb-8 md:pt-32 md:pb-16 flex flex-col items-center justify-center w-full bg-gradient-to-br from-blue-200 via-indigo-300 to-rose-300 min-h-[40vh]"
-            >
-                <div class="text-center px-6 md:px-8">
-                    <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold text-gray-900 mb-4 md:mb-6 drop-shadow-lg leading-tight">
-                        My Projects
-                    </h1>
-                    <p class="text-gray-700 text-lg sm:text-xl md:text-2xl mb-3 font-semibold leading-relaxed max-w-4xl mx-auto" style="font-family: 'Michroma', sans-serif;">
-                        A collection of things I've built and worked on
-                    </p>
+            <section id="projects-hero" class="relative min-h-screen bg-black flex items-center overflow-hidden">
+                <div class="max-w-7xl mx-auto px-8 w-full">
+                    <div class="text-center space-y-8">
+                        <h1 class="text-6xl lg:text-8xl font-black text-white leading-none">
+                            My Projects <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default mt-4">💻</span>
+                        </h1>
+                        <p class="text-2xl lg:text-3xl text-zinc-300 font-light max-w-4xl mx-auto" style="font-family: 'Michroma', sans-serif;">
+                            A collection of things I've built and worked on
+                        </p>
+                    </div>
                 </div>
             </section>
 
-            <section class="w-full py-12 bg-black relative">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 pointer-events-none" />
-                
-                <div class="relative z-10 max-w-7xl mx-auto px-6">
-                    <div class="flex flex-col sm:flex-row gap-4 items-center justify-between mb-8">
+            <section class="relative pt-16 pb-52 bg-black overflow-hidden">
+                <div class="max-w-7xl mx-auto px-8">
+                    <div class="flex flex-col sm:flex-row gap-4 items-center justify-between mb-12">
                         <div class="flex flex-wrap gap-3">
                             <button
                                 @click="activeFilter = 'all'"
                                 :class="[
-                                    'px-4 py-2 rounded-xl font-medium transition-all duration-300 cursor-pointer',
+                                    'px-6 py-3 rounded-full font-medium transition-all duration-300 cursor-pointer',
                                     activeFilter === 'all'
-                                        ? 'bg-white text-gray-900'
-                                        : 'bg-white/10 border border-white/20 text-white hover:bg-white/15'
+                                        ? 'bg-white text-zinc-900'
+                                        : 'bg-zinc-800/50 border border-zinc-700/50 text-white hover:bg-zinc-700/50'
                                 ]"
                             >
                                 All Projects
@@ -37,10 +34,10 @@
                                 :key="type"
                                 @click="activeFilter = type"
                                 :class="[
-                                    'px-4 py-2 rounded-xl font-medium transition-all duration-300 cursor-pointer',
+                                    'px-6 py-3 rounded-full font-medium transition-all duration-300 cursor-pointer',
                                     activeFilter === type
-                                        ? 'bg-white text-gray-900'
-                                        : 'bg-white/10 border border-white/20 text-white hover:bg-white/15'
+                                        ? 'bg-white text-zinc-900'
+                                        : 'bg-zinc-800/50 border border-zinc-700/50 text-white hover:bg-zinc-700/50'
                                 ]"
                             >
                                 {{ type }}
@@ -48,14 +45,14 @@
                         </div>
                         
                         <div class="flex items-center gap-4">
-                            <div class="text-white/70 text-sm">
+                            <div class="text-zinc-400 text-sm">
                                 {{ filteredProjects.length }} {{ filteredProjects.length === 1 ? 'project' : 'projects' }}
                             </div>
                             <a
                                 href="https://github.com/dev-banane"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-base bg-white text-gray-900 shadow-lg shadow-white/20 transition-all duration-300 hover:bg-white/90 hover:scale-105"
+                                class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium bg-white text-zinc-900 transition-all duration-300 hover:bg-zinc-100 hover:scale-105"
                             >
                                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                                     <path :d="siGithub.path" />
@@ -64,79 +61,82 @@
                             </a>
                         </div>
                     </div>
-                    <p class="mt-4 text-white/70 text-sm">These are only my most recent and important projects. Check back later for more updates!</p>
-                </div>
-            </section>
+                    
+                    <p class="text-zinc-400 text-lg mb-16" style="font-family: 'Gabarito', sans-serif;">
+                        These are only my most recent and important projects. Check back later for more updates!
+                    </p>
 
-            <section class="w-full pb-20 bg-black relative">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 pointer-events-none" />
-                
-                <div class="relative z-10 max-w-7xl mx-auto px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <div
                             v-for="project in filteredProjects"
                             :key="project.id"
-                            class="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-lg flex flex-col transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:transform hover:scale-[1.02]"
+                            class="bg-zinc-800/30 border border-zinc-700/50 rounded-2xl p-8 hover:bg-zinc-700/40 transition-all duration-300 hover:transform hover:scale-[1.02] flex flex-col"
                         >
                             <div class="flex items-center justify-between mb-4">
                                 <span
-                                    class="text-xs px-3 py-1 rounded-full border font-semibold tracking-wide"
+                                    class="text-sm px-3 py-1 rounded-full border font-medium"
                                     :class="getTypeColorClass(project.typeColor)"
                                 >
                                     {{ project.type }}
                                 </span>
-                                <div class="flex gap-2">
+                                <div class="flex gap-3">
                                     <a
                                         v-if="project.github"
                                         :href="project.github"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="p-2 rounded-lg bg-white/10 border border-white/20 text-white/60 hover:text-white hover:bg-white/15 transition-all duration-300"
+                                        class="text-zinc-300 hover:text-white transition-colors"
                                     >
-                                        <Github class="w-4 h-4" />
+                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                                            <path :d="siGithub.path" />
+                                        </svg>
                                     </a>
                                     <a
                                         :href="project.url"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="p-2 rounded-lg bg-white/10 border border-white/20 text-white/60 hover:text-white hover:bg-white/15 transition-all duration-300"
+                                        class="text-zinc-300 hover:text-white transition-colors"
                                     >
-                                        <ExternalLink class="w-4 h-4" />
+                                        <ExternalLink class="w-5 h-5" />
                                     </a>
                                 </div>
                             </div>
 
                             <div class="flex-grow">
-                                <h3 class="font-bold text-xl mb-3 text-white">
+                                <h3 class="text-2xl font-bold text-white mb-4">
                                     {{ project.title }}
                                 </h3>
-                                <p class="text-white/70 text-sm mb-4 leading-relaxed">
+                                <p class="text-zinc-300 mb-6 leading-relaxed">
                                     {{ project.description }}
                                 </p>
                             </div>
 
                             <div class="space-y-4">
                                 <div class="flex flex-wrap gap-2">
-                                    <span
+                                    <div
                                         v-for="tech in project.technologies"
                                         :key="tech"
-                                        class="bg-white/20 text-white/80 text-xs px-2 py-1 rounded border border-white/10"
+                                        class="flex items-center gap-2 text-sm px-3 py-1"
                                     >
-                                        {{ tech }}
-                                    </span>
+                                        <img
+                                            :src="getTechIcon(tech)"
+                                            :alt="tech"
+                                            class="w-6 h-6"
+                                        />
+                                    </div>
                                 </div>
                                 
                                 <div class="flex items-center justify-between">
                                     <div
                                         v-if="project.featured"
-                                        class="flex items-center gap-2 text-yellow-400 text-xs"
+                                        class="flex items-center gap-2 text-yellow-400 text-sm"
                                     >
-                                        <Star class="w-3 h-3 fill-current" />
+                                        <Star class="w-4 h-4 fill-current" />
                                         <span>Featured</span>
                                     </div>
                                     <div
                                         v-if="project.stats"
-                                        class="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-white/80 text-xs font-medium"
+                                        class="px-3 py-1 bg-zinc-700/50 border border-zinc-600/50 rounded-lg text-zinc-300 text-sm font-medium"
                                     >
                                         {{ project.stats }}
                                     </div>
@@ -149,42 +149,47 @@
                         v-if="filteredProjects.length === 0"
                         class="text-center py-20"
                     >
-                        <div class="text-white/40 mb-4">
+                        <div class="text-zinc-600 mb-4">
                             <Search class="w-16 h-16 mx-auto" />
                         </div>
-                        <h3 class="text-xl font-semibold text-white/70 mb-2">
+                        <h3 class="text-xl font-semibold text-zinc-400 mb-2">
                             No projects found
                         </h3>
-                        <p class="text-white/50">
+                        <p class="text-zinc-500">
                             Try adjusting your filter or check back later for new projects.
                         </p>
                     </div>
                 </div>
+
+                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+                    <path d="M0,60 Q360,0 720,60 T1440,60 L1440,120 L0,120 Z"></path>
+                </svg>
             </section>
 
-            <section class="w-full bg-black relative pb-24 pt-12">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 pointer-events-none" />
-                <div class="relative z-10 text-center px-6">
-                    <h3 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent mb-4">
-                        Like What You See?
-                    </h3>
-                    <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-                        I'm always working on new projects and exploring different technologies.
-                        Let's collaborate on something amazing together.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a
-                            href="/contact"
-                            class="px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl transition-all duration-300 hover:bg-white/90 hover:scale-105 shadow-lg shadow-white/20"
-                        >
-                            Start a Project
-                        </a>
-                        <a
-                            href="/about"
-                            class="px-8 py-4 bg-white/10 border border-white/20 text-white font-semibold rounded-xl transition-all duration-300 hover:bg-white/15 hover:border-white/30"
-                        >
-                            Learn About Me
-                        </a>
+            <section class="relative pt-20 pb-24 bg-[#1b1b1e]">
+                <div class="max-w-6xl mx-auto px-8">
+                    <div class="text-center space-y-8">
+                        <h3 class="text-5xl lg:text-7xl font-black text-white">
+                            Like What You See?
+                        </h3>
+                        <p class="text-xl text-zinc-300 max-w-2xl mx-auto leading-relaxed" style="font-family: 'Gabarito', sans-serif;">
+                            I'm always working on new projects and exploring different technologies.
+                            Let's collaborate on something amazing together.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <router-link
+                                to="/#contact"
+                                class="inline-block px-8 py-4 bg-white text-zinc-900 font-bold rounded-full hover:bg-zinc-100 transition-colors"
+                            >
+                                Start a Project
+                            </router-link>
+                            <router-link
+                                to="/about"
+                                class="inline-block px-8 py-4 border border-white text-white font-bold rounded-full hover:bg-white hover:text-zinc-900 transition-colors"
+                            >
+                                Learn About Me
+                            </router-link>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -220,5 +225,29 @@ const getTypeColorClass = (typeColor: string) => {
         'orange': 'bg-orange-500/20 text-orange-200 border-orange-400/30'
     }
     return colorClasses[typeColor as keyof typeof colorClasses] || colorClasses.blue
+}
+
+const getTechIcon = (techName: string) => {
+    const techIcons: { [key: string]: string } = {
+        'Vue.js': '/assets/vue.svg',
+        'React': '/assets/react.svg',
+        'TypeScript': '/assets/typescript.svg',
+        'JavaScript': '/assets/javascript.svg',
+        'Node.js': '/assets/nodejs.svg',
+        'discord.js': '/assets/discord.js.svg',
+        'Java': '/assets/java.svg',
+        'Python': '/assets/python.svg',
+        'HTML': '/assets/html.svg',
+        'CSS': '/assets/css.svg',
+        'TailwindCSS': '/assets/tailwind.svg',
+        'Tailwind CSS': '/assets/tailwind.svg',
+        'Git': '/assets/git.svg',
+        'MongoDB': '/assets/mongodb.svg',
+        'SQLite': '/assets/sqlite.svg',
+        'Supabase': '/assets/supabase.svg',
+        'Express': '/assets/nodejs.svg',
+        'Discord.js': '/assets/discord.js.svg'
+    }
+    return techIcons[techName] || '/assets/default.svg'
 }
 </script>

@@ -1,422 +1,293 @@
 <template>
-    <div class="min-h-screen bg-black">
+    <div class="min-h-screen bg-zinc-900">
         <main class="pt-0 max-w-none mx-0 px-0">
-            <section
-                id="hero"
-                class="pt-16 pb-8 md:pt-48 md:pb-32 flex flex-col md:flex-row items-center justify-center w-full bg-gradient-to-br from-blue-200 via-indigo-300 to-rose-300 min-h-screen md:min-h-0"
-            >
-                <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left px-6 md:px-8 md:ml-0 lg:ml-24 xl:ml-32 order-2 md:order-1 max-w-5xl">
-                    <h1 class="text-4xl sm:text-5xl md:text-7xl font-extrabold text-gray-900 mb-4 md:mb-6 drop-shadow-lg leading-tight">
-                        Hi, I'm Jakob <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
-                    </h1>
-                    <p class="text-gray-700 text-lg sm:text-xl md:text-2xl lg:text-3xl mb-3 md:mb-4 font-semibold leading-relaxed max-w-5xl" style="font-family: 'Michroma', sans-serif;">
-                        16 y/o <span class="italic">full-stack</span> developer from Germany, learning
-                        Go, C, and building cool things.
-                    </p>
-                    <p class="text-gray-500 text-base sm:text-lg md:text-xl lg:text-2xl max-w-4xl leading-relaxed" >
-                        Currently working on
-                        <a
-                            href="https://snap.cephie.app"
-                            class="relative bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent font-bold
-                                after:content-[''] after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-gradient-to-r after:from-blue-500 after:via-purple-500 after:to-pink-500 after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-left"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Cephie
-                        </a>
-                        , a platform of tools and services for discord.
-                    </p>
-                </div>
-                <div class="flex-1 flex items-center justify-center w-full px-6 md:px-0 order-1 md:order-2">
-                    <div class="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center">
-                        <img
-                            src="/pfp.webp"
-                            alt="Profile Picture"
-                            class="w-60 h-60 sm:w-72 sm:h-72 md:w-92 md:h-92 rounded-full border-4 border-white/30 shadow-lg object-cover"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            <section
-                id="skills"
-                class="w-full py-28 bg-black relative overflow-hidden"
-            >
-                <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 pointer-events-none" />
-
-                <div class="relative z-10 flex flex-col md:flex-row items-center justify-center max-w-6xl mx-auto px-2 mt-4">
-                    <div class="flex-1 text-center md:text-left mb-12 md:mb-0 md:mr-16">
-                        <h2
-                            class="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent mb-4 drop-shadow"
-                            style="line-height: 1.15; padding-bottom: 0.15em"
-                        >
-                            My Skills
-                        </h2>
-                        <p class="text-lg md:text-xl text-gray-300 mb-6 max-w-xl mx-auto md:mx-0" >
-                            I'm always eager to learn new technologies and
-                            improve my skills. If you're interested in
-                            collaborating or have a project in mind, feel
-                            free to reach out!
-                        </p>
-                        <div class="w-28 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-10 mx-auto md:mx-0" />
-                        <router-link
-                            to="/projects"
-                            class="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white font-medium transition-all duration-300 hover:bg-white/15 hover:border-white/30 cursor-pointer inline-block"
-                        >
-                            <div class="flex items-center justify-between">
-                                <span>Explore my projects</span>
-                                <PersonStanding class="ml-2" :size="22" />
-                            </div>
-                        </router-link>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <div class="flex flex-col items-center gap-y-4 w-full max-w-2xl">
-                            <div class="flex gap-4 md:gap-6 justify-center flex-wrap">
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white"
-                                        alt="Java"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vuedotjs&logoColor=white"
-                                        alt="Vue"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/Clerk-000000?style=for-the-badge&logo=clerk&logoColor=white"
-                                        alt="Clerk"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex gap-4 md:gap-6 justify-center ml-2 md:ml-5 flex-wrap">
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white"
-                                        alt="MongoDB"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/SQL-4479A1?style=for-the-badge&logo=postgresql&logoColor=white"
-                                        alt="SQL"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/discord.js-5865F2?style=for-the-badge&logo=discord&logoColor=white"
-                                        alt="discord.js"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex gap-4 md:gap-6 justify-center flex-wrap">
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"
-                                        alt="TailwindCSS"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/React-20232a?style=for-the-badge&logo=react&logoColor=61dafb"
-                                        alt="React"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"
-                                        alt="Node.js"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"
-                                        alt="Supabase"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex gap-4 md:gap-6 justify-center ml-2 md:ml-10 flex-wrap">
-                                
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"
-                                        alt="TypeScript"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"
-                                        alt="Git"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"
-                                        alt="Python"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"
-                                        alt="GitHub"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex gap-4 md:gap-6 justify-center flex-wrap">
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white"
-                                        alt="HTML5"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white"
-                                        alt="CSS3"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                                <div class="bg-white/10 rounded shadow p-2 md:p-3 flex items-center border border-white/20">
-                                    <img
-                                        src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"
-                                        alt="JavaScript"
-                                        class="h-5 md:h-7"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section
-                id="projects"
-                class="w-full py-28 bg-black relative"
-            >
-                <div class="absolute inset-0 bg-gradient-to-tr from-blue-500/10 via-purple-500/10 to-pink-500/10 pointer-events-none" />
-
-                <div class="max-w-6xl mx-auto px-4 pt-12">
-                    <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
-                        <div class="flex-1 text-center md:text-left">
-                            <h2
-                            class="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent mb-4 drop-shadow"
-                            style="line-height: 1.15; padding-bottom: 0.15em"
-                        >
-                            My Projects
-                        </h2>
-                            <p class="text-white/70 text-lg mb-0 md:mb-0" >
-                                A collection of my biggest and most notable
-                                projects.
+            <section id="hero" class="relative min-h-screen bg-black flex items-center overflow-hidden">
+                <div class="max-w-7xl mx-auto px-8 w-full">
+                    <div class="flex gap-16 items-center">
+                        <div class="space-y-8">
+                            <h1 class="text-6xl lg:text-8xl font-black text-white leading-none">
+                                Hi, I'm Jakob <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
+                            </h1>
+                            <p class="text-2xl lg:text-3xl text-zinc-300 font-light" style="font-family: 'Michroma', sans-serif;">
+                                16 y/o <span class="italic">full-stack</span> developer from Germany, learning Go, C, and building cool things.
+                            </p>
+                            <p class="text-xl text-zinc-400 leading-relaxed" style="font-family: 'Gabarito', sans-serif;">
+                                Currently working on
+                                <a
+                                    href="https://snap.cephie.app"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-white font-bold hover:text-zinc-300 transition-colors underline decoration-zinc-600 hover:decoration-zinc-400"
+                                >
+                                    Cephie
+                                </a>
+                                , a platform of tools and services for Discord.
                             </p>
                         </div>
-                        <div class="mt-6 md:mt-0">
-                            <a
-                                href="https://github.com/dev-banane"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-base bg-white text-gray-900 shadow-lg shadow-white/20 transition-all duration-300 hover:bg-white/90 hover:scale-105"
-                            >
-                                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                                    <path :d="siGithub.path" />
-                                </svg>
-                                View GitHub
-                            </a>
+                    </div>
+                </div>
+                
+                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e] z-0" viewBox="0 0 1440 120" preserveAspectRatio="none">
+                    <path d="M0,60 Q360,0 720,60 T1440,60 L1440,120 L0,120 Z"></path>
+                </svg>
+            </section>
+
+            <section id="skills" class="relative py-16 sm:py-32 bg-[#1b1b1e] overflow-hidden z-10">
+                <div class="max-w-6xl mx-auto px-4 sm:px-8 pb-12 sm:pb-24">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+                        <div class="order-2 lg:order-1">
+                            <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-6">
+                                <div
+                                    v-for="skill in skills"
+                                    :key="skill.name"
+                                    class="relative p-2 sm:p-4 hover:scale-105 transition-all cursor-pointer group"
+                                    @mouseenter="hoveredSkill = skill"
+                                    @mouseleave="hoveredSkill = null"
+                                    @click="hoveredSkill = hoveredSkill === skill ? null : skill"
+                                >
+                                    <img :src="skill.icon" :alt="skill.name" class="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 mx-auto" />
+
+                                    <div
+                                        v-if="hoveredSkill === skill"
+                                        class="absolute z-[9999] bottom-full left-1/2 transform -translate-x-1/2 mb-2 sm:mb-3 w-56 sm:w-64 bg-black/95 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-3 sm:p-4 shadow-2xl"
+                                    >
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-black/95"></div>
+                                        
+                                        <div class="text-center">
+                                            <h4 class="text-white font-bold text-base sm:text-lg mb-1 sm:mb-2">{{ skill.name }}</h4>
+                                            <p class="text-zinc-300 text-xs sm:text-sm leading-relaxed">{{ skill.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-1 lg:order-2 space-y-6 sm:space-y-8 lg:ml-12">
+                            <h2 class="text-4xl sm:text-5xl lg:text-7xl font-black text-white">
+                                Skills
+                            </h2>
+                            <div class="space-y-4 sm:space-y-6">
+                                <p class="text-lg sm:text-xl text-zinc-300 leading-relaxed" style="font-family: 'Gabarito', sans-serif;">
+                                    Technologies I work with and continuously learn to build amazing projects.
+                                </p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                                <router-link
+                                    to="/projects"
+                                    class="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-white text-zinc-900 font-bold rounded-full hover:bg-zinc-100 transition-colors text-center"
+                                >
+                                    View Projects
+                                </router-link>
+                                <router-link
+                                    to="/about"
+                                    class="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border border-white text-white font-bold rounded-full hover:bg-white hover:text-zinc-900 transition-colors"
+                                >
+                                    <PersonStanding class="w-5 h-5 mr-2" />
+                                    About me
+                                </router-link>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <svg class="absolute bottom-0 w-full h-16 sm:h-24 fill-black z-20" viewBox="0 0 1440 120" preserveAspectRatio="none">
+                    <path d="M0,60 Q720,0 1440,60 L1440,120 L0,120 Z"></path>
+                </svg>
+            </section>
+
+            <section id="projects" class="relative pb-56 pt-8  bg-black overflow-hidden">
+                <div class="max-w-6xl mx-auto px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-5xl lg:text-7xl font-black text-white mb-6">
+                            Featured Projects
+                        </h2>
+                        <p class="text-xl text-zinc-300 max-w-2xl mx-auto" style="font-family: 'Gabarito', sans-serif;">
+                            A collection of my biggest and most notable projects.
+                        </p>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div
                             v-for="project in homepageProjects"
                             :key="project.id"
-                            class="bg-white/10 border border-white/20 rounded-2xl p-6 shadow-lg flex flex-col transition-all"
+                            class="bg-zinc-700/50 border border-zinc-700/50 rounded-2xl p-8 hover:bg-zinc-700/60 transition-all"
                         >
-                            <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center justify-between mb-4">
                                 <span
-                                    class="text-xs px-3 py-1 rounded-full border font-semibold tracking-wide"
+                                    class="text-sm px-3 py-1 rounded-full border font-medium"
                                     :class="getTypeColorClass(project.typeColor)"
                                 >
                                     {{ project.type }}
                                 </span>
-                                <div class="flex gap-2">
+                                <div class="flex gap-3">
                                     <a
                                         v-if="project.github"
                                         :href="project.github"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="text-white/60 hover:text-white transition-colors"
+                                        class="text-zinc-300 hover:text-white transition-colors"
                                     >
-                                        <siGithub class="w-4 h-4" />
+                                        <ExternalLink class="w-5 h-5" />
                                     </a>
                                     <a
                                         :href="project.url"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="text-white/60 hover:text-white transition-colors"
+                                        class="text-zinc-300 hover:text-white transition-colors"
                                     >
-                                        <ExternalLink class="w-4 h-4" />
+                                        <ExternalLink class="w-5 h-5" />
                                     </a>
                                 </div>
                             </div>
-                            <h3 class="font-bold text-lg mb-1 text-white">
+                            <h3 class="text-2xl font-bold text-white mb-4">
                                 {{ project.title }}
                             </h3>
-                            <p class="text-white/70 text-sm mb-3 leading-relaxed">
+                            <p class="text-zinc-300 mb-6 leading-relaxed">
                                 {{ project.description }}
                             </p>
-                            <div class="flex flex-row justify-between items-end gap-4">
-                                <div class="flex flex-wrap gap-2">
-                                    <span
-                                        v-for="tech in project.technologies"
-                                        :key="tech"
-                                        class="bg-white/20 text-white/80 text-xs px-2 py-1 rounded"
-                                    >
-                                        {{ tech }}
-                                    </span>
-                                </div>
+                            <div class="flex flex-wrap gap-2">
                                 <div
-                                    v-if="project.stats"
-                                    class="p-2 bg-white/10 border border-white/20 rounded-lg text-white/80 text-xs font-medium whitespace-nowrap"
+                                    v-for="tech in project.technologies"
+                                    :key="tech"
+                                    class="flex items-center gap-2 text-sm px-3 py-1"
                                 >
-                                    {{ project.stats }}
+                                    <img
+                                        :src="getTechIcon(tech)"
+                                        :alt="tech"
+                                        class="w-6 h-6"
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+                    <path d="M0,60 Q360,0 720,60 T1440,60 L1440,120 L0,120 Z"></path>
+                </svg>
             </section>
 
-            <section
-                id="contact"
-                class="w-full pt-20 bg-black relative"
-            >
-                <div class="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-purple-500/10 to-pink-300/10 pointer-events-none" />
-                <div class="flex flex-col justify-center items-center px-2 py-8 relative z-10 max-w-4xl mx-auto">
-                    <div class="bg-black/20 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 md:p-12 w-full shadow-2xl shadow-black/25 max-w-2xl">
-                        <div class="text-center mb-8">
-                            <div class="inline-flex flex-row items-center justify-center mb-6 gap-4">
-                                <img
-                                    src="/pfp-clear.webp"
-                                    alt="Logo"
-                                    class="w-20"
-                                />
-                                <h2 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent mb-4 drop-shadow">
-                                    Let's Connect
-                                </h2>
-                            </div>
-                            <p class="text-white/70 text-lg leading-relaxed" >
-                                Have an idea, want to collaborate, or just
-                                want to chat?
-                                <br />
-                                Drop me a message and let's make something
-                                amazing together.
+            <section id="contact" class="relative py-32 bg-[#1b1b1e]">
+                <div class="max-w-6xl mx-auto px-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <div class="space-y-8">
+                            <h2 class="text-5xl lg:text-7xl font-black text-white">
+                                Let's Connect
+                            </h2>
+                            <p class="text-xl text-zinc-300 leading-relaxed" style="font-family: 'Gabarito', sans-serif;">
+                                Have an idea or want to collaborate? Drop me a message and let's make something amazing together.
                             </p>
+
+                            <div class="flex gap-6">
+                                <a
+                                    href="https://github.com/dev-banane"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-zinc-400 hover:text-white transition-colors group"
+                                    title="GitHub"
+                                >
+                                    <svg class="w-8 h-8 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                                        <path :d="siGithub.path" />
+                                    </svg>
+                                </a>
+                                <a
+                                    href="https://instagram.com/_jakob09"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-zinc-400 hover:text-white transition-colors group"
+                                    title="Instagram"
+                                >
+                                    <svg class="w-8 h-8 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                                        <path :d="siInstagram.path" />
+                                    </svg>
+                                </a>
+                                <a
+                                    href="https://discord.com/users/798485492621770792"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-zinc-400 hover:text-white transition-colors group"
+                                    title="Discord"
+                                >
+                                    <svg class="w-8 h-8 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                                        <path :d="siDiscord.path" />
+                                    </svg>
+                                </a>
+                                <a
+                                    href="https://open.spotify.com/user/31pqvbbf3v2vaiictlvpz6dy4yye?si=d4059a18b49141f7"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-zinc-400 hover:text-white transition-colors group"
+                                    title="Spotify"
+                                >
+                                    <svg class="w-8 h-8 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                                        <path :d="siSpotify.path" />
+                                    </svg>
+                                </a>
+                                <a
+                                    href="https://steamcommunity.com/profiles/76561199061188081/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-zinc-400 hover:text-white transition-colors group"
+                                    title="Steam"
+                                >
+                                    <svg class="w-8 h-8 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                                        <path :d="siSteam.path" />
+                                    </svg>
+                                </a>
+                            </div>
+                            <p class="text-left text-sm text-zinc-400">&copy;2025 devbanane.com <br />All rights reserved.</p>
                         </div>
-                        <form @submit="handleSubmit" class="space-y-6" >
-                            <div class="group">
-                                <div class="relative">
-                                    <User class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-white/70 transition-colors" />
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        v-model="form.name"
-                                        placeholder="Your name"
-                                        class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all backdrop-blur-sm"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div class="group">
-                                <div class="relative">
-                                    <Mail class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-white/70 transition-colors" />
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        v-model="form.email"
-                                        placeholder="your.email@example.com"
-                                        class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all backdrop-blur-sm"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div class="group">
-                                <div class="relative">
-                                    <MessageSquare class="absolute left-4 top-6 w-5 h-5 text-white/40 group-focus-within:text-white/70 transition-colors" />
-                                    <textarea
-                                        name="message"
-                                        v-model="form.message"
-                                        placeholder="Tell me about your project, idea, or just say hello..."
-                                        :rows="5"
-                                        class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all backdrop-blur-sm resize-none"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex flex-row items-center gap-4 mt-8">
+                        
+                        <div class="bg-zinc-800/30 border border-zinc-700/50 rounded-2xl p-8">
+                            <form @submit="handleSubmit" class="space-y-6">
+                                <input
+                                    type="text"
+                                    v-model="form.name"
+                                    placeholder="Your name"
+                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all"
+                                    required
+                                />
+                                <input
+                                    type="email"
+                                    v-model="form.email"
+                                    placeholder="your@email.com"
+                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all"
+                                    required
+                                />
+                                <textarea
+                                    v-model="form.message"
+                                    placeholder="Tell me about you..."
+                                    rows="4"
+                                    class="w-full px-6 py-4 bg-zinc-800/50 border border-zinc-700/50 rounded-xl text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:border-zinc-400 transition-all resize-none"
+                                    required
+                                />
                                 <button
                                     type="submit"
                                     :disabled="loading"
-                                    class="group bg-white text-gray-900 font-semibold py-4 px-6 rounded-xl transition-all duration-300 hover:bg-white/90 hover:scale-[1.01] hover:shadow-lg hover:shadow-white/20 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 order-1 md:order-none cursor-pointer"
+                                    class="w-full py-4 bg-white text-zinc-900 font-bold rounded-xl hover:bg-zinc-100 transition-colors disabled:opacity-70"
                                 >
-                                    <template v-if="loading">
+                                    <span v-if="loading" class="flex items-center justify-center gap-2">
                                         <Loader2 class="w-5 h-5 animate-spin" />
                                         Sending...
-                                    </template>
-                                    <template v-else>
-                                        <span>Send Message</span>
-                                        <Send class="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
-                                    </template>
+                                    </span>
+                                    <span v-else class="flex items-center justify-center gap-2">
+                                        <Send class="w-5 h-5" />
+                                        Send Message
+                                    </span>
                                 </button>
-                                <p class="hidden md:block text-white/50 text-sm text-center md:text-right w-full md:w-auto ml-auto mr-2" >
-                                    You can also reach me directly at
-                                    <a
-                                        href="mailto:jakob@uplift.de"
-                                        class="text-white/70 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white/70"
-                                    >
-                                        jakob@uplift.de
-                                    </a>
-                                </p>
-                                <div v-if="success" class="flex items-center gap-2 text-green-400">
-                                    <CheckCircle class="w-5 h-5" />
-                                    <span>Message sent successfully!</span>
-                                </div>
-                                <div v-if="error" class="flex items-center gap-2 text-red-400">
-                                    <AlertCircle class="w-5 h-5" />
-                                    <span>{{ error }}</span>
-                                </div>
+                            </form>
+                            
+                            <div v-if="success" class="mt-4 p-4 bg-green-500/20 border border-green-400/30 rounded-xl text-green-200 text-center flex items-center justify-center gap-2">
+                                <CheckCircle class="w-5 h-5" />
+                                Message sent successfully!
                             </div>
-                        </form>
+                            <div v-if="error" class="mt-4 p-4 bg-red-500/20 border border-red-400/30 rounded-xl text-red-200 text-center flex items-center justify-center gap-2">
+                                <AlertCircle class="w-5 h-5" />
+                                {{ error }}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <p class="text-center text-white/50 text-sm pt-6 pb-6 space-y-2" style="font-family: 'Michroma', sans-serif;">
-                    <span>
-                        Website built with Vue.js |
-                        <a
-                            class="text-white/70 hover:text-white transition-colors underline decoration-white/30 hover:decoration-white/70 ml-1"
-                            href="https://github.com/dev-banane/dev-banane"
-                            target="_blank"
-                        >
-                            See the code
-                        </a>
-                    </span>
-                    <br />
-                    <span class="block mt-2">&copy; 2025 devbanane.com</span>
-                </p>
             </section>
         </main>
     </div>
@@ -435,17 +306,100 @@ import {
     ExternalLink,
     PersonStanding
 } from 'lucide-vue-next'
-import { siGithub } from 'simple-icons';
+import { siGithub, siInstagram, siDiscord, siSpotify, siSteam } from 'simple-icons';
 import { projects } from '../../data/projects'
 
 const loading = ref(false)
 const success = ref(false)
 const error = ref<string | null>(null)
+type Skill = {
+    name: string
+    icon: string
+    description: string
+}
+const hoveredSkill = ref<Skill | null>(null)
 const form = ref({
     name: '',
     email: '',
     message: ''
 })
+const skills = ref([
+    {
+        name: 'Vue.js',
+        icon: '/assets/vue.svg',
+        description: 'Progressive JavaScript framework for building user interfaces with reactive data binding and component-based architecture.'
+    },
+    {
+        name: 'React',
+        icon: '/assets/react.svg',
+        description: 'Popular JavaScript library for building interactive user interfaces using a component-based approach.'
+    },
+    {
+        name: 'TypeScript',
+        icon: '/assets/typescript.svg',
+        description: 'Strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.'
+    },
+    {
+        name: 'JavaScript',
+        icon: '/assets/javascript.svg',
+        description: 'Dynamic programming language that enables interactive web pages and is an essential part of web applications.'
+    },
+    {
+        name: 'Node.js',
+        icon: '/assets/nodejs.svg',
+        description: 'JavaScript runtime built on Chrome\'s V8 engine for building scalable network applications and APIs.'
+    },
+    {
+        name: 'discord.js',
+        icon: '/assets/discord.js.svg',
+        description: 'JavaScript library for interacting with the Discord API, enabling the creation of bots and applications for Discord.'
+    },
+    {
+        name: 'Java',
+        icon: '/assets/java.svg',
+        description: 'Object-oriented programming language known for its portability, security, and use in enterprise applications.'
+    },
+    {
+        name: 'Python',
+        icon: '/assets/python.svg',
+        description: 'Versatile programming language used for web development, data science, automation, and artificial intelligence.'
+    },
+    {
+        name: 'HTML',
+        icon: '/assets/html.svg',
+        description: 'Standard markup language for creating web pages and web applications, defining structure and content.'
+    },
+    {
+        name: 'CSS',
+        icon: '/assets/css.svg',
+        description: 'Style sheet language used for describing the presentation and visual styling of HTML documents.'
+    },
+    {
+        name: 'Tailwind CSS',
+        icon: '/assets/tailwind.svg',
+        description: 'Utility-first CSS framework for creating custom designs without having to leave your HTML.'
+    },
+    {
+        name: 'Git',
+        icon: '/assets/git.svg',
+        description: 'Distributed version control system for tracking changes in source code during software development.'
+    },
+    {
+        name: 'MongoDB',
+        icon: '/assets/mongodb.svg',
+        description: 'NoSQL document database that provides high performance, high availability, and easy scalability.'
+    },
+    {
+        name: 'SQLite',
+        icon: '/assets/sqlite.svg',
+        description: 'Lightweight, serverless, self-contained SQL database engine perfect for embedded applications.'
+    },
+    {
+        name: 'Supabase',
+        icon: '/assets/supabase.svg',
+        description: 'Open-source Firebase alternative that provides a suite of tools for building and scaling applications.'
+    },
+])
 
 const homepageProjects = computed(() => {
     return projects.filter(project => project.showOnHomepage)
@@ -459,6 +413,30 @@ const getTypeColorClass = (typeColor: string) => {
         'orange': 'bg-orange-500/20 text-orange-200 border-orange-400/30'
     }
     return colorClasses[typeColor as keyof typeof colorClasses] || colorClasses.blue
+}
+
+const getTechIcon = (techName: string) => {
+    const techIcons: { [key: string]: string } = {
+        'Vue.js': '/assets/vue.svg',
+        'React': '/assets/react.svg',
+        'TypeScript': '/assets/typescript.svg',
+        'JavaScript': '/assets/javascript.svg',
+        'Node.js': '/assets/nodejs.svg',
+        'discord.js': '/assets/discord.js.svg',
+        'Java': '/assets/java.svg',
+        'Python': '/assets/python.svg',
+        'HTML': '/assets/html.svg',
+        'CSS': '/assets/css.svg',
+        'TailwindCSS': '/assets/tailwind.svg',
+        'Tailwind CSS': '/assets/tailwind.svg',
+        'Git': '/assets/git.svg',
+        'MongoDB': '/assets/mongodb.svg',
+        'SQLite': '/assets/sqlite.svg',
+        'Supabase': '/assets/supabase.svg',
+        'Express': '/assets/nodejs.svg',
+        'Discord.js': '/assets/discord.js.svg'
+    }
+    return techIcons[techName] || '/assets/default.svg'
 }
 
 const handleSubmit = async (e: Event) => {

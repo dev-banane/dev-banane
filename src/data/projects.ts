@@ -17,7 +17,7 @@ export const projects: Project[] = [
         id: 1,
         title: 'PFControl',
         description:
-            'A web-based flight-strip management platform for Air Traffic Controllers on Project Flight.',
+            'A web-based flight-strip management platform for Air Traffic Controllers on Project Flight. Connect, enabling efficient handling of flight plans and real-time updates.',
         type: 'Website',
         typeColor: 'orange',
         url: 'https://control.pfconnect.online',
@@ -50,7 +50,7 @@ export const projects: Project[] = [
         typeColor: 'blue',
         url: 'https://api.pfconnect.online',
         github: null,
-        technologies: ['JavaScript', 'Node.js', 'Express', 'SQLite'],
+        technologies: ['JavaScript', 'Node.js', 'SQLite'],
         featured: true,
         showOnHomepage: true
     },

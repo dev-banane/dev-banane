@@ -6,5 +6,5 @@ import NotesWidget from './components/NotesWidget.vue';
 <template>
     <Navbar />
     <router-view />
-    <NotesWidget />
+    <!--<NotesWidget />-->
 </template>
