@@ -396,10 +396,10 @@ const skills = ref([
         description: 'Lightweight, serverless, self-contained SQL database engine perfect for embedded applications.'
     },
     {
-        name: 'Supabase',
-        icon: '/assets/supabase.svg',
-        description: 'Open-source Firebase alternative that provides a suite of tools for building and scaling applications.'
-    },
+        name: 'PostgreSQL',
+        icon: '/assets/postgresql.svg',
+        description: 'Powerful, open-source object-relational database system with a strong reputation for reliability, feature robustness, and performance.'
+    }
 ])
 
 const homepageProjects = computed(() => {

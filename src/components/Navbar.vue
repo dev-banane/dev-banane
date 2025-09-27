@@ -56,7 +56,7 @@
                         href="https://github.com/dev-banane"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-base bg-white text-gray-900 shadow-lg shadow-white/20 transition-all duration-300 hover:bg-white/90 hover:scale-105"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full font-medium text-base bg-white text-gray-900 shadow-lg shadow-white/20 transition-all duration-300 hover:bg-white/90 hover:scale-105"
                     >
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
                             <path :d="siGithub.path" />
