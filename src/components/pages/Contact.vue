@@ -163,10 +163,10 @@
                             <h4 class="text-2xl font-bold text-white mb-4">Direct Email</h4>
                             <p class="text-zinc-300 mb-6">For business inquiries and collaborations</p>
                             <a
-                                href="mailto:jakob@uplift.de"
+                                href="mailto:me@devbanane.com"
                                 class="inline-block px-8 py-4 bg-white text-zinc-900 font-bold rounded-full hover:bg-zinc-100 transition-colors"
                             >
-                                jakob@uplift.de
+                                me@devbanane.com
                             </a>
                         </div>
 
@@ -229,7 +229,7 @@ const handleSubmit = async (e: Event) => {
                 from_name: form.value.name,
                 from_email: form.value.email,
                 message: form.value.message,
-                to_email: 'jakob@uplift.de'
+                to_email: 'me@devbanane.com'
             },
             import.meta.env.VITE_PUBLIC_KEY
         )

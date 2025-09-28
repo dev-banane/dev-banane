@@ -462,7 +462,7 @@ const handleSubmit = async (e: Event) => {
                 from_name: form.value.name,
                 from_email: form.value.email,
                 message: form.value.message,
-                to_email: 'jakob@uplift.de'
+                to_email: 'me@devbanane.com'
             },
             import.meta.env.VITE_PUBLIC_KEY
         )

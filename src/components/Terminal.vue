@@ -212,7 +212,7 @@ Currently learning: Go, C</span>`
         description: 'Show contact information',
         action: () => {
             return `<span class="text-white">Contact Information:
-  Email: jakob@uplift.de
+  Email: me@devbanane.com
   Discord: bananensammler_
   GitHub: github.com/dev-banane
   
@@ -249,7 +249,7 @@ drwxr-xr-x  skills/
 Passionate about creating digital experiences that matter.
 Currently working on Cephie and learning Go & C.</span>`,
                 'contact.txt': `<span class="text-white">Jakob - Full-stack Developer
-Email: jakob@uplift.de
+Email: me@devbanane.com
 Location: Germany
 Status: Available for projects</span>`,
                 'README.md': `<span class="text-white"># devbanane
