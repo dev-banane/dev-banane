@@ -46,7 +46,7 @@
                     'bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl flex flex-col font-mono text-sm transition-all duration-300',
                     isFullscreen
                         ? 'w-full h-full max-w-none max-h-none'
-                        : 'w-[800px] h-[600px] max-w-[90vw] max-h-[90vh]'
+                        : 'w-[1000px] h-[600px] max-w-[90vw] max-h-[90vh]'
                 ]"
             >
                 <div class="flex items-center justify-between bg-zinc-800 px-4 py-3 rounded-t-xl border-b border-zinc-700">
