@@ -1,5 +1,5 @@
 <template>
-    <nav class="fixed left-0 right-0 z-50 transition-all duration-300" :class="navClass">
+    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" :class="navClass">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <router-link to="/" class="flex items-center space-x-3">
@@ -174,10 +174,9 @@ const isActive = (path: string) => {
 
 const scrolled = ref(false)
 const bgApplied = ref(false)
-const bgTimeout = ref<number | null>(null)
 
 const navClass = computed(() => {
-    let cls = scrolled.value ? 'top-0' : 'top-2'
+    let cls = scrolled.value ? 'pt-0' : 'pt-2'
     cls += bgApplied.value ? ' bg-black/90 backdrop-blur-xl' : ' bg-transparent'
     return cls
 })
@@ -185,18 +184,10 @@ const navClass = computed(() => {
 const handleScroll = () => {
     if (window.scrollY > 0) {
         scrolled.value = true
-        if (bgTimeout.value) clearTimeout(bgTimeout.value)
-        bgTimeout.value = setTimeout(() => {
-            bgApplied.value = true
-            bgTimeout.value = null
-        }, 150)
+        bgApplied.value = true
     } else {
         scrolled.value = false
         bgApplied.value = false
-        if (bgTimeout.value) {
-            clearTimeout(bgTimeout.value)
-            bgTimeout.value = null
-        }
     }
 }
 
