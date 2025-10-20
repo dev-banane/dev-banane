@@ -6,7 +6,7 @@
                     <div class="flex gap-16 items-center">
                         <div class="space-y-8">
                             <h1 class="text-6xl lg:text-8xl font-black text-white leading-none">
-                                Hi, I'm Jakob <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
+                                Hi, I'm <span class="lightbeam">Jakob</span> <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
                             </h1>
                             <p class="text-2xl lg:text-3xl text-zinc-300 font-light" style="font-family: 'Michroma', sans-serif;">
                                 16 y/o <span class="italic">full-stack</span> developer from Germany, learning Go, C, and building cool things.
@@ -391,9 +391,9 @@ const skills = ref([
         description: 'NoSQL document database that provides high performance, high availability, and easy scalability.'
     },
     {
-        name: 'SQLite',
-        icon: '/assets/sqlite.svg',
-        description: 'Lightweight, serverless, self-contained SQL database engine perfect for embedded applications.'
+        name: 'Redis',
+        icon: '/assets/redis.svg',
+        description: 'In-memory data structure store used as a database and cache, known for its speed and flexibility.'
     },
     {
         name: 'PostgreSQL',
@@ -475,3 +475,23 @@ const handleSubmit = async (e: Event) => {
     loading.value = false
 }
 </script>
+
+<style scoped>
+.lightbeam {
+    position: relative;
+}
+
+.lightbeam::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 130vh;
+    background: radial-gradient(ellipse at top, rgba(200, 237, 247, 0.3) 0%, transparent 100%);
+    transform: translate(-50%, -50%) rotate(30deg);
+    z-index: 0;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    filter: blur(20px);
+}
+</style>

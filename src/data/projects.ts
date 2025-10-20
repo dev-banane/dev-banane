@@ -24,7 +24,7 @@ export const projects: Project[] = [
         github: null,
         technologies: ['React', 'TailwindCSS', 'JavaScript', 'Node.js'],
         featured: true,
-        stats: '4.500+ users',
+        stats: '5,000+ users',
         showOnHomepage: true
     },
     {

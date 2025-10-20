@@ -187,7 +187,7 @@ Type any command to get started!</span>`
         description: 'List my projects',
         action: () => {
             return `<span class="text-white">My Projects:
-  • PFControl - Flight-strip management platform (4,500+ users)
+  • PFControl - Flight-strip management platform (5,000+ users)
   • PFConnect Bot - Discord management bot (250+ servers)
   • PFConnect API - RESTful API with documentation
   • Cephie Snap - Image sharing platform

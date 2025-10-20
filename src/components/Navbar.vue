@@ -1,5 +1,5 @@
 <template>
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl">
+    <nav class="fixed left-0 right-0 z-50 transition-all duration-300" :class="navClass">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <router-link to="/" class="flex items-center space-x-3">
@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import {
     Home,
@@ -171,4 +171,40 @@ const closeMobileMenu = () => {
 const isActive = (path: string) => {
     return route.path === path
 }
+
+const scrolled = ref(false)
+const bgApplied = ref(false)
+const bgTimeout = ref<number | null>(null)
+
+const navClass = computed(() => {
+    let cls = scrolled.value ? 'top-0' : 'top-2'
+    cls += bgApplied.value ? ' bg-black/90 backdrop-blur-xl' : ' bg-transparent'
+    return cls
+})
+
+const handleScroll = () => {
+    if (window.scrollY > 0) {
+        scrolled.value = true
+        if (bgTimeout.value) clearTimeout(bgTimeout.value)
+        bgTimeout.value = setTimeout(() => {
+            bgApplied.value = true
+            bgTimeout.value = null
+        }, 150)
+    } else {
+        scrolled.value = false
+        bgApplied.value = false
+        if (bgTimeout.value) {
+            clearTimeout(bgTimeout.value)
+            bgTimeout.value = null
+        }
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
+})
 </script>
