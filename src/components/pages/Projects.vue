@@ -1,8 +1,10 @@
 <template>
-    <div class="min-h-screen bg-zinc-900">
-        <main class="pt-0 max-w-none mx-0 px-0">
-            <section id="projects-hero" class="relative min-h-screen bg-black flex items-center overflow-hidden">
-                <div class="max-w-7xl mx-auto px-8 w-full">
+    <div class="min-h-screen bg-black relative">
+        <Background />
+        
+        <main class="pt-0 max-w-none mx-0 px-0 relative z-10">
+            <section id="projects-hero" class="relative min-h-screen flex items-center overflow-hidden">
+                <div class="max-w-7xl mx-auto px-8 w-full relative z-10">
                     <div class="text-center space-y-8">
                         <h1 class="text-6xl lg:text-8xl font-black text-white leading-none">
                             My Projects <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default mt-4">💻</span>
@@ -14,8 +16,8 @@
                 </div>
             </section>
 
-            <section class="relative pt-16 pb-52 bg-black overflow-hidden">
-                <div class="max-w-7xl mx-auto px-8">
+            <section class="relative pt-16 pb-52 overflow-hidden">
+                <div class="max-w-7xl mx-auto px-8 relative z-10">
                     <div class="flex flex-col sm:flex-row gap-4 items-center justify-between mb-12">
                         <div class="flex flex-wrap gap-3">
                             <button
@@ -161,7 +163,7 @@
                     </div>
                 </div>
 
-                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e] z-0" viewBox="0 0 1440 120" preserveAspectRatio="none">
                     <path d="M0,60 Q360,0 720,60 T1440,60 L1440,120 L0,120 Z"></path>
                 </svg>
             </section>
@@ -202,6 +204,7 @@ import { ref, computed } from 'vue'
 import { ExternalLink, Star, Search } from 'lucide-vue-next'
 import { siGithub } from 'simple-icons'
 import { projects } from '../../data/projects'
+import Background from '../Background.vue'
 
 const activeFilter = ref<string>('all')
 

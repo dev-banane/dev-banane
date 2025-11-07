@@ -55,26 +55,16 @@
                             @click="closeModal"
                             class="w-3 h-3 bg-red-500 rounded-full hover:bg-red-400 transition-colors group relative"
                         >
-                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="w-1.5 h-0.5 bg-red-900 rotate-45"></div>
-                                <div class="w-1.5 h-0.5 bg-red-900 -rotate-45 absolute"></div>
-                            </div>
                         </button>
                         <button
                             @click="minimizeModal"
                             class="w-3 h-3 bg-yellow-500 rounded-full hover:bg-yellow-400 transition-colors group relative"
                         >
-                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="w-1.5 h-0.5 bg-yellow-900"></div>
-                            </div>
                         </button>
                         <button
                             @click="toggleFullscreen"
                             class="w-3 h-3 bg-green-500 rounded-full hover:bg-green-400 transition-colors group relative"
                         >
-                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div class="w-1 h-1 border border-green-900"></div>
-                            </div>
                         </button>
                     </div>
                     
@@ -85,10 +75,10 @@
                     <div class="flex items-center gap-2">
                         <button
                             @click="clearTerminal"
-                            class="text-zinc-400 hover:text-white transition-colors text-xs px-2 py-1 rounded hover:bg-zinc-700"
+                            class="text-zinc-400 hover:text-white transition-colors text-xs px-2 py-1 rounded-full hover:bg-zinc-700"
                             title="Clear terminal"
                         >
-                            Clear
+                            <TextWrapIcon class="w-4 h-4" />
                         </button>
                     </div>
                 </div>
@@ -126,7 +116,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick, onUnmounted, watch } from 'vue'
-import { Terminal } from 'lucide-vue-next'
+import { Terminal, TextWrapIcon } from 'lucide-vue-next'
 
 const isOpen = ref(false)
 const isFullscreen = ref(false)

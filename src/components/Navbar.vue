@@ -1,5 +1,5 @@
 <template>
-    <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" :class="navClass">
+    <nav class="fixed top-0 left-0 right-0 z-100 transition-all duration-300" :class="navClass">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <router-link to="/" class="flex items-center space-x-3">
@@ -28,21 +28,6 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <div class="hidden md:flex items-center space-x-2">
-                        <a
-                            v-for="social in socialLinks"
-                            :key="social.label"
-                            :href="social.url"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="p-2 text-white/70 hover:text-white transition-colors rounded-lg hover:bg-white/5"
-                            :aria-label="social.label"
-                        >
-                            <svg :width="18" :height="18" viewBox="0 0 24 24" class="fill-current">
-                                <path :d="social.icon.path"/>
-                            </svg>
-                        </a>
-                    </div>
 
                     <button
                         @click="toggleMobileMenu"
@@ -68,9 +53,12 @@
 
             <div
                 class="md:hidden transition-all duration-300 overflow-hidden"
-                :class="mobileMenuOpen
-                    ? 'max-h-96 opacity-100'
-                    : 'max-h-0 opacity-0'"
+                :class=" [
+                    mobileMenuOpen
+                        ? 'max-h-96 opacity-100'
+                        : 'max-h-0 opacity-0',
+                    mobileMenuOpen ? 'bg-black/95 backdrop-blur-xl' : ''
+                ]"
             >
                 <div class="py-4 space-y-2 border-t border-white/10">
                     <router-link
@@ -86,22 +74,6 @@
                         <component :is="link.icon" :size="18" />
                         <span>{{ link.label }}</span>
                     </router-link>
-                    
-                    <div class="flex items-center justify-center space-x-4 pt-4 border-t border-white/10 mt-4">
-                        <a
-                            v-for="social in socialLinks"
-                            :key="social.label"
-                            :href="social.url"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="p-3 text-white/70 hover:text-white transition-colors rounded-lg hover:bg-white/5"
-                            :aria-label="social.label"
-                        >
-                            <svg :width="20" :height="20" viewBox="0 0 24 24" class="fill-current">
-                                <path :d="social.icon.path"/>
-                            </svg>
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -120,10 +92,6 @@ import {
     X
 } from 'lucide-vue-next'
 import {
-    siDiscord,
-    siInstagram,
-    siSpotify,
-    siSteam,
     siGithub
 } from 'simple-icons';
 
@@ -135,29 +103,6 @@ const navLinks = [
     { label: 'About', path: '/about', icon: User },
     { label: 'Projects', path: '/projects', icon: Briefcase },
     { label: 'Contact', path: '/contact', icon: Mail }
-]
-
-const socialLinks = [
-    {
-        label: 'Instagram',
-        url: 'https://instagram.com/_jakob09',
-        icon: { path: siInstagram.path }
-    },
-    {
-        label: 'Discord',
-        url: 'https://discord.com/users/798485492621770792',
-        icon: { path: siDiscord.path }
-    },
-    {
-        label: 'Spotify',
-        url: 'https://open.spotify.com/user/31pqvbbf3v2vaiictlvpz6dy4yye?si=d4059a18b49141f7',
-        icon: { path: siSpotify.path }
-    },
-    {
-        label: 'Steam',
-        url: 'https://steamcommunity.com/profiles/76561199061188081/',
-        icon: { path: siSteam.path }
-    }
 ]
 
 const toggleMobileMenu = () => {

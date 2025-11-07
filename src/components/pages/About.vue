@@ -2,7 +2,9 @@
     <div class="min-h-screen bg-zinc-900">
         <main class="pt-0 max-w-none mx-0 px-0">
             <section id="about-hero" class="relative min-h-screen bg-black flex items-center overflow-hidden">
-                <div class="max-w-7xl mx-auto px-8 w-full">
+                <Background />
+
+                <div class="max-w-7xl mx-auto px-8 w-full relative z-10">
                     <div class="flex gap-16 items-center">
                         <div class="flex-1 space-y-8">
                             <h1 class="text-6xl lg:text-8xl font-black text-white leading-none">
@@ -61,7 +63,9 @@
             </section>
 
             <section class="relative pt-20 pb-56 bg-black overflow-hidden">
-                <div class="max-w-6xl mx-auto px-8">
+                <Background />
+
+                <div class="max-w-6xl mx-auto px-8 relative z-10">
                     <div class="text-center mb-16">
                         <h2 class="text-5xl lg:text-7xl font-black text-white mb-6">
                             My Journey
@@ -126,7 +130,7 @@
                     </div>
                 </div>
 
-                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e] z-0" viewBox="0 0 1440 120" preserveAspectRatio="none">
                     <path d="M0,60 Q360,0 720,60 T1440,60 L1440,120 L0,120 Z"></path>
                 </svg>
             </section>
@@ -160,3 +164,7 @@
         </main>
     </div>
 </template>
+
+<script setup lang="ts">
+import Background from '../Background.vue'
+</script>

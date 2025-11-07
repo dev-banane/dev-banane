@@ -2,7 +2,9 @@
     <div class="min-h-screen bg-zinc-900">
         <main class="pt-0 max-w-none mx-0 px-0">
             <section id="contact-hero" class="relative min-h-screen bg-black flex items-center overflow-hidden">
-                <div class="max-w-7xl mx-auto px-8 w-full">
+                <Background />
+
+                <div class="max-w-7xl mx-auto px-8 w-full relative z-10">
                     <div class="text-center space-y-8">
                         <h1 class="text-6xl lg:text-8xl font-black text-white leading-none">
                             Contact Me <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">📧</span>
@@ -145,7 +147,9 @@
             </section>
 
             <section class="relative pb-32 pt-24 bg-black overflow-hidden">
-                <div class="max-w-6xl mx-auto px-8">
+                <Background />
+
+                <div class="max-w-6xl mx-auto px-8 relative z-10">
                     <div class="text-center mb-16">
                         <h3 class="text-5xl lg:text-7xl font-black text-white mb-6">
                             Other Ways to Reach Me
@@ -196,6 +200,7 @@
 import { ref } from 'vue'
 import { Mail, MessageSquare, CheckCircle, AlertCircle, Loader2, Send } from 'lucide-vue-next'
 import { siGithub, siInstagram, siDiscord, siSpotify, siSteam } from 'simple-icons'
+import Background from '../Background.vue'
 
 const loading = ref(false)
 const success = ref(false)

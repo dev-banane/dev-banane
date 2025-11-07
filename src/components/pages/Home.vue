@@ -2,13 +2,15 @@
     <div class="min-h-screen bg-zinc-900">
         <main class="pt-0 max-w-none mx-0 px-0">
             <section id="hero" class="relative min-h-screen bg-black flex items-center overflow-hidden">
-                <div class="max-w-7xl mx-auto px-8 w-full">
+                <Background />
+
+                <div class="max-w-7xl mx-auto px-8 w-full relative z-10">
                     <div class="flex gap-16 items-center">
-                        <div class="space-y-8">
-                            <h1 class="text-6xl lg:text-8xl font-black text-white leading-none">
-                                Hi, I'm <span class="lightbeam">Jakob</span> <span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
+                        <div class="space-y-2">
+                            <h1 class="text-6xl lg:text-8xl font-black text-white leading-none pb-6">
+                                Hi, I'm Jakob<span class="inline-block transition-all duration-300 hover:scale-110 hover:rotate-12 text-yellow-400 cursor-default">👋</span>
                             </h1>
-                            <p class="text-2xl lg:text-3xl text-zinc-300 font-light" style="font-family: 'Michroma', sans-serif;">
+                            <p class="text-2xl lg:text-3xl text-zinc-300 font-light" style="font-family: 'Gabarito', sans-serif;">
                                 16 y/o <span class="italic">full-stack</span> developer from Germany, learning Go, C, and building cool things.
                             </p>
                             <p class="text-xl text-zinc-400 leading-relaxed" style="font-family: 'Gabarito', sans-serif;">
@@ -95,8 +97,10 @@
                 </svg>
             </section>
 
-            <section id="projects" class="relative pb-56 pt-8  bg-black overflow-hidden">
-                <div class="max-w-6xl mx-auto px-8">
+            <section id="projects" class="relative pb-56 pt-8 bg-black overflow-hidden">
+                <Background />
+
+                <div class="max-w-6xl mx-auto px-8 relative z-10">
                     <div class="text-center mb-16">
                         <h2 class="text-5xl lg:text-7xl font-black text-white mb-6">
                             Featured Projects
@@ -162,7 +166,7 @@
                     </div>
                 </div>
 
-                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+                <svg class="absolute bottom-0 w-full h-24 fill-[#1b1b1e] z-0" viewBox="0 0 1440 120" preserveAspectRatio="none">
                     <path d="M0,60 Q360,0 720,60 T1440,60 L1440,120 L0,120 Z"></path>
                 </svg>
             </section>
@@ -309,6 +313,7 @@ import {
 } from 'lucide-vue-next'
 import { siGithub, siInstagram, siDiscord, siSpotify, siSteam } from 'simple-icons';
 import { projects } from '../../data/projects'
+import Background from '../Background.vue'
 
 const loading = ref(false)
 const success = ref(false)
@@ -475,23 +480,3 @@ const handleSubmit = async (e: Event) => {
     loading.value = false
 }
 </script>
-
-<style scoped>
-.lightbeam {
-    position: relative;
-}
-
-.lightbeam::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 600px;
-    height: 130vh;
-    background: radial-gradient(ellipse at top, rgba(200, 237, 247, 0.3) 0%, transparent 100%);
-    transform: translate(-50%, -50%) rotate(30deg);
-    z-index: 0;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-    filter: blur(20px);
-}
-</style>
