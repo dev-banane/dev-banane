@@ -35,14 +35,25 @@ const skills = [
 	{ name: 'Vue.js', icon: '/assets/vue.svg' },
 	{ name: 'React', icon: '/assets/react.svg' },
 	{ name: 'TypeScript', icon: '/assets/typescript.svg' },
+	{ name: 'JavaScript', icon: '/assets/javascript.svg' },
+	{ name: 'Vite', icon: '/assets/vite.svg' },
 	{ name: 'Node.js', icon: '/assets/nodejs.svg' },
 	{ name: 'Discord.js', icon: '/assets/discordjs.svg' },
+	{ name: 'Fastify', icon: '/assets/fastify.svg' },
 	{ name: 'HTML', icon: '/assets/html.svg' },
 	{ name: 'CSS', icon: '/assets/css.svg' },
 	{ name: 'Tailwind', icon: '/assets/tailwind.svg' },
 	{ name: 'Git', icon: '/assets/git.svg' },
 	{ name: 'Redis', icon: '/assets/redis.svg' },
-	{ name: 'PostgreSQL', icon: '/assets/postgresql.svg' }
+	{ name: 'PostgreSQL', icon: '/assets/postgresql.svg' },
+	{ name: 'MySQL', icon: '/assets/mysql.svg' },
+	{ name: 'SQLite', icon: '/assets/sqlite.svg' },
+	{ name: 'MongoDB', icon: '/assets/mongodb.svg' },
+	{ name: 'Docker', icon: '/assets/docker.svg' },
+	{ name: 'Nginx', icon: '/assets/nginx.svg' },
+	{ name: 'Linux', icon: '/assets/linux.svg' },
+	{ name: 'REST', icon: '/assets/http.svg' },
+	{ name: 'Cloudflare', icon: '/assets/cloudflare.svg' }
 ];
 
 const socialLinks = [
@@ -60,7 +71,10 @@ const socialLinks = [
 	<div class="min-h-screen bg-black text-white font-sans relative">
 		<div
 			class="fixed inset-0 z-0 pointer-events-none opacity-10 bg-center bg-no-repeat"
-			style="background-image: url('/pfp-clear.png'); background-size: 60%"
+			style="
+				background-image: url('/pfp-clear.png');
+				background-size: 60%;
+			"
 		></div>
 		<div class="container mx-auto px-4 py-20 max-w-4xl relative z-10">
 			<header class="mb-16 text-left flex items-center gap-4">
