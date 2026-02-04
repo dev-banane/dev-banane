@@ -12,4 +12,4 @@
   <a href="https://steamcommunity.com/profiles/76561199061188081/" target="blank"><img align="center" src="https://cdn.simpleicons.org/steam/ffffff" alt="steam" height="30" width="30" /></a>
 </p>
 
-### For more visit my Website: https://devbanane.com</h3>
+### Visit my Website: https://devbanane.com</h3>
