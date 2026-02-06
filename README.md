@@ -1,6 +1,6 @@
 ## Hi there, I'm Jakob 👋
 
--   👀 I'm currently working on [Cephie](https://snap.cephie.app)
+-   👀 I'm currently working on [Cephie](https://cephie.app)
 -   🌱 I'm currently learning Java and GoLang
 -   💞️ I love collaborating on open source projects!
 
