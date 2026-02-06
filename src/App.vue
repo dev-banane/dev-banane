@@ -32,8 +32,9 @@ const projects = [
 const skills = [
 	{ name: 'Java', icon: '/assets/java.svg' },
 	{ name: 'Python', icon: '/assets/python.svg' },
-	{ name: 'Vue.js', icon: '/assets/vue.svg' },
 	{ name: 'React', icon: '/assets/react.svg' },
+	{ name: 'Vue.js', icon: '/assets/vue.svg' },
+	{ name: 'Next.js', icon: '/assets/nextjs.svg' },
 	{ name: 'TypeScript', icon: '/assets/typescript.svg' },
 	{ name: 'JavaScript', icon: '/assets/javascript.svg' },
 	{ name: 'Vite', icon: '/assets/vite.svg' },
