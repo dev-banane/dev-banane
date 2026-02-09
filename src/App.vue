@@ -9,24 +9,24 @@ import {
 
 const projects = [
 	{
-		title: 'PFControl v2',
-		description:
-			'Fast and reliable flight-strip platform for coordination between air traffic controllers',
-		url: 'https://github.com/PFConnect/pfcontrol-2',
-		github: 'https://github.com/PFConnect/pfcontrol-2'
-	},
-	{
-		title: 'Cephie',
-		description: 'A platform of tools and services for Discord',
+		title: 'Cephie Snap',
+		description: 'Upload a picture and get an instant, permanent URL.',
 		url: 'https://snap.cephie.app',
-		github: 'https://github.com/dev-banane'
+		github: 'https://github.com/cephie-studios'
 	},
 	{
-		title: 'Portfolio',
-		description: 'This minimalist portfolio website',
-		url: '#',
-		github: 'https://github.com/dev-banane/dev-banane'
-	}
+		title: 'Cephie Dashboard',
+		description: 'Take control with our intuitive bot dashboard.',
+		url: 'https://dash.cephie.app',
+		github: 'ttps://github.com/cephie-studios/app'
+	},
+  {
+    title: 'PFControl v2',
+    description:
+        'Fast and reliable flight-strip platform for coordination between air traffic controllers',
+    url: 'https://pfcontrol.com',
+    github: 'https://github.com/cephie-studios/pfcontrol-2'
+  },
 ];
 
 const skills = [
