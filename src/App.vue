@@ -288,7 +288,7 @@ const socialLinks = [
 					<article
 						v-for="(project, i) in projects"
 						:key="project.title"
-						class="flex flex-col min-w-[85vw] sm:min-w-[420px] max-w-[720px] bg-white rounded-2xl border border-black/10 shadow hover:shadow-lg transition hover:-translate-y-1 shrink-0 overflow-hidden snap-start"
+						class="flex flex-col min-w-[85vw] sm:min-w-[420px] max-w-[720px] bg-white rounded-2xl border border-black/10 shadow-lg transition shrink-0 overflow-hidden snap-start"
 					>
 						<div v-if="project.imgUrl" class="h-64 bg-neutral-100 overflow-hidden">
 							<img :src="project.imgUrl" :alt="project.title" class="h-full w-full object-cover" loading="lazy" />
