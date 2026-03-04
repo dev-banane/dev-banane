@@ -1,6 +1,6 @@
 ## Hi there, I'm Jakob 👋
 
--   👀 I'm currently working at [GiftGRÜN](https://www.giftgruen.com/)
+-   👀 I'm currently working at [giftGRÜN](https://www.giftgruen.com/)
 -   🌱 I'm currently learning GoLang
 -   💞️ I love collaborating on open source projects!
 
