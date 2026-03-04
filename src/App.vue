@@ -1,32 +1,60 @@
-<script setup>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import AppButton from './components/AppButton.vue';
 import {
 	Github,
 	Mail,
 	Instagram,
-	MessageCircle,
-	ExternalLink
+	ExternalLink,
+	BookOpen,
+	Server,
+	Image,
+	LayoutDashboard,
+	Plane
 } from 'lucide-vue-next';
 
 const projects = [
 	{
+		title: 'Cephie API',
+		description:
+			'Single API for Cephie products: flight tracking, shifts, guilds, images, and flight assets. OpenAPI docs and optional Discord auth for transcripts.',
+		url: 'https://api.cephie.app',
+		github: 'https://github.com/cephie-studios/api',
+		icon: Server,
+		docsUrl: 'https://api.cephie.app/docs',
+		features: [
+			'Flight tracking',
+			'Shifts',
+			'Guilds',
+			'Images',
+			'Flight assets',
+			'Transcripts (Discord auth)'
+		]
+	},
+	{
 		title: 'Cephie Snap',
-		description: 'Upload a picture and get an instant, permanent URL.',
+		description:
+			'Image hosting with permanent URLs and a public API for developer integrations. Built for reliability and simple embedding in apps and docs.',
 		url: 'https://snap.cephie.app',
-		github: 'https://github.com/cephie-studios'
+		github: 'https://github.com/cephie-studios',
+		icon: Image
 	},
 	{
 		title: 'Cephie Dashboard',
-		description: 'Take control with our intuitive bot dashboard.',
+		description:
+			'Discord bot and management platform for virtual airlines and aviation communities. Role sync, verification, and moderation trusted by dozens of major groups.',
 		url: 'https://dash.cephie.app',
-		github: 'ttps://github.com/cephie-studios/app'
+		github: 'https://github.com/cephie-studios/app',
+		icon: LayoutDashboard
 	},
-  {
-    title: 'PFControl v2',
-    description:
-        'Fast and reliable flight-strip platform for coordination between air traffic controllers',
-    url: 'https://pfcontrol.com',
-    github: 'https://github.com/cephie-studios/pfcontrol-2'
-  },
+	{
+		title: 'PFControl v2',
+		description:
+			'Flight-strip management for Project Flight and Roblox aviation sims. Real-time coordination between ATC and pilots with a modern, fast UI.',
+		url: 'https://pfcontrol.com',
+		github: 'https://github.com/cephie-studios/pfcontrol-2',
+		icon: Plane
+	}
 ];
 
 const skills = [
@@ -35,12 +63,12 @@ const skills = [
 	{ name: 'React', icon: '/assets/react.svg' },
 	{ name: 'Vue.js', icon: '/assets/vue.svg' },
 	{ name: 'Next.js', icon: '/assets/nextjs.svg' },
-	{ name: 'TypeScript', icon: '/assets/typescript.svg' },
-	{ name: 'JavaScript', icon: '/assets/javascript.svg' },
+	{ name: 'Expo', icon: '/assets/expo.svg' },
 	{ name: 'Vite', icon: '/assets/vite.svg' },
 	{ name: 'Node.js', icon: '/assets/nodejs.svg' },
-	{ name: 'Discord.js', icon: '/assets/discordjs.svg' },
 	{ name: 'Fastify', icon: '/assets/fastify.svg' },
+	{ name: 'TypeScript', icon: '/assets/typescript.svg' },
+	{ name: 'JavaScript', icon: '/assets/javascript.svg' },
 	{ name: 'HTML', icon: '/assets/html.svg' },
 	{ name: 'CSS', icon: '/assets/css.svg' },
 	{ name: 'Tailwind', icon: '/assets/tailwind.svg' },
@@ -50,11 +78,15 @@ const skills = [
 	{ name: 'MySQL', icon: '/assets/mysql.svg' },
 	{ name: 'SQLite', icon: '/assets/sqlite.svg' },
 	{ name: 'MongoDB', icon: '/assets/mongodb.svg' },
+	{ name: 'Supabase', icon: '/assets/supabase.svg' },
 	{ name: 'Docker', icon: '/assets/docker.svg' },
+	{ name: 'Dokploy', icon: '/assets/dokploy.svg' },
 	{ name: 'Nginx', icon: '/assets/nginx.svg' },
 	{ name: 'Linux', icon: '/assets/linux.svg' },
 	{ name: 'REST', icon: '/assets/http.svg' },
-	{ name: 'Cloudflare', icon: '/assets/cloudflare.svg' }
+	{ name: 'Cloudflare', icon: '/assets/cloudflare.svg' },
+	{ name: 'OpenWebUI', icon: '/assets/openwebui.svg' },
+	{ name: 'n8n', icon: '/assets/n8n.svg' }
 ];
 
 const socialLinks = [
@@ -69,153 +101,279 @@ const socialLinks = [
 </script>
 
 <template>
-	<div class="min-h-screen bg-black text-white font-sans relative">
-		<div
-			class="fixed inset-0 z-0 pointer-events-none opacity-10 bg-center bg-no-repeat"
-			style="
-				background-image: url('/pfp-clear.png');
-				background-size: 60%;
-			"
-		></div>
-		<div class="container mx-auto px-4 py-20 max-w-4xl relative z-10">
-			<header class="mb-16 text-left flex items-center gap-4">
-				<img
-					src="/pfp.webp"
-					alt="Profile Picture"
-					class="w-20 h-20 mt-1 rounded-full border border-white/12"
-				/>
-				<div>
-					<h1 class="text-4xl font-bold mb-1">devbanane</h1>
-					<p class="text-xl text-gray-400">Developer</p>
-				</div>
-			</header>
-
-			<section class="mb-16">
-				<p class="text-lg text-gray-300 leading-relaxed mb-1">
-					Learning Java and GoLang as well as building web
-					applications and various tools in my spare time.
-				</p>
-				<p class="text-lg text-gray-300 leading-relaxed">
-					Currently working on
-					<a
-						href="https://snap.cephie.app"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-white underline decoration-gray-600 hover:decoration-gray-400"
-					>
-						Cephie </a
-					>, a platform of tools and services for sharing Images.
-				</p>
-			</section>
-
-			<section class="mb-16">
-				<h2
-					class="text-2xl font-bold mb-6 pb-2 border-b border-white/12"
-				>
-					Skills
-				</h2>
-				<div class="flex flex-wrap gap-4 max-w-4xl">
-					<div
-						v-for="skill in skills"
-						:key="skill.name"
-						class="flex items-center gap-2 px-3 py-2 bg-white/5 border border-white/12 rounded-full hover:bg-white/10 transition-colors"
-					>
-						<img
-							v-if="skill.icon"
-							:src="skill.icon"
-							:alt="skill.name"
-							class="w-5 h-5"
-						/>
-						<span class="text-sm">{{ skill.name }}</span>
-					</div>
-				</div>
-			</section>
-
-			<section class="mb-16">
-				<h2
-					class="text-2xl font-bold mb-6 pb-2 border-b border-white/12"
-				>
-					Projects
-				</h2>
-				<div class="space-y-8">
-					<div
-						v-for="project in projects"
-						:key="project.title"
-						class="group"
-					>
-						<div class="flex justify-between items-end mb-2">
-							<h3 class="text-xl font-medium">
-								{{ project.title }}
-							</h3>
-							<div class="flex gap-3">
-								<a
-									v-if="project.github"
-									:href="project.github"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="text-gray-400 hover:text-white transition-colors"
-								>
-									<Github class="w-5 h-5" />
-								</a>
-								<a
-									:href="project.url"
-									target="_blank"
-									rel="noopener noreferrer"
-									class="text-gray-400 hover:text-white transition-colors"
-								>
-									<ExternalLink class="w-5 h-5" />
-								</a>
-							</div>
-						</div>
-						<p class="text-gray-400">{{ project.description }}</p>
-					</div>
-				</div>
-			</section>
-
-			<section class="mb-16">
-				<h2
-					class="text-2xl font-bold mb-6 pb-2 border-b border-white/12"
-				>
-					Contact
-				</h2>
-				<p class="text-gray-300 mb-6">
-					Have an idea or want to collaborate? Feel free to reach out.
-				</p>
-				<div class="flex flex-wrap gap-4">
-					<a
-						v-for="link in socialLinks"
-						:key="link.name"
-						:href="link.url"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/12 rounded-full text-sm hover:bg-white/10 transition-colors"
-					>
-						<component :is="link.icon" class="w-4 h-4" />
-						{{ link.name }}
-					</a>
-				</div>
-			</section>
-
-			<footer
-				class="text-left text-gray-500 text-sm pt-8 border-t border-white/12"
+	<div class="min-h-screen bg-white text-[#0a0a0a] font-sans antialiased">
+		<main>
+			<section
+				class="relative overflow-hidden border-b border-black/10 bg-[#f8f8f8]"
 			>
-				<p>©{{ new Date().getFullYear() }} devbanane</p>
-			</footer>
-		</div>
+				<div class="mx-auto max-w-6xl px-6 py-28 sm:py-36 lg:py-44">
+					<h1
+						class="font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+					>
+						Hi, I'm Jakob.<br />
+						<span class="text-black/70"><span class="italic">Full-stack</span> developer.</span>
+					</h1>
+					<p
+						class="mt-8 max-w-xl text-lg leading-relaxed text-black/60 sm:text-xl"
+					>
+						I build web applications, APIs, and tooling.
+						<br />
+						I work at
+						<a
+							href="https://www.giftgruen.com/"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="underline underline-offset-2 decoration-black/30 hover:decoration-black"
+							>giftGRÜN</a
+						>
+						and independently on
+						<a
+							href="https://cephie.app"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="underline underline-offset-2 decoration-black/30 hover:decoration-black"
+							>Cephie</a
+						>.
+					</p>
+					<div class="mt-10 flex flex-wrap items-center gap-4">
+						<AppButton href="#contact" variant="default">
+							Get in touch
+						</AppButton>
+						<div class="flex gap-2">
+							<AppButton
+								v-for="link in socialLinks"
+								:key="link.name"
+								:href="link.url"
+								variant="icon"
+								target="_blank"
+								rel="noopener noreferrer"
+								:aria-label="link.name"
+							>
+								<component :is="link.icon" class="h-5 w-5" />
+							</AppButton>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="border-b border-black/10 bg-black py-5 text-white" aria-label="Technologies">
+				<div class="overflow-hidden">
+					<div class="flex w-max animate-ticker items-center gap-12">
+						<template v-for="(_, i) in 2" :key="i">
+							<div
+								v-for="skill in skills"
+								:key="`${i}-${skill.name}`"
+								class="flex shrink-0 items-center gap-3"
+							>
+								<img
+									v-if="skill.icon"
+									:src="skill.icon"
+									:alt="skill.name"
+									class="h-8 w-8 opacity-90"
+									loading="lazy"
+								/>
+								<span class="whitespace-nowrap text-sm font-semibold tracking-wide text-white/90">{{ skill.name }}</span>
+							</div>
+						</template>
+					</div>
+				</div>
+			</section>
+
+			<section id="work" class="border-b border-black/10 bg-[#fafafa]">
+				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+					<h2 class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+						Notable work
+					</h2>
+					<p class="mt-3 max-w-xl text-lg text-black/55">
+						Selected projects and products I've built or contribute to.
+					</p>
+
+					<div class="mt-14 grid gap-6 sm:grid-cols-2">
+						<article
+							v-for="project in projects"
+							:key="project.title"
+							class="group flex flex-col rounded-2xl border border-black/8 bg-white p-6 shadow-sm transition-all duration-300 hover:border-black/15 hover:shadow-md sm:p-8"
+						>
+							<div class="flex items-start justify-between gap-4">
+								<div class="flex min-w-0 items-start gap-4">
+									<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black text-white">
+										<component :is="project.icon" class="h-6 w-6" />
+									</div>
+									<div class="min-w-0">
+										<h3 class="font-display text-xl font-bold tracking-tight text-black">
+											{{ project.title }}
+										</h3>
+										<p class="mt-0.5 truncate text-sm text-black/50">
+											{{ project.url.replace(/^https?:\/\//, '') }}
+										</p>
+									</div>
+								</div>
+							</div>
+							<p class="mt-4 flex-1 text-[15px] leading-relaxed text-black/70 line-clamp-3">
+								{{ project.description }}
+							</p>
+							<div
+								v-if="'features' in project && project.features?.length"
+								class="mt-4 flex flex-wrap gap-1.5"
+							>
+								<span
+									v-for="f in project.features"
+									:key="f"
+									class="rounded-md bg-black/[0.06] px-2.5 py-1 text-xs font-medium text-black/75"
+								>
+									{{ f }}
+								</span>
+							</div>
+							<div class="mt-6 flex flex-wrap items-center gap-2">
+								<template v-if="'docsUrl' in project && project.docsUrl">
+									<AppButton
+										:href="project.docsUrl"
+										variant="outline"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<BookOpen class="h-4 w-4" />
+										Docs
+									</AppButton>
+									<AppButton
+										:href="project.url"
+										variant="icon"
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label="Visit site"
+									>
+										<ExternalLink class="h-4 w-4" />
+									</AppButton>
+								</template>
+								<template v-else>
+									<AppButton
+										v-if="project.github"
+										:href="project.github"
+										variant="icon"
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label="GitHub"
+									>
+										<Github class="h-4 w-4" />
+									</AppButton>
+									<AppButton
+										:href="project.url"
+										variant="icon"
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label="Visit site"
+									>
+										<ExternalLink class="h-4 w-4" />
+									</AppButton>
+								</template>
+							</div>
+						</article>
+					</div>
+				</div>
+			</section>
+
+			<section class="border-b border-black/10 bg-[#f2f2f2]">
+				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+					<h2
+						class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+					>
+						Skills & technologies.
+					</h2>
+					<p class="mt-4 max-w-2xl text-lg text-black/60">
+						These are the technologies and tools I rely on day-to-day to design, develop, and deploy high-quality products and web applications.
+					</p>
+					<div class="mt-14 flex flex-wrap gap-3">
+						<div
+							v-for="skill in skills"
+							:key="skill.name"
+							class="flex items-center gap-2.5 rounded-full bg-black text-white px-4 py-2.5"
+						>
+							<img
+								v-if="skill.icon"
+								:src="skill.icon"
+								:alt="skill.name"
+								class="h-5 w-5 shrink-0"
+								loading="lazy"
+							/>
+							<span class="text-sm font-semibold text-white/85">{{
+								skill.name
+							}}</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section id="contact" class="bg-black text-white">
+				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+					<h2
+						class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+					>
+						Let's work together.
+					</h2>
+					<p
+						class="mt-6 max-w-xl text-lg leading-relaxed text-white/70"
+					>
+						Open to collaboration and new projects. Have an idea or
+						want to build something? Reach out.
+					</p>
+					<p class="mt-4 text-white/90">
+						Reach me at
+						<a
+							href="mailto:me@devbanane.com"
+							class="underline underline-offset-2 decoration-white/50 hover:decoration-white"
+							>me@devbanane.com</a
+						>
+					</p>
+					<div class="mt-10 flex flex-wrap gap-4">
+						<AppButton
+							v-for="link in socialLinks"
+							:key="link.name"
+							:href="link.url"
+							variant="inverted"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<component :is="link.icon" class="h-4 w-4" />
+							{{ link.name }}
+						</AppButton>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<footer class="bg-black py-8">
+			<div
+				class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-white/50 sm:flex-row"
+			>
+				<p>© {{ new Date().getFullYear() }} devbanane</p>
+				<div class="flex gap-8">
+					<AppButton
+						href="https://github.com/dev-banane"
+						variant="link"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						GitHub
+					</AppButton>
+					<AppButton href="mailto:me@devbanane.com" variant="link">
+						Email
+					</AppButton>
+				</div>
+			</div>
+		</footer>
 	</div>
 </template>
 
 <style>
-body {
-	background-color: black;
-	color: white;
-	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
-		sans-serif;
+@keyframes ticker {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
 }
-
-a {
-	color: inherit;
-	text-decoration: none;
+.animate-ticker {
+	animation: ticker 60s linear infinite;
 }
 </style>
