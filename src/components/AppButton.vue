@@ -4,6 +4,7 @@ defineProps<{
 	size?: 'sm' | 'md';
 	href?: string;
 	type?: 'button' | 'submit' | 'reset';
+	lightMode?: boolean;
 }>();
 
 defineOptions({
@@ -23,7 +24,12 @@ defineOptions({
 			variant === 'outline' && 'app-button--outline',
 			variant === 'inverted' && 'app-button--inverted',
 			variant === 'link' && 'app-button--link',
-			(!variant || variant === 'default') && 'app-button--default'
+			(!variant || variant === 'default') && 'app-button--default',
+			$props.lightMode && 'app-button--light',
+			$props.lightMode && variant === 'icon' && 'app-button--icon-light',
+			$props.lightMode && variant === 'outline' && 'app-button--outline-light',
+			$props.lightMode && variant === 'inverted' && 'app-button--inverted-light',
+			$props.lightMode && variant === 'link' && 'app-button--link-light',
 		]"
 		v-bind="$attrs"
 	>
@@ -126,5 +132,67 @@ defineOptions({
 .app-button--link:hover {
 	opacity: 1;
 	color: white;
+}
+
+.app-button--light.app-button--default {
+	background-color: #fff;
+	color: #0a0a0a;
+	border-bottom-color: rgb(52 211 153);
+}
+.app-button--light.app-button--default:hover {
+	background-color: rgb(52 211 153);
+	border-bottom-color: #fff;
+	color: #000;
+	opacity: 0.9;
+}
+.app-button--icon-light {
+	background-color: transparent;
+	color: inherit;
+	border-bottom-color: rgb(52 211 153);
+}
+.app-button--icon-light:hover {
+	background-color: rgb(52 211 153);
+	border-bottom-color: #fff;
+	color: #fff;
+	opacity: 0.9;
+}
+.app-button--light.app-button--outline,
+.app-button--outline-light {
+	background-color: transparent;
+	color: rgba(255,255,255,0.8);
+	border: 2px solid rgba(255,255,255,0.2);
+}
+.app-button--light.app-button--outline:hover,
+.app-button--outline-light:hover {
+	background-color: #fff;
+	border-color: #fff;
+	color: #0a0a0a;
+}
+.app-button--light.app-button--inverted,
+.app-button--inverted-light {
+	background-color: rgba(0, 0, 0, 0.05);
+	color: #0a0a0a;
+	border: 2px solid rgba(0,0,0,0.3);
+}
+.app-button--light.app-button--inverted:hover,
+.app-button--inverted-light:hover {
+	background-color: #0a0a0a;
+	border-color: #0a0a0a;
+	color: #fff;
+}
+.app-button--light.app-button--link,
+.app-button--link-light {
+	color: inherit;
+	background: none;
+	border: none;
+	padding: 0;
+	font-size: inherit;
+	font-weight: inherit;
+	border-radius: 0;
+}
+.app-button--light.app-button--link:hover,
+.app-button--link-light:hover {
+	opacity: 1;
+	color: #0a0a0a;
 }
 </style>

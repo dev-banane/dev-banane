@@ -1,61 +1,142 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import AppButton from './components/AppButton.vue';
 import {
 	Github,
 	Mail,
 	Instagram,
 	ExternalLink,
-	BookOpen,
-	Server,
-	Image,
-	LayoutDashboard,
-	Plane
+	BookOpen
 } from 'lucide-vue-next';
 
 const projects = [
 	{
 		title: 'Cephie API',
-		description:
-			'Single API for Cephie products: flight tracking, shifts, guilds, images, and flight assets. OpenAPI docs and optional Discord auth for transcripts.',
+		subtitle: 'API',
+		description: 'This REST API powers flight tracking, shift scheduling, guild and membership management, image hosting, and the distribution of flight assets for all Cephie products.',
 		url: 'https://api.cephie.app',
 		github: 'https://github.com/cephie-studios/api',
-		icon: Server,
 		docsUrl: 'https://api.cephie.app/docs',
-		features: [
-			'Flight tracking',
-			'Shifts',
-			'Guilds',
-			'Images',
-			'Flight assets',
-			'Transcripts (Discord auth)'
-		]
+		accent: '#6366f1',
+		accentLight: '#eef2ff',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_1',
 	},
 	{
 		title: 'Cephie Snap',
-		description:
-			'Image hosting with permanent URLs and a public API for developer integrations. Built for reliability and simple embedding in apps and docs.',
+		subtitle: 'Image hosting',
+		description: 'Rapid image sharing made simple. Upload a picture and get an instant, permanent URL. Used by Cephie products and developers.',
 		url: 'https://snap.cephie.app',
 		github: 'https://github.com/cephie-studios',
-		icon: Image
+		docsUrl: null,
+		accent: '#f59e0b',
+		accentLight: '#fffbeb',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_2',
 	},
 	{
 		title: 'Cephie Dashboard',
-		description:
-			'Discord bot and management platform for virtual airlines and aviation communities. Role sync, verification, and moderation trusted by dozens of major groups.',
+		subtitle: 'Discord bot & management',
+		description: 'Manage your virtual airline with ease using our comprehensive dashboard. Track flights, manage your staff and send welcome messages, all in one place.',
 		url: 'https://dash.cephie.app',
 		github: 'https://github.com/cephie-studios/app',
-		icon: LayoutDashboard
+		docsUrl: null,
+		accent: '#10b981',
+		accentLight: '#ecfdf5',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_3',
 	},
 	{
 		title: 'PFControl v2',
-		description:
-			'Flight-strip management for Project Flight and Roblox aviation sims. Real-time coordination between ATC and pilots with a modern, fast UI.',
+		subtitle: 'ATC strip management',
+		description: 'The next-generation flight strip platform built for real-time coordination between air traffic controllers with enterprise-level reliability.',
 		url: 'https://pfcontrol.com',
 		github: 'https://github.com/cephie-studios/pfcontrol-2',
-		icon: Plane
-	}
+		docsUrl: null,
+		accent: '#3b82f6',
+		accentLight: '#eff6ff',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_4',
+	},
 ];
+
+const track = ref<HTMLElement | null>(null);
+const isDragging = ref(false);
+const startX = ref(0);
+const scrollLeft = ref(0);
+const activeIndex = ref(0);
+const velocity = ref(0);
+const lastX = ref(0);
+const rafId = ref<number | null>(null);
+
+function onMouseDown(e: MouseEvent) {
+	if (!track.value) return;
+	isDragging.value = true;
+	startX.value = e.pageX - track.value.offsetLeft;
+	scrollLeft.value = track.value.scrollLeft;
+	lastX.value = e.pageX;
+	velocity.value = 0;
+	if (rafId.value) cancelAnimationFrame(rafId.value);
+}
+
+function onMouseMove(e: MouseEvent) {
+	if (!isDragging.value || !track.value) return;
+	e.preventDefault();
+	const x = e.pageX - track.value.offsetLeft;
+	const walk = (x - startX.value) * 1.2;
+	velocity.value = e.pageX - lastX.value;
+	lastX.value = e.pageX;
+	track.value.scrollLeft = scrollLeft.value - walk;
+	updateActiveIndex();
+}
+
+function onMouseUp() {
+	isDragging.value = false;
+	applyMomentum();
+}
+
+function applyMomentum() {
+	if (!track.value) return;
+	let v = velocity.value * 0.8;
+	function step() {
+		if (!track.value) return;
+		if (Math.abs(v) < 0.5) return;
+		track.value.scrollLeft -= v;
+		v *= 0.92;
+		updateActiveIndex();
+		rafId.value = requestAnimationFrame(step);
+	}
+	rafId.value = requestAnimationFrame(step);
+}
+
+const TRACK_FIRST_CARD_OFFSET = 1;
+
+function updateActiveIndex() {
+	if (!track.value) return;
+	const scrollLeft = track.value.scrollLeft;
+	let idx = 0;
+	for (let j = 0; j < projects.length; j++) {
+		const card = track.value.children[j + TRACK_FIRST_CARD_OFFSET] as HTMLElement;
+		if (card && scrollLeft >= card.offsetLeft - 50) idx = j;
+	}
+	activeIndex.value = idx;
+}
+
+function scrollToIndex(i: number) {
+	if (!track.value) return;
+	const card = track.value.children[i + TRACK_FIRST_CARD_OFFSET] as HTMLElement;
+	if (card) {
+		track.value.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
+		activeIndex.value = i;
+	}
+}
+
+onMounted(() => {
+	window.addEventListener('mouseup', onMouseUp);
+	window.addEventListener('mousemove', onMouseMove);
+});
+
+onUnmounted(() => {
+	window.removeEventListener('mouseup', onMouseUp);
+	window.removeEventListener('mousemove', onMouseMove);
+});
+
 
 const skills = [
 	{ name: 'Java', icon: '/assets/java.svg' },
@@ -95,8 +176,7 @@ const socialLinks = [
 		name: 'Instagram',
 		url: 'https://instagram.com/_jakob09',
 		icon: Instagram
-	},
-	{ name: 'Email', url: 'mailto:me@devbanane.com', icon: Mail }
+	}
 ];
 </script>
 
@@ -128,7 +208,7 @@ const socialLinks = [
 						>
 						and independently on
 						<a
-							href="https://cephie.app"
+							href="https://snap.cephie.app"
 							target="_blank"
 							rel="noopener noreferrer"
 							class="underline underline-offset-2 decoration-black/30 hover:decoration-black"
@@ -179,100 +259,87 @@ const socialLinks = [
 				</div>
 			</section>
 
-			<section id="work" class="border-b border-black/10 bg-[#fafafa]">
-				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-					<h2 class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-						Notable work
-					</h2>
-					<p class="mt-3 max-w-xl text-lg text-black/55">
-						Selected projects and products I've built or contribute to.
-					</p>
-
-					<div class="mt-14 grid gap-6 sm:grid-cols-2">
+			<section id="work" class="bg-white py-20 pt-36">
+				<div class="mx-auto max-w-5xl px-6 flex flex-wrap justify-between gap-6 items-end py-12">
+					<div>
+						<h2 class="font-display text-5xl sm:text-6xl font-bold">
+							Things I've <em class="italic font-bold">built.</em>
+						</h2>
+						<p class="mt-4 max-w-xl text-lg text-black/60">
+							A selection of products and projects I've built in recent years.
+						</p>
+					</div>
+					<div class="flex items-center gap-2">
+						<button
+							v-for="(p, i) in projects"
+							:key="i"
+							class="h-2 w-2 rounded-full bg-black/15 transition hover:bg-black/30 border-0 p-0"
+							:class="activeIndex === i ? 'w-6 rounded-md bg-black/60' : ''"
+							:style="activeIndex === i ? { background: p.accent } : {}"
+							@click="scrollToIndex(i)"
+							:aria-label="`Go to ${p.title}`"
+						/>
+					</div>
+				</div>
+				<div class="w-full overflow-x-hidden">
+					<div
+						ref="track"
+						class="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory hide-horizontal-scrollbar select-none ml-16 mr-16"
+						:class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
+						@mousedown="onMouseDown"
+					>
+						<div class="min-w-10 shrink-0" aria-hidden="true" />
 						<article
-							v-for="project in projects"
-							:key="project.title"
-							class="group flex flex-col rounded-2xl border border-black/8 bg-white p-6 shadow-sm transition-all duration-300 hover:border-black/15 hover:shadow-md sm:p-8"
-						>
-							<div class="flex items-start justify-between gap-4">
-								<div class="flex min-w-0 items-start gap-4">
-									<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-black text-white">
-										<component :is="project.icon" class="h-6 w-6" />
-									</div>
-									<div class="min-w-0">
-										<h3 class="font-display text-xl font-bold tracking-tight text-black">
-											{{ project.title }}
-										</h3>
-										<p class="mt-0.5 truncate text-sm text-black/50">
-											{{ project.url.replace(/^https?:\/\//, '') }}
-										</p>
-									</div>
-								</div>
-							</div>
-							<p class="mt-4 flex-1 text-[15px] leading-relaxed text-black/70 line-clamp-3">
+						v-for="(project, i) in projects"
+						:key="project.title"
+						class="flex flex-col min-w-[85vw] sm:min-w-[420px] max-w-[720px] bg-white rounded-2xl border border-black/10 shadow hover:shadow-lg transition hover:-translate-y-1 shrink-0 overflow-hidden snap-start"
+					>
+						<div v-if="project.imgUrl" class="h-64 bg-neutral-100 overflow-hidden">
+							<img :src="project.imgUrl" :alt="project.title" class="h-full w-full object-cover" loading="lazy" />
+						</div>
+						<div class="flex flex-col px-6 py-6">
+							<h3 class="font-display text-2xl sm:text-3xl font-bold italic mb-1 text-black">
+								{{ project.title }}
+							</h3>
+							<p class="text-xs font-semibold uppercase tracking-wide text-black/40 mb-2">
+								{{ project.subtitle }}
+							</p>
+							<p class="text-sm text-black/70 mb-3">
 								{{ project.description }}
 							</p>
-							<div
-								v-if="'features' in project && project.features?.length"
-								class="mt-4 flex flex-wrap gap-1.5"
-							>
-								<span
-									v-for="f in project.features"
-									:key="f"
-									class="rounded-md bg-black/[0.06] px-2.5 py-1 text-xs font-medium text-black/75"
+							<div class="flex items-center gap-2">
+								<AppButton
+									v-if="project.docsUrl"
+									:href="project.docsUrl"
+									target="_blank"
+									rel="noopener"
 								>
-									{{ f }}
-								</span>
+									<BookOpen :size="15" /> Docs
+								</AppButton>
+								<AppButton
+									:href="project.url"
+									target="_blank"
+									rel="noopener"
+								>
+									<ExternalLink :size="15" /> Visit
+								</AppButton>
+								<AppButton
+									v-if="project.github"
+									:href="project.github"
+									target="_blank"
+									rel="noopener"
+								>
+									<Github :size="15" /> GitHub
+								</AppButton>
 							</div>
-							<div class="mt-6 flex flex-wrap items-center gap-2">
-								<template v-if="'docsUrl' in project && project.docsUrl">
-									<AppButton
-										:href="project.docsUrl"
-										variant="outline"
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										<BookOpen class="h-4 w-4" />
-										Docs
-									</AppButton>
-									<AppButton
-										:href="project.url"
-										variant="icon"
-										target="_blank"
-										rel="noopener noreferrer"
-										aria-label="Visit site"
-									>
-										<ExternalLink class="h-4 w-4" />
-									</AppButton>
-								</template>
-								<template v-else>
-									<AppButton
-										v-if="project.github"
-										:href="project.github"
-										variant="icon"
-										target="_blank"
-										rel="noopener noreferrer"
-										aria-label="GitHub"
-									>
-										<Github class="h-4 w-4" />
-									</AppButton>
-									<AppButton
-										:href="project.url"
-										variant="icon"
-										target="_blank"
-										rel="noopener noreferrer"
-										aria-label="Visit site"
-									>
-										<ExternalLink class="h-4 w-4" />
-									</AppButton>
-								</template>
-							</div>
-						</article>
+						</div>
+					</article>
+						<div class="min-w-8 shrink-0" aria-hidden="true" />
 					</div>
 				</div>
 			</section>
 
-			<section class="border-b border-black/10 bg-[#f2f2f2]">
+			<section class="bg-white">
 				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
 					<h2
 						class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
@@ -329,9 +396,9 @@ const socialLinks = [
 							v-for="link in socialLinks"
 							:key="link.name"
 							:href="link.url"
-							variant="inverted"
 							target="_blank"
 							rel="noopener noreferrer"
+							lightMode
 						>
 							<component :is="link.icon" class="h-4 w-4" />
 							{{ link.name }}
@@ -346,19 +413,6 @@ const socialLinks = [
 				class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-white/50 sm:flex-row"
 			>
 				<p>© {{ new Date().getFullYear() }} devbanane</p>
-				<div class="flex gap-8">
-					<AppButton
-						href="https://github.com/dev-banane"
-						variant="link"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						GitHub
-					</AppButton>
-					<AppButton href="mailto:me@devbanane.com" variant="link">
-						Email
-					</AppButton>
-				</div>
 			</div>
 		</footer>
 	</div>
@@ -375,5 +429,15 @@ const socialLinks = [
 }
 .animate-ticker {
 	animation: ticker 60s linear infinite;
+}
+
+/* Hide horizontal scrollbar on projects track; scroll with wheel up/down */
+.hide-horizontal-scrollbar {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+.hide-horizontal-scrollbar::-webkit-scrollbar {
+	height: 0;
+	display: none;
 }
 </style>
