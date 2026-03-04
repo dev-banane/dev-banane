@@ -57,53 +57,7 @@ const projects = [
 ];
 
 const track = ref<HTMLElement | null>(null);
-const isDragging = ref(false);
-const startX = ref(0);
-const scrollLeft = ref(0);
 const activeIndex = ref(0);
-const velocity = ref(0);
-const lastX = ref(0);
-const rafId = ref<number | null>(null);
-
-function onMouseDown(e: MouseEvent) {
-	if (!track.value) return;
-	isDragging.value = true;
-	startX.value = e.pageX - track.value.offsetLeft;
-	scrollLeft.value = track.value.scrollLeft;
-	lastX.value = e.pageX;
-	velocity.value = 0;
-	if (rafId.value) cancelAnimationFrame(rafId.value);
-}
-
-function onMouseMove(e: MouseEvent) {
-	if (!isDragging.value || !track.value) return;
-	e.preventDefault();
-	const x = e.pageX - track.value.offsetLeft;
-	const walk = (x - startX.value) * 1.2;
-	velocity.value = e.pageX - lastX.value;
-	lastX.value = e.pageX;
-	track.value.scrollLeft = scrollLeft.value - walk;
-	updateActiveIndex();
-}
-
-function onMouseUp() {
-	isDragging.value = false;
-	applyMomentum();
-}
-
-function applyMomentum() {
-	if (!track.value) return;
-	let v = velocity.value * 0.8;
-	function step() {
-		if (!track.value) return;
-		if (Math.abs(v) < 0.5) return;
-		track.value.scrollLeft -= v;
-		v *= 0.92;
-		updateActiveIndex();
-		rafId.value = requestAnimationFrame(step);
-	}
-	rafId.value = requestAnimationFrame(step);
-}
 
 function updateActiveIndex() {
 	if (!track.value) return;
@@ -126,13 +80,13 @@ function scrollToIndex(i: number) {
 }
 
 onMounted(() => {
-	window.addEventListener('mouseup', onMouseUp);
-	window.addEventListener('mousemove', onMouseMove);
+	const el = track.value;
+	if (el) el.addEventListener('scroll', updateActiveIndex);
 });
 
 onUnmounted(() => {
-	window.removeEventListener('mouseup', onMouseUp);
-	window.removeEventListener('mousemove', onMouseMove);
+	const el = track.value;
+	if (el) el.removeEventListener('scroll', updateActiveIndex);
 });
 
 
@@ -281,9 +235,7 @@ const socialLinks = [
 				</div>
 				<div
 					ref="track"
-					class="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory hide-horizontal-scrollbar select-none ml-24"
-					:class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
-					@mousedown="onMouseDown"
+					class="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory hide-horizontal-scrollbar ml-24"
 				>
 					<article
 						v-for="(project, i) in projects"
@@ -425,8 +377,6 @@ const socialLinks = [
 .animate-ticker {
 	animation: ticker 60s linear infinite;
 }
-
-/* Hide horizontal scrollbar on projects track; scroll with wheel up/down */
 .hide-horizontal-scrollbar {
 	scrollbar-width: none;
 	-ms-overflow-style: none;
