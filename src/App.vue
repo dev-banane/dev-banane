@@ -12,8 +12,8 @@ import {
 const projects = [
 	{
 		title: 'Cephie API',
-		subtitle: 'API',
-		description: 'This REST API powers flight tracking, shift scheduling, guild and membership management, image hosting, and the distribution of flight assets for all Cephie products.',
+		subtitle: 'Unified developer platform',
+		description: 'Single API for Cephie products: flight tracking, shifts, guilds, images, and flight assets. OpenAPI docs and optional Discord auth for transcripts.',
 		url: 'https://api.cephie.app',
 		github: 'https://github.com/cephie-studios/api',
 		docsUrl: 'https://api.cephie.app/docs',
@@ -23,8 +23,8 @@ const projects = [
 	},
 	{
 		title: 'Cephie Snap',
-		subtitle: 'Image hosting',
-		description: 'Rapid image sharing made simple. Upload a picture and get an instant, permanent URL. Used by Cephie products and developers.',
+		subtitle: 'Image hosting for developers',
+		description: 'Image hosting with permanent URLs and a public API for developer integrations. Built for reliability and simple embedding in apps and docs.',
 		url: 'https://snap.cephie.app',
 		github: 'https://github.com/cephie-studios',
 		docsUrl: null,
@@ -35,7 +35,7 @@ const projects = [
 	{
 		title: 'Cephie Dashboard',
 		subtitle: 'Discord bot & management',
-		description: 'Manage your virtual airline with ease using our comprehensive dashboard. Track flights, manage your staff and send welcome messages, all in one place.',
+		description: 'Discord bot and management platform for virtual airlines and aviation communities. Role sync, verification, and moderation trusted by dozens of major groups.',
 		url: 'https://dash.cephie.app',
 		github: 'https://github.com/cephie-studios/app',
 		docsUrl: null,
@@ -46,7 +46,7 @@ const projects = [
 	{
 		title: 'PFControl v2',
 		subtitle: 'ATC strip management',
-		description: 'The next-generation flight strip platform built for real-time coordination between air traffic controllers with enterprise-level reliability.',
+		description: 'Flight-strip management for Project Flight and Roblox aviation sims. Real-time coordination between ATC and pilots with a modern, fast UI.',
 		url: 'https://pfcontrol.com',
 		github: 'https://github.com/cephie-studios/pfcontrol-2',
 		docsUrl: null,
@@ -105,14 +105,12 @@ function applyMomentum() {
 	rafId.value = requestAnimationFrame(step);
 }
 
-const TRACK_FIRST_CARD_OFFSET = 1;
-
 function updateActiveIndex() {
 	if (!track.value) return;
 	const scrollLeft = track.value.scrollLeft;
 	let idx = 0;
 	for (let j = 0; j < projects.length; j++) {
-		const card = track.value.children[j + TRACK_FIRST_CARD_OFFSET] as HTMLElement;
+		const card = track.value.children[j] as HTMLElement;
 		if (card && scrollLeft >= card.offsetLeft - 50) idx = j;
 	}
 	activeIndex.value = idx;
@@ -120,7 +118,7 @@ function updateActiveIndex() {
 
 function scrollToIndex(i: number) {
 	if (!track.value) return;
-	const card = track.value.children[i + TRACK_FIRST_CARD_OFFSET] as HTMLElement;
+	const card = track.value.children[i] as HTMLElement;
 	if (card) {
 		track.value.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
 		activeIndex.value = i;
@@ -281,15 +279,13 @@ const socialLinks = [
 						/>
 					</div>
 				</div>
-				<div class="w-full overflow-x-hidden">
-					<div
-						ref="track"
-						class="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory hide-horizontal-scrollbar select-none ml-16 mr-16"
-						:class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
-						@mousedown="onMouseDown"
-					>
-						<div class="min-w-10 shrink-0" aria-hidden="true" />
-						<article
+				<div
+					ref="track"
+					class="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory hide-horizontal-scrollbar select-none ml-24"
+					:class="isDragging ? 'cursor-grabbing' : 'cursor-grab'"
+					@mousedown="onMouseDown"
+				>
+					<article
 						v-for="(project, i) in projects"
 						:key="project.title"
 						class="flex flex-col min-w-[85vw] sm:min-w-[420px] max-w-[720px] bg-white rounded-2xl border border-black/10 shadow hover:shadow-lg transition hover:-translate-y-1 shrink-0 overflow-hidden snap-start"
@@ -334,8 +330,7 @@ const socialLinks = [
 							</div>
 						</div>
 					</article>
-						<div class="min-w-8 shrink-0" aria-hidden="true" />
-					</div>
+					<div class="min-w-8 shrink-0" aria-hidden="true" />
 				</div>
 			</section>
 
