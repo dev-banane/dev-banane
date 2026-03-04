@@ -13,47 +13,51 @@ const projects = [
 	{
 		title: 'Cephie API',
 		subtitle: 'Unified developer platform',
-		description: 'Single API for Cephie products: flight tracking, shifts, guilds, images, and flight assets. OpenAPI docs and optional Discord auth for transcripts.',
+		description:
+			'Single API for Cephie products: flight tracking, shifts, guilds, images, and flight assets. OpenAPI docs and optional Discord auth for transcripts.',
 		url: 'https://api.cephie.app',
 		github: 'https://github.com/cephie-studios/api',
 		docsUrl: 'https://api.cephie.app/docs',
 		accent: '#6366f1',
 		accentLight: '#eef2ff',
-		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_1',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_1'
 	},
 	{
 		title: 'Cephie Snap',
 		subtitle: 'Image hosting for developers',
-		description: 'Image hosting with permanent URLs and a public API for developer integrations. Built for reliability and simple embedding in apps and docs.',
+		description:
+			'Image hosting with permanent URLs and a public API for developer integrations. Built for reliability and simple embedding in apps and docs.',
 		url: 'https://snap.cephie.app',
 		github: 'https://github.com/cephie-studios',
 		docsUrl: null,
 		accent: '#f59e0b',
 		accentLight: '#fffbeb',
-		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_2',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_2'
 	},
 	{
 		title: 'Cephie Dashboard',
 		subtitle: 'Discord bot & management',
-		description: 'Discord bot and management platform for virtual airlines and aviation communities. Role sync, verification, and moderation trusted by dozens of major groups.',
+		description:
+			'Discord bot and management platform for virtual airlines and aviation communities. Role sync, verification, and moderation trusted by dozens of major groups.',
 		url: 'https://dash.cephie.app',
 		github: 'https://github.com/cephie-studios/app',
 		docsUrl: null,
 		accent: '#10b981',
 		accentLight: '#ecfdf5',
-		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_3',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_3'
 	},
 	{
 		title: 'PFControl v2',
 		subtitle: 'ATC strip management',
-		description: 'Flight-strip management for Project Flight and Roblox aviation sims. Real-time coordination between ATC and pilots with a modern, fast UI.',
+		description:
+			'Flight-strip management for Project Flight and Roblox aviation sims. Real-time coordination between ATC and pilots with a modern, fast UI.',
 		url: 'https://pfcontrol.com',
 		github: 'https://github.com/cephie-studios/pfcontrol-2',
 		docsUrl: null,
 		accent: '#3b82f6',
 		accentLight: '#eff6ff',
-		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_4',
-	},
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_4'
+	}
 ];
 
 const track = ref<HTMLElement | null>(null);
@@ -88,7 +92,6 @@ onUnmounted(() => {
 	const el = track.value;
 	if (el) el.removeEventListener('scroll', updateActiveIndex);
 });
-
 
 const skills = [
 	{ name: 'Java', icon: '/assets/java.svg' },
@@ -143,7 +146,10 @@ const socialLinks = [
 						class="font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
 					>
 						Hi, I'm Jakob.<br />
-						<span class="text-black/70"><span class="italic">Full-stack</span> developer.</span>
+						<span class="text-black/70"
+							><span class="italic">Full-stack</span>
+							developer.</span
+						>
 					</h1>
 					<p
 						class="mt-8 max-w-xl text-lg leading-relaxed text-black/60 sm:text-xl"
@@ -188,7 +194,10 @@ const socialLinks = [
 				</div>
 			</section>
 
-			<section class="border-b border-black/10 bg-black py-5 text-white" aria-label="Technologies">
+			<section
+				class="border-b border-black/10 bg-black py-5 text-white"
+				aria-label="Technologies"
+			>
 				<div class="overflow-hidden">
 					<div class="flex w-max animate-ticker items-center gap-12">
 						<template v-for="(_, i) in 2" :key="i">
@@ -204,7 +213,10 @@ const socialLinks = [
 									class="h-8 w-8 opacity-90"
 									loading="lazy"
 								/>
-								<span class="whitespace-nowrap text-sm font-semibold tracking-wide text-white/90">{{ skill.name }}</span>
+								<span
+									class="whitespace-nowrap text-sm font-semibold tracking-wide text-white/90"
+									>{{ skill.name }}</span
+								>
 							</div>
 						</template>
 					</div>
@@ -212,13 +224,16 @@ const socialLinks = [
 			</section>
 
 			<section id="work" class="bg-white py-20 pt-36">
-				<div class="mx-auto max-w-5xl px-6 flex flex-wrap justify-between gap-6 items-end py-12">
+				<div
+					class="mx-auto max-w-5xl px-6 flex flex-wrap justify-between gap-6 items-end py-12"
+				>
 					<div>
 						<h2 class="font-display text-5xl sm:text-6xl font-bold">
 							Things I've <em class="italic font-bold">built.</em>
 						</h2>
 						<p class="mt-4 max-w-xl text-lg text-black/60">
-							A selection of products and projects I've built in recent years.
+							A selection of products and projects I've built in
+							recent years.
 						</p>
 					</div>
 					<div class="flex items-center gap-2">
@@ -226,8 +241,16 @@ const socialLinks = [
 							v-for="(p, i) in projects"
 							:key="i"
 							class="h-2 w-2 rounded-full bg-black/15 transition hover:bg-black/30 border-0 p-0"
-							:class="activeIndex === i ? 'w-6 rounded-md bg-black/60' : ''"
-							:style="activeIndex === i ? { background: p.accent } : {}"
+							:class="
+								activeIndex === i
+									? 'w-6 rounded-md bg-black/60'
+									: ''
+							"
+							:style="
+								activeIndex === i
+									? { background: p.accent }
+									: {}
+							"
 							@click="scrollToIndex(i)"
 							:aria-label="`Go to ${p.title}`"
 						/>
@@ -235,21 +258,33 @@ const socialLinks = [
 				</div>
 				<div
 					ref="track"
-					class="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory hide-horizontal-scrollbar ml-24"
+					class="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory hide-horizontal-scrollbar sm:ml-24"
 				>
 					<article
 						v-for="(project, i) in projects"
 						:key="project.title"
 						class="flex flex-col min-w-[85vw] sm:min-w-[420px] max-w-[720px] bg-white rounded-2xl border border-black/10 shadow-lg transition shrink-0 overflow-hidden snap-start"
 					>
-						<div v-if="project.imgUrl" class="h-64 bg-neutral-100 overflow-hidden">
-							<img :src="project.imgUrl" :alt="project.title" class="h-full w-full object-cover" loading="lazy" />
+						<div
+							v-if="project.imgUrl"
+							class="h-64 bg-neutral-100 overflow-hidden"
+						>
+							<img
+								:src="project.imgUrl"
+								:alt="project.title"
+								class="h-full w-full object-cover"
+								loading="lazy"
+							/>
 						</div>
 						<div class="flex flex-col px-6 py-6">
-							<h3 class="font-display text-2xl sm:text-3xl font-bold italic mb-1 text-black">
+							<h3
+								class="font-display text-2xl sm:text-3xl font-bold italic mb-1 text-black"
+							>
 								{{ project.title }}
 							</h3>
-							<p class="text-xs font-semibold uppercase tracking-wide text-black/40 mb-2">
+							<p
+								class="text-xs font-semibold uppercase tracking-wide text-black/40 mb-2"
+							>
 								{{ project.subtitle }}
 							</p>
 							<p class="text-sm text-black/70 mb-3">
@@ -294,7 +329,9 @@ const socialLinks = [
 						Skills & technologies.
 					</h2>
 					<p class="mt-4 max-w-2xl text-lg text-black/60">
-						These are the technologies and tools I rely on day-to-day to design, develop, and deploy high-quality products and web applications.
+						These are the technologies and tools I rely on
+						day-to-day to design, develop, and deploy high-quality
+						products and web applications.
 					</p>
 					<div class="mt-14 flex flex-wrap gap-3">
 						<div
