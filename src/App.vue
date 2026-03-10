@@ -3,10 +3,11 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import AppButton from './components/AppButton.vue';
 import {
 	Github,
-	Mail,
 	Instagram,
 	ExternalLink,
-	BookOpen
+	BookOpen,
+	ChevronLeft,
+	ChevronRight
 } from 'lucide-vue-next';
 
 const projects = [
@@ -60,38 +61,36 @@ const projects = [
 	}
 ];
 
-const track = ref<HTMLElement | null>(null);
 const activeIndex = ref(0);
 
-function updateActiveIndex() {
-	if (!track.value) return;
-	const scrollLeft = track.value.scrollLeft;
-	let idx = 0;
-	for (let j = 0; j < projects.length; j++) {
-		const card = track.value.children[j] as HTMLElement;
-		if (card && scrollLeft >= card.offsetLeft - 50) idx = j;
-	}
-	activeIndex.value = idx;
+function prev() {
+	activeIndex.value = (activeIndex.value - 1 + projects.length) % projects.length;
 }
 
-function scrollToIndex(i: number) {
-	if (!track.value) return;
-	const card = track.value.children[i] as HTMLElement;
-	if (card) {
-		track.value.scrollTo({ left: card.offsetLeft, behavior: 'smooth' });
-		activeIndex.value = i;
+function next() {
+	activeIndex.value = (activeIndex.value + 1) % projects.length;
+}
+
+const touchStartX = ref(0);
+
+function onTouchStart(e: TouchEvent) {
+	touchStartX.value = e.touches[0]?.clientX ?? 0;
+}
+
+function onTouchEnd(e: TouchEvent) {
+	const delta = touchStartX.value - (e.changedTouches[0]?.clientX ?? touchStartX.value);
+	if (Math.abs(delta) > 40) {
+		delta > 0 ? next() : prev();
 	}
 }
 
-onMounted(() => {
-	const el = track.value;
-	if (el) el.addEventListener('scroll', updateActiveIndex);
-});
+function onKeydown(e: KeyboardEvent) {
+	if (e.key === 'ArrowLeft') prev();
+	if (e.key === 'ArrowRight') next();
+}
 
-onUnmounted(() => {
-	const el = track.value;
-	if (el) el.removeEventListener('scroll', updateActiveIndex);
-});
+onMounted(() => window.addEventListener('keydown', onKeydown));
+onUnmounted(() => window.removeEventListener('keydown', onKeydown));
 
 const skills = [
 	{ name: 'Java', icon: '/assets/java.svg' },
@@ -103,6 +102,7 @@ const skills = [
 	{ name: 'Vite', icon: '/assets/vite.svg' },
 	{ name: 'Node.js', icon: '/assets/nodejs.svg' },
 	{ name: 'Fastify', icon: '/assets/fastify.svg' },
+	{ name: 'npm.js', icon: '/assets/npmjs.svg' },
 	{ name: 'TypeScript', icon: '/assets/typescript.svg' },
 	{ name: 'JavaScript', icon: '/assets/javascript.svg' },
 	{ name: 'HTML', icon: '/assets/html.svg' },
@@ -224,100 +224,245 @@ const socialLinks = [
 			</section>
 
 			<section id="work" class="bg-white py-20 pt-36">
-				<div
-					class="mx-auto max-w-5xl px-6 flex flex-wrap justify-between gap-6 items-end py-12"
-				>
-					<div>
-						<h2 class="font-display text-5xl sm:text-6xl font-bold">
-							Things I've <em class="italic font-bold">built.</em>
-						</h2>
-						<p class="mt-4 max-w-xl text-lg text-black/60">
-							A selection of products and projects I've built in
-							recent years.
-						</p>
+				<div class="mx-auto max-w-6xl px-6 mb-10">
+					<div
+						class="flex flex-wrap items-end justify-between gap-6"
+					>
+						<div>
+							<h2
+								class="font-display text-5xl sm:text-6xl font-bold"
+							>
+								Things I've
+								<em class="italic font-bold">built.</em>
+							</h2>
+							<p class="mt-4 max-w-xl text-lg text-black/60">
+								A selection of products and projects I've built
+								in recent years.
+							</p>
+						</div>
+						<div
+							class="flex items-center gap-5 shrink-0 lg:hidden"
+						>
+							<span
+								class="font-mono text-sm tabular-nums text-black/40"
+							>
+								{{
+									String(activeIndex + 1).padStart(2, '0')
+								}}&nbsp;/&nbsp;{{
+									String(projects.length).padStart(2, '0')
+								}}
+							</span>
+							<div class="flex gap-2">
+								<button
+									@click="prev"
+									class="flex h-10 w-10 items-center justify-center rounded-full border border-black/15 text-black/60 transition-all hover:bg-black hover:text-white hover:border-black"
+									aria-label="Previous project"
+								>
+									<ChevronLeft :size="18" />
+								</button>
+								<button
+									@click="next"
+									class="flex h-10 w-10 items-center justify-center rounded-full border border-black/15 text-black/60 transition-all hover:bg-black hover:text-white hover:border-black"
+									aria-label="Next project"
+								>
+									<ChevronRight :size="18" />
+								</button>
+							</div>
+						</div>
 					</div>
-					<div class="flex items-center gap-2">
+				</div>
+
+				<div class="lg:hidden px-6">
+					<div
+						class="overflow-hidden rounded-2xl border border-black/10"
+						@touchstart.passive="onTouchStart"
+						@touchend.passive="onTouchEnd"
+					>
+						<div
+							class="flex transition-transform duration-500 ease-in-out"
+							:style="`transform: translateX(-${activeIndex * 100}%)`"
+						>
+							<article
+								v-for="(project, i) in projects"
+								:key="project.title"
+								class="w-full shrink-0 bg-[#f8f8f8]"
+							>
+								<div
+									class="h-56 sm:h-72 overflow-hidden bg-neutral-200"
+								>
+									<img
+										:src="project.imgUrl"
+										:alt="project.title"
+										class="h-full w-full object-cover"
+										loading="lazy"
+									/>
+								</div>
+								<div class="p-6 sm:p-8">
+									<p
+										class="mb-2 text-xs font-bold uppercase tracking-widest"
+										:style="{ color: project.accent }"
+									>
+										{{ project.subtitle }}
+									</p>
+									<h3
+										class="font-display text-2xl sm:text-3xl font-bold italic mb-3 leading-tight"
+									>
+										{{ project.title }}
+									</h3>
+									<p
+										class="text-sm sm:text-base leading-relaxed text-black/60 mb-6"
+									>
+										{{ project.description }}
+									</p>
+									<div class="flex flex-wrap gap-3">
+										<AppButton
+											v-if="project.docsUrl"
+											:href="project.docsUrl"
+											target="_blank"
+											rel="noopener"
+										>
+											<BookOpen :size="15" /> Docs
+										</AppButton>
+										<AppButton
+											:href="project.url"
+											target="_blank"
+											rel="noopener"
+										>
+											<ExternalLink :size="15" /> Visit
+										</AppButton>
+										<AppButton
+											v-if="project.github"
+											:href="project.github"
+											target="_blank"
+											rel="noopener"
+										>
+											<Github :size="15" /> GitHub
+										</AppButton>
+									</div>
+								</div>
+							</article>
+						</div>
+					</div>
+					<div class="mt-5 flex items-center justify-center gap-2">
 						<button
 							v-for="(p, i) in projects"
 							:key="i"
-							class="h-2 w-2 rounded-full bg-black/15 transition hover:bg-black/30 border-0 p-0"
+							class="h-1.5 rounded-full border-0 p-0 transition-all duration-300"
 							:class="
 								activeIndex === i
-									? 'w-6 rounded-md bg-black/60'
-									: ''
+									? ''
+									: 'w-1.5 bg-black/20 hover:bg-black/40'
 							"
 							:style="
 								activeIndex === i
-									? { background: p.accent }
+									? { background: p.accent, width: '2rem' }
 									: {}
 							"
-							@click="scrollToIndex(i)"
+							@click="activeIndex = i"
 							:aria-label="`Go to ${p.title}`"
 						/>
 					</div>
 				</div>
-				<div
-					ref="track"
-					class="flex gap-5 overflow-x-auto px-6 pb-4 snap-x snap-mandatory hide-horizontal-scrollbar sm:ml-24"
-				>
-					<article
+
+				<div class="hidden lg:flex h-[600px] gap-3 px-6">
+					<div
 						v-for="(project, i) in projects"
 						:key="project.title"
-						class="flex flex-col min-w-[85vw] sm:min-w-[420px] max-w-[720px] bg-white rounded-2xl border border-black/10 shadow-lg transition shrink-0 overflow-hidden snap-start"
+						class="relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 ease-in-out"
+						:class="activeIndex === i ? 'flex-[4]' : 'flex-[1] hover:flex-[1.3]'"
+						@click="activeIndex = i"
 					>
+						<img
+							:src="project.imgUrl"
+							:alt="project.title"
+							class="absolute inset-0 h-full w-full object-cover transition-transform duration-700"
+							:class="activeIndex === i ? 'scale-100' : 'scale-110'"
+							loading="lazy"
+						/>
+
 						<div
-							v-if="project.imgUrl"
-							class="h-64 bg-neutral-100 overflow-hidden"
-						>
-							<img
-								:src="project.imgUrl"
-								:alt="project.title"
-								class="h-full w-full object-cover"
-								loading="lazy"
-							/>
-						</div>
-						<div class="flex flex-col px-6 py-6">
-							<h3
-								class="font-display text-2xl sm:text-3xl font-bold italic mb-1 text-black"
+							class="absolute inset-0 bg-black transition-opacity duration-500"
+							:class="
+								activeIndex === i ? 'opacity-10' : 'opacity-50'
+							"
+						/>
+
+						<Transition name="panel-label">
+							<div
+								v-if="activeIndex !== i"
+								class="absolute inset-0 flex flex-col items-center justify-end pb-8 gap-3"
 							>
-								{{ project.title }}
-							</h3>
-							<p
-								class="text-xs font-semibold uppercase tracking-wide text-black/40 mb-2"
-							>
-								{{ project.subtitle }}
-							</p>
-							<p class="text-sm text-black/70 mb-3">
-								{{ project.description }}
-							</p>
-							<div class="flex items-center gap-2">
-								<AppButton
-									v-if="project.docsUrl"
-									:href="project.docsUrl"
-									target="_blank"
-									rel="noopener"
+								<p
+									class="text-white font-bold text-sm tracking-wider opacity-90"
 								>
-									<BookOpen :size="15" /> Docs
-								</AppButton>
-								<AppButton
-									:href="project.url"
-									target="_blank"
-									rel="noopener"
-								>
-									<ExternalLink :size="15" /> Visit
-								</AppButton>
-								<AppButton
-									v-if="project.github"
-									:href="project.github"
-									target="_blank"
-									rel="noopener"
-								>
-									<Github :size="15" /> GitHub
-								</AppButton>
+									{{ project.title }}
+								</p>
 							</div>
-						</div>
-					</article>
-					<div class="min-w-8 shrink-0" aria-hidden="true" />
+						</Transition>
+
+						<Transition name="content-panel">
+							<div
+								v-if="activeIndex === i"
+								class="absolute top-0 right-0 bottom-0 w-[52%] bg-zinc-100 flex flex-col justify-between p-9 xl:p-11"
+							>
+								<div>
+									<div
+										class="mb-6 flex items-center gap-3"
+									>
+										<span
+											class="font-mono text-xs tabular-nums text-black/25"
+										>
+											{{
+												String(i + 1).padStart(2, '0')
+											}}
+										</span>
+										<div class="h-px flex-1 bg-black/10" />
+									</div>
+									<p
+										class="mb-3 text-xs font-bold uppercase tracking-widest"
+										:style="{ color: project.accent }"
+									>
+										{{ project.subtitle }}
+									</p>
+									<h3
+										class="font-display text-3xl xl:text-4xl font-bold italic mb-4 leading-tight text-black"
+									>
+										{{ project.title }}
+									</h3>
+									<p
+										class="text-sm xl:text-base leading-relaxed text-black/60"
+									>
+										{{ project.description }}
+									</p>
+								</div>
+								<div class="flex flex-wrap gap-3">
+									<AppButton
+										v-if="project.docsUrl"
+										:href="project.docsUrl"
+										target="_blank"
+										rel="noopener"
+									>
+										<BookOpen :size="15" /> Docs
+									</AppButton>
+									<AppButton
+										:href="project.url"
+										target="_blank"
+										rel="noopener"
+									>
+										<ExternalLink :size="15" /> Visit
+									</AppButton>
+									<AppButton
+										v-if="project.github"
+										:href="project.github"
+										target="_blank"
+										rel="noopener"
+									>
+										<Github :size="15" /> GitHub
+									</AppButton>
+								</div>
+							</div>
+						</Transition>
+					</div>
 				</div>
 			</section>
 
@@ -414,12 +559,29 @@ const socialLinks = [
 .animate-ticker {
 	animation: ticker 60s linear infinite;
 }
-.hide-horizontal-scrollbar {
-	scrollbar-width: none;
-	-ms-overflow-style: none;
+
+.panel-label-enter-active,
+.panel-label-leave-active {
+	transition: opacity 0.25s ease;
 }
-.hide-horizontal-scrollbar::-webkit-scrollbar {
-	height: 0;
-	display: none;
+.panel-label-enter-from,
+.panel-label-leave-to {
+	opacity: 0;
+}
+
+.content-panel-enter-active {
+	transition:
+		opacity 0.35s ease 0.2s,
+		transform 0.4s ease 0.15s;
+}
+.content-panel-leave-active {
+	transition: opacity 0.15s ease;
+}
+.content-panel-enter-from {
+	opacity: 0;
+	transform: translateX(18px);
+}
+.content-panel-leave-to {
+	opacity: 0;
 }
 </style>
