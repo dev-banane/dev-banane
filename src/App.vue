@@ -12,10 +12,24 @@ import {
 
 const projects = [
 	{
+		title: 'PFControl v2',
+		subtitle: 'Leading ATC strip platform',
+		description:
+			'The go-to flight-strip and ATC management platform for Project Flight and Roblox aviation. Real-time coordination between controllers and pilots, modern UI, and the scale to support growing communities. Built and run by me and some friends from the ground up.',
+		stats: '8,000+ registered users',
+		url: 'https://pfcontrol.com',
+		github: 'https://github.com/cephie-studios/pfcontrol-2',
+		docsUrl: null,
+		accent: '#3b82f6',
+		accentLight: '#eff6ff',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_4'
+	},
+	{
 		title: 'Cephie API',
 		subtitle: 'Unified developer platform',
 		description:
-			'Single API for Cephie products: flight tracking, shifts, guilds, images, and flight assets. OpenAPI docs and optional Discord auth for transcripts.',
+			'Single, production-ready API powering Cephie products: flight tracking, shifts, guilds, images, and flight assets. Full OpenAPI docs and optional Discord auth for transcripts. The backbone for aviation and community tools.',
+		stats: null,
 		url: 'https://api.cephie.app',
 		github: 'https://github.com/cephie-studios/api',
 		docsUrl: 'https://api.cephie.app/docs',
@@ -25,9 +39,10 @@ const projects = [
 	},
 	{
 		title: 'Cephie Snap',
-		subtitle: 'Image hosting for developers',
+		subtitle: 'Image hosting',
 		description:
-			'Image hosting with permanent URLs and a public API for developer integrations. Built for reliability and simple embedding in apps and docs.',
+			'Reliable image hosting with permanent URLs and a public API for integrations. Built for anyone who needs stable embeds in apps, and docs. No disappearing links, full control.',
+		stats: null,
 		url: 'https://snap.cephie.app',
 		github: 'https://github.com/cephie-studios',
 		docsUrl: null,
@@ -39,25 +54,14 @@ const projects = [
 		title: 'Cephie Dashboard',
 		subtitle: 'Discord bot & management',
 		description:
-			'Discord bot and management platform for virtual airlines and aviation communities. Role sync, verification, and moderation trusted by dozens of major groups.',
+			'Discord bot and management platform for virtual airlines and aviation communities. Manages the PFConnect Bot; handles role sync, verification, and moderation. Trusted by dozens of major groups to run their servers.',
+		stats: null,
 		url: 'https://dash.cephie.app',
 		github: 'https://github.com/cephie-studios/app',
 		docsUrl: null,
 		accent: '#10b981',
 		accentLight: '#ecfdf5',
 		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_3'
-	},
-	{
-		title: 'PFControl v2',
-		subtitle: 'ATC strip management',
-		description:
-			'Flight-strip management for Project Flight and Roblox aviation sims. Real-time coordination between ATC and pilots with a modern, fast UI.',
-		url: 'https://pfcontrol.com',
-		github: 'https://github.com/cephie-studios/pfcontrol-2',
-		docsUrl: null,
-		accent: '#3b82f6',
-		accentLight: '#eff6ff',
-		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_4'
 	}
 ];
 
@@ -152,9 +156,9 @@ const socialLinks = [
 						>
 					</h1>
 					<p
-						class="mt-8 max-w-xl text-lg leading-relaxed text-black/60 sm:text-xl"
+						class="mt-8 max-w-6xl text-lg leading-relaxed text-black/60 sm:text-xl"
 					>
-						I build web applications, APIs, and tooling.
+						I build and ship web applications, APIs, and platforms that people actually use. From ATC tools with <strong>8,000+ users</strong> to developer APIs and Discord bots for management and moderation.
 						<br />
 						I work at
 						<a
@@ -164,14 +168,15 @@ const socialLinks = [
 							class="underline underline-offset-2 decoration-black/30 hover:decoration-black"
 							>giftGRÜN</a
 						>
-						and independently on
+						and run
 						<a
 							href="https://snap.cephie.app"
 							target="_blank"
 							rel="noopener noreferrer"
 							class="underline underline-offset-2 decoration-black/30 hover:decoration-black"
 							>Cephie</a
-						>.
+						>
+						on the side—products I built from scratch and maintain myself.
 					</p>
 					<div class="mt-10 flex flex-wrap items-center gap-4">
 						<AppButton href="#contact" variant="default">
@@ -236,8 +241,7 @@ const socialLinks = [
 								<em class="italic font-bold">built.</em>
 							</h2>
 							<p class="mt-4 max-w-xl text-lg text-black/60">
-								A selection of products and projects I've built
-								in recent years.
+								Products I've built, shipped, and run—with real users and real impact. From my flagship ATC platform to APIs and tools powering aviation communities.
 							</p>
 						</div>
 						<div
@@ -309,6 +313,13 @@ const socialLinks = [
 									>
 										{{ project.title }}
 									</h3>
+									<p
+										v-if="project.stats"
+										class="text-sm font-semibold mb-2"
+										:style="{ color: project.accent }"
+									>
+										{{ project.stats }}
+									</p>
 									<p
 										class="text-sm sm:text-base leading-relaxed text-black/60 mb-6"
 									>
@@ -429,6 +440,13 @@ const socialLinks = [
 									>
 										{{ project.title }}
 									</h3>
+									<p
+										v-if="project.stats"
+										class="text-sm font-semibold mb-3"
+										:style="{ color: project.accent }"
+									>
+										{{ project.stats }}
+									</p>
 									<p
 										class="text-sm xl:text-base leading-relaxed text-black/60"
 									>
