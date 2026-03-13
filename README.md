@@ -71,4 +71,4 @@ A Discord bot and management platform for virtual airlines and aviation communit
   <a href="https://steamcommunity.com/profiles/76561199061188081/" target="blank"><img align="center" src="https://cdn.simpleicons.org/steam/ffffff" alt="steam" height="40" width="40" /></a>
 </p>
 
-**Website:** [devbanane.com](https://devbanane.com)
+## [devbanane.com](https://devbanane.com)
