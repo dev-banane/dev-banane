@@ -132,7 +132,6 @@ function onKeydown(e: KeyboardEvent) {
 onMounted(() => window.addEventListener('keydown', onKeydown));
 onUnmounted(() => window.removeEventListener('keydown', onKeydown));
 
-
 const socialLinks = [
 	{ name: 'GitHub', url: 'https://github.com/dev-banane', icon: Github },
 	{
@@ -149,7 +148,7 @@ const socialLinks = [
 			<section
 				class="relative overflow-hidden border-b border-black/10 bg-[#f8f8f8]"
 			>
-				<div class="mx-auto max-w-6xl px-6 py-28 sm:py-36 lg:py-44">
+				<div class="mx-auto max-w-[80%] px-6 py-28 sm:py-36 lg:py-44">
 					<h1
 						class="font-display text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
 					>
@@ -233,7 +232,7 @@ const socialLinks = [
 			</section>
 
 			<section id="work" class="bg-white py-20 pt-36 pb-16">
-				<div class="mx-auto max-w-6xl px-6 mb-10">
+				<div class="mx-auto max-w-[80%] px-6 mb-10">
 					<div
 						class="flex flex-wrap items-end justify-between gap-6"
 					>
@@ -383,7 +382,7 @@ const socialLinks = [
 					<div
 						v-for="(project, i) in projects"
 						:key="project.title"
-						class="relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-500 ease-in-out"
+						class="relative overflow-hidden rounded-4xl cursor-pointer transition-all duration-500 ease-in-out"
 						:class="activeIndex === i ? 'flex-[4]' : 'flex-[1] hover:flex-[1.3]'"
 						@click="activeIndex = i"
 					>
@@ -488,11 +487,20 @@ const socialLinks = [
 				</div>
 			</section>
 
+			<section class="bg-white py-12 pt-24">
+				<div class="bg-black text-white mx-auto max-w-[95%] rounded-4xl px-6 py-16 sm:py-20">
+					<blockquote class="mx-auto max-w-2xl text-center">
+						<p class="font-display text-2xl font-medium italic leading-snug text-white sm:text-3xl md:text-7xl">
+							Talk is cheap. Show me the code.
+						</p>
+						<cite class="mt-2 block font-mono text-sm text-white/50 not-italic">Linus Torvalds</cite>
+					</blockquote>
+				</div>
+			</section>
+
 			<section id="skills" class="bg-white">
-				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-					<h2
-						class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
-					>
+				<div class="mx-auto max-w-[80%] px-6 py-24 sm:py-32">
+					<h2 class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
 						Skills & technologies.
 					</h2>
 					<p class="mt-4 max-w-2xl text-lg text-black/60">
@@ -583,43 +591,70 @@ const socialLinks = [
 			<section id="contact" class="bg-white text-white">
 				<div class="w-full">
 					<div class="bg-black max-w-[95%] mx-auto rounded-4xl">
-						<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-							<h2
-								class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
-							>
-								Let's work together.
-							</h2>
-							<p
-								class="mt-6 max-w-xl text-lg leading-relaxed text-white/70"
-							>
-								Open to collaboration and new projects. Have an idea or
-								want to build something? Reach out.
-							</p>
-							<p class="mt-4 text-white/90">
-								Reach me at
-								<a
-									href="mailto:me@devbanane.com"
-									class="underline underline-offset-2 decoration-white/50 hover:decoration-white"
-									>me@devbanane.com</a
-								>
-							</p>
-							<div class="mt-10 flex flex-wrap gap-4">
-								<AppButton
-									v-for="link in socialLinks"
-									:key="link.name"
-									:href="link.url"
-									target="_blank"
-									rel="noopener noreferrer"
-									lightMode
-								>
-									<component :is="link.icon" class="h-4 w-4" />
-									{{ link.name }}
-								</AppButton>
+						<div class="mx-auto max-w-[80%] px-6 py-24 sm:py-32">
+							<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
+								<div class="flex-1">
+									<h2
+										class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+									>
+										Let's work together.
+									</h2>
+									<p
+										class="mt-6 max-w-xl text-lg leading-relaxed text-white/70"
+									>
+										Open to collaboration and new projects. Have an idea or
+										want to build something? Reach out.
+									</p>
+									<p class="mt-4 text-white/90">
+										Reach me at
+										<a
+											href="mailto:me@devbanane.com"
+											class="underline underline-offset-2 decoration-white/50 hover:decoration-white"
+											>me@devbanane.com</a
+										>
+									</p>
+									<div class="mt-10 flex flex-wrap gap-4">
+										<AppButton
+											v-for="link in socialLinks"
+											:key="link.name"
+											:href="link.url"
+											target="_blank"
+											rel="noopener noreferrer"
+											lightMode
+										>
+											<component :is="link.icon" class="h-4 w-4" />
+											{{ link.name }}
+										</AppButton>
+									</div>
+								</div>
+								<div class="hidden xl:block w-full md:w-auto flex justify-center md:justify-end relative">
+									<img
+										src="https://avatars.githubusercontent.com/u/193952663?v=4"
+										alt="Profile picture"
+										class="rounded-full border-4 border-white/10 shadow-xl shadow-black/20 object-cover"
+										style="width: 16rem; height: 16rem;"
+										loading="lazy"
+									/>
+									<div 
+										class="absolute left-1/2 -translate-x-1/2 -top-40 md:left-auto md:right-[calc(5rem+2rem)] md:top-50"
+										style="pointer-events: none;"
+									>
+										<svg width="160" height="56" viewBox="0 0 120 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M5 38 Q60 56, 110 22 Q125 11" stroke="#fff" stroke-width="3" fill="none" style="filter: drop-shadow(0 1.5px 0 #0004); stroke-dasharray: 5,3;" />
+										</svg>
+										<div
+											class="font-display italic pl-1 select-none font-semibold text-white text-[1.15rem] absolute left-[-2.3rem] top-[2.6rem] -translate-y-[75%] -translate-x-[60%] text-shadow"
+											style="text-shadow: 0 1px 4px #0008;"
+										>
+											this is me btw
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 						<footer class="bg-black py-8">
 							<div
-								class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-white/50 sm:flex-row"
+								class="mx-auto flex max-w-[80%] flex-col items-center justify-between gap-4 px-6 text-sm text-white/50 sm:flex-row"
 							>
 								<p>© {{ new Date().getFullYear() }} devbanane</p>
 							</div>
@@ -676,5 +711,40 @@ const socialLinks = [
 }
 .skill-icon--invert {
 	filter: invert(1);
+}
+
+.approach-grid-pattern {
+	position: absolute;
+	inset: 0;
+	background-image:
+		linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+		linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+	background-size: 48px 48px;
+	pointer-events: none;
+}
+.approach-bento {
+	grid-auto-rows: minmax(140px, auto);
+}
+@media (min-width: 1024px) {
+	.approach-bento {
+		grid-template-rows: repeat(2, minmax(180px, 1fr));
+	}
+}
+.approach-card {
+	background: #fafafa;
+}
+.approach-card--featured {
+	background: linear-gradient(145deg, #fafafa 0%, #f5f5f5 50%, var(--accent-bg) 100%);
+}
+.approach-card__gradient {
+	background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--accent-bg), transparent 70%);
+}
+.approach-card__corner {
+	background: linear-gradient(135deg, var(--accent) 0%, transparent 50%);
+	opacity: 0.4;
+	border-radius: 0 0 0 100%;
+}
+.approach-card:hover .approach-card__corner {
+	opacity: 0.6;
 }
 </style>
