@@ -7,6 +7,8 @@ Full-stack developer. I build and ship web applications, APIs, and platforms tha
 -   💞️ I love collaborating on open source projects!
 -   🤝 Let me know if you want to start a project together!
 
+### Check out my website:  *[devbanane.com](https://devbanane.com)*
+
 ---
 
 ### Things I've built
@@ -70,5 +72,3 @@ A Discord bot and management platform for virtual airlines and aviation communit
   <a href="https://open.spotify.com/user/31pqvbbf3v2vaiictlvpz6dy4yye?si=d4059a18b49141f7" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/spotify.svg" alt="spotify" height="40" width="40" /></a>
   <a href="https://steamcommunity.com/profiles/76561199061188081/" target="blank"><img align="center" src="https://cdn.simpleicons.org/steam/ffffff" alt="steam" height="40" width="40" /></a>
 </p>
-
-## [devbanane.com](https://devbanane.com)
