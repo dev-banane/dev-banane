@@ -19,7 +19,7 @@ const skills = [
 	{ name: 'Expo', icon: '/assets/expo.svg', description: 'Toolchain for building React Native apps.' },
 	{ name: 'Vite', icon: '/assets/vite.svg', description: 'Fast dev server and build tool for the frontend.' },
 	{ name: 'Node.js', icon: '/assets/nodejs.svg', description: 'JavaScript runtime for servers and tooling.' },
-	{ name: 'bun.js', icon: '/assets/bunjs.svg', description: 'Fast, low-overhead JavaScript runtime.', invertIcon: true },
+	{ name: 'bun.js', icon: '/assets/bunjs.svg', description: 'Fast, low-overhead JavaScript runtime.' },
 	{ name: 'Fastify', icon: '/assets/fastify.svg', description: 'Fast, low-overhead Node.js web framework.', invertIcon: true },
 	{ name: 'npm.js', icon: '/assets/npmjs.svg', description: 'Package manager and registry for JavaScript.' },
 	{ name: 'TypeScript', icon: '/assets/typescript.svg', description: 'Typed superset of JavaScript.' },
