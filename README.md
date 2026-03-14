@@ -38,6 +38,7 @@ A Discord bot and management platform for virtual airlines and aviation communit
   <img src="https://devbanane.com/assets/expo.svg" width="50" height="50" alt="Expo" />
   <img src="https://devbanane.com/assets/vite.svg" width="50" height="50" alt="Vite" />
   <img src="https://devbanane.com/assets/nodejs.svg" width="50" height="50" alt="Node.js" />
+  <img src="https://devbanane.com/assets/bunjs.svg" width="50" height="50" alt="bun.js" />
   <img src="https://devbanane.com/assets/fastify.svg" width="50" height="50" alt="Fastify" />
   <img src="https://devbanane.com/assets/npmjs.svg" width="50" height="50" alt="npm" />
   <img src="https://devbanane.com/assets/typescript.svg" width="50" height="50" alt="TypeScript" />

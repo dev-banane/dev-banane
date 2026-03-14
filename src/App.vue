@@ -10,6 +10,42 @@ import {
 	ChevronRight
 } from 'lucide-vue-next';
 
+const skills = [
+	{ name: 'Java', icon: '/assets/java.svg', description: 'Object-oriented language for backend and Android.' },
+	{ name: 'Python', icon: '/assets/python.svg', description: 'Versatile language for scripting, APIs, and data.' },
+	{ name: 'React', icon: '/assets/react.svg', description: 'UI library for component-based interfaces.' },
+	{ name: 'Vue.js', icon: '/assets/vue.svg', description: 'Progressive framework for reactive UIs.' },
+	{ name: 'Next.js', icon: '/assets/nextjs.svg', description: 'React framework with SSR and routing.', invertIcon: true },
+	{ name: 'Expo', icon: '/assets/expo.svg', description: 'Toolchain for building React Native apps.' },
+	{ name: 'Vite', icon: '/assets/vite.svg', description: 'Fast dev server and build tool for the frontend.' },
+	{ name: 'Node.js', icon: '/assets/nodejs.svg', description: 'JavaScript runtime for servers and tooling.' },
+	{ name: 'bun.js', icon: '/assets/bunjs.svg', description: 'Fast, low-overhead JavaScript runtime.', invertIcon: true },
+	{ name: 'Fastify', icon: '/assets/fastify.svg', description: 'Fast, low-overhead Node.js web framework.', invertIcon: true },
+	{ name: 'npm.js', icon: '/assets/npmjs.svg', description: 'Package manager and registry for JavaScript.' },
+	{ name: 'TypeScript', icon: '/assets/typescript.svg', description: 'Typed superset of JavaScript.' },
+	{ name: 'JavaScript', icon: '/assets/javascript.svg', description: 'Language of the web for logic and interactivity.' },
+	{ name: 'HTML', icon: '/assets/html.svg', description: 'Markup for structure and content.' },
+	{ name: 'CSS', icon: '/assets/css.svg', description: 'Styling and layout for the web.' },
+	{ name: 'Tailwind', icon: '/assets/tailwind.svg', description: 'Utility-first CSS framework.' },
+	{ name: 'Git', icon: '/assets/git.svg', description: 'Version control for code and collaboration.' },
+	{ name: 'Redis', icon: '/assets/redis.svg', description: 'In-memory store for cache and sessions.' },
+	{ name: 'PostgreSQL', icon: '/assets/postgresql.svg', description: 'Robust relational database with SQL.' },
+	{ name: 'MySQL', icon: '/assets/mysql.svg', description: 'Popular relational database server.' },
+	{ name: 'SQLite', icon: '/assets/sqlite.svg', description: 'Embedded, file-based SQL database.' },
+	{ name: 'MongoDB', icon: '/assets/mongodb.svg', description: 'Document-oriented NoSQL database.' },
+	{ name: 'Supabase', icon: '/assets/supabase.svg', description: 'Open-source Firebase alternative (Postgres + auth).' },
+	{ name: 'Docker', icon: '/assets/docker.svg', description: 'Containers for consistent dev and deploy.' },
+	{ name: 'Dokploy', icon: '/assets/dokploy.svg', description: 'Self-hosted PaaS for deploying apps.', invertIcon: true },
+	{ name: 'Nginx', icon: '/assets/nginx.svg', description: 'Web server and reverse proxy.' },
+	{ name: 'Linux', icon: '/assets/linux.svg', description: 'OS and environment for servers and dev.' },
+	{ name: 'REST', icon: '/assets/http.svg', description: 'API design style over HTTP.' },
+	{ name: 'Cloudflare', icon: '/assets/cloudflare.svg', description: 'CDN, DNS, and edge security.' },
+	{ name: 'OpenWebUI', icon: '/assets/openwebui.svg', description: 'Open-source UI for LLM APIs.' },
+	{ name: 'n8n', icon: '/assets/n8n.svg', description: 'Workflow automation and integrations.' }
+];
+
+const redisSkillIndex = skills.findIndex((s) => s.name === 'Redis');
+
 const projects = [
 	{
 		title: 'PFControl v2',
@@ -96,38 +132,6 @@ function onKeydown(e: KeyboardEvent) {
 onMounted(() => window.addEventListener('keydown', onKeydown));
 onUnmounted(() => window.removeEventListener('keydown', onKeydown));
 
-const skills = [
-	{ name: 'Java', icon: '/assets/java.svg' },
-	{ name: 'Python', icon: '/assets/python.svg' },
-	{ name: 'React', icon: '/assets/react.svg' },
-	{ name: 'Vue.js', icon: '/assets/vue.svg' },
-	{ name: 'Next.js', icon: '/assets/nextjs.svg' },
-	{ name: 'Expo', icon: '/assets/expo.svg' },
-	{ name: 'Vite', icon: '/assets/vite.svg' },
-	{ name: 'Node.js', icon: '/assets/nodejs.svg' },
-	{ name: 'Fastify', icon: '/assets/fastify.svg' },
-	{ name: 'npm.js', icon: '/assets/npmjs.svg' },
-	{ name: 'TypeScript', icon: '/assets/typescript.svg' },
-	{ name: 'JavaScript', icon: '/assets/javascript.svg' },
-	{ name: 'HTML', icon: '/assets/html.svg' },
-	{ name: 'CSS', icon: '/assets/css.svg' },
-	{ name: 'Tailwind', icon: '/assets/tailwind.svg' },
-	{ name: 'Git', icon: '/assets/git.svg' },
-	{ name: 'Redis', icon: '/assets/redis.svg' },
-	{ name: 'PostgreSQL', icon: '/assets/postgresql.svg' },
-	{ name: 'MySQL', icon: '/assets/mysql.svg' },
-	{ name: 'SQLite', icon: '/assets/sqlite.svg' },
-	{ name: 'MongoDB', icon: '/assets/mongodb.svg' },
-	{ name: 'Supabase', icon: '/assets/supabase.svg' },
-	{ name: 'Docker', icon: '/assets/docker.svg' },
-	{ name: 'Dokploy', icon: '/assets/dokploy.svg' },
-	{ name: 'Nginx', icon: '/assets/nginx.svg' },
-	{ name: 'Linux', icon: '/assets/linux.svg' },
-	{ name: 'REST', icon: '/assets/http.svg' },
-	{ name: 'Cloudflare', icon: '/assets/cloudflare.svg' },
-	{ name: 'OpenWebUI', icon: '/assets/openwebui.svg' },
-	{ name: 'n8n', icon: '/assets/n8n.svg' }
-];
 
 const socialLinks = [
 	{ name: 'GitHub', url: 'https://github.com/dev-banane', icon: Github },
@@ -228,7 +232,7 @@ const socialLinks = [
 				</div>
 			</section>
 
-			<section id="work" class="bg-white py-20 pt-36">
+			<section id="work" class="bg-white py-20 pt-36 pb-16">
 				<div class="mx-auto max-w-6xl px-6 mb-10">
 					<div
 						class="flex flex-wrap items-end justify-between gap-6"
@@ -484,7 +488,7 @@ const socialLinks = [
 				</div>
 			</section>
 
-			<section class="bg-white">
+			<section id="skills" class="bg-white">
 				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
 					<h2
 						class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
@@ -492,76 +496,138 @@ const socialLinks = [
 						Skills & technologies.
 					</h2>
 					<p class="mt-4 max-w-2xl text-lg text-black/60">
-						These are the technologies and tools I rely on
-						day-to-day to design, develop, and deploy high-quality
-						products and web applications.
+						Technologies and tools I use day-to-day.
 					</p>
-					<div class="mt-14 flex flex-wrap gap-3">
+
+					<div
+						class="mt-14 hidden lg:grid skills-bento gap-3"
+						role="list"
+						aria-label="Skills and technologies"
+					>
 						<div
-							v-for="skill in skills"
+							v-for="(skill, i) in skills"
 							:key="skill.name"
-							class="flex items-center gap-2.5 rounded-full bg-black text-white px-4 py-2.5"
+							role="listitem"
+							class="skills-bento-item rounded-2xl border border-black/10 bg-white text-left"
+							:class="
+								redisSkillIndex === i
+									? 'col-span-2 row-span-2 shadow-lg shadow-black/5'
+									: ''
+							"
 						>
-							<img
-								v-if="skill.icon"
-								:src="skill.icon"
-								:alt="skill.name"
-								class="h-5 w-5 shrink-0"
-								loading="lazy"
-							/>
-							<span class="text-sm font-semibold text-white/85">{{
-								skill.name
-							}}</span>
+							<div
+								class="flex h-full flex-col justify-between p-4 sm:p-5"
+							>
+								<div class="flex items-center gap-3">
+									<img
+										v-if="skill.icon"
+										:src="skill.icon"
+										alt=""
+										class="h-8 w-8 shrink-0 opacity-90"
+										:class="{ 'skill-icon--invert': skill.invertIcon }"
+										loading="lazy"
+									/>
+									<span
+										class="font-semibold text-black/90"
+										:class="
+											redisSkillIndex === i ? 'text-base sm:text-lg' : 'text-sm'
+										"
+									>
+										{{ skill.name }}
+									</span>
+								</div>
+								<p
+									v-if="redisSkillIndex === i"
+									class="mt-2 text-sm leading-relaxed text-black/60"
+								>
+									{{ skill.description }}
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:hidden">
+						<div
+							v-for="(skill, i) in skills"
+							:key="skill.name"
+							class="rounded-2xl border border-black/10 bg-white p-4 text-left"
+							:class="redisSkillIndex === i ? 'col-span-2' : ''"
+						>
+							<div class="flex items-center gap-2.5">
+								<img
+									v-if="skill.icon"
+									:src="skill.icon"
+									alt=""
+									class="h-7 w-7 shrink-0 opacity-90"
+									:class="{ 'skill-icon--invert': skill.invertIcon }"
+									loading="lazy"
+								/>
+								<span
+									class="text-sm font-semibold text-black/90"
+									:class="redisSkillIndex === i ? 'text-base' : ''"
+								>
+									{{ skill.name }}
+								</span>
+							</div>
+							<p
+								v-if="redisSkillIndex === i"
+								class="mt-2 text-xs leading-relaxed text-black/60"
+							>
+								{{ skill.description }}
+							</p>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<section id="contact" class="bg-black text-white">
-				<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
-					<h2
-						class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
-					>
-						Let's work together.
-					</h2>
-					<p
-						class="mt-6 max-w-xl text-lg leading-relaxed text-white/70"
-					>
-						Open to collaboration and new projects. Have an idea or
-						want to build something? Reach out.
-					</p>
-					<p class="mt-4 text-white/90">
-						Reach me at
-						<a
-							href="mailto:me@devbanane.com"
-							class="underline underline-offset-2 decoration-white/50 hover:decoration-white"
-							>me@devbanane.com</a
-						>
-					</p>
-					<div class="mt-10 flex flex-wrap gap-4">
-						<AppButton
-							v-for="link in socialLinks"
-							:key="link.name"
-							:href="link.url"
-							target="_blank"
-							rel="noopener noreferrer"
-							lightMode
-						>
-							<component :is="link.icon" class="h-4 w-4" />
-							{{ link.name }}
-						</AppButton>
+			<section id="contact" class="bg-white text-white">
+				<div class="w-full">
+					<div class="bg-black max-w-[95%] mx-auto rounded-4xl">
+						<div class="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+							<h2
+								class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+							>
+								Let's work together.
+							</h2>
+							<p
+								class="mt-6 max-w-xl text-lg leading-relaxed text-white/70"
+							>
+								Open to collaboration and new projects. Have an idea or
+								want to build something? Reach out.
+							</p>
+							<p class="mt-4 text-white/90">
+								Reach me at
+								<a
+									href="mailto:me@devbanane.com"
+									class="underline underline-offset-2 decoration-white/50 hover:decoration-white"
+									>me@devbanane.com</a
+								>
+							</p>
+							<div class="mt-10 flex flex-wrap gap-4">
+								<AppButton
+									v-for="link in socialLinks"
+									:key="link.name"
+									:href="link.url"
+									target="_blank"
+									rel="noopener noreferrer"
+									lightMode
+								>
+									<component :is="link.icon" class="h-4 w-4" />
+									{{ link.name }}
+								</AppButton>
+							</div>
+						</div>
+						<footer class="bg-black py-8">
+							<div
+								class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-white/50 sm:flex-row"
+							>
+								<p>© {{ new Date().getFullYear() }} devbanane</p>
+							</div>
+						</footer>
 					</div>
 				</div>
 			</section>
 		</main>
-
-		<footer class="bg-black py-8">
-			<div
-				class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-white/50 sm:flex-row"
-			>
-				<p>© {{ new Date().getFullYear() }} devbanane</p>
-			</div>
-		</footer>
 	</div>
 </template>
 
@@ -601,5 +667,14 @@ const socialLinks = [
 }
 .content-panel-leave-to {
 	opacity: 0;
+}
+
+.skills-bento {
+	grid-template-columns: repeat(7, 1fr);
+	grid-auto-rows: 100px;
+	grid-auto-flow: dense;
+}
+.skill-icon--invert {
+	filter: invert(1);
 }
 </style>
