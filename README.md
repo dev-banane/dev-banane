@@ -29,48 +29,57 @@ A Discord bot and management platform for virtual airlines and aviation communit
 
 ### Skills & technologies
 
-<p align="left">
-  <img src="https://devbanane.com/assets/java.svg" width="50" height="50" alt="Java" />
-  <img src="https://devbanane.com/assets/python.svg" width="50" height="50" alt="Python" />
-  <img src="https://devbanane.com/assets/react.svg" width="50" height="50" alt="React" />
-  <img src="https://devbanane.com/assets/vue.svg" width="50" height="50" alt="Vue.js" />
-  <img src="https://devbanane.com/assets/nextjs.svg" width="50" height="50" alt="Next.js" />
-  <img src="https://devbanane.com/assets/expo.svg" width="50" height="50" alt="Expo" />
-  <img src="https://devbanane.com/assets/vite.svg" width="50" height="50" alt="Vite" />
-  <img src="https://devbanane.com/assets/nodejs.svg" width="50" height="50" alt="Node.js" />
-  <img src="https://devbanane.com/assets/bunjs.svg" width="50" height="50" alt="bun.js" />
-  <img src="https://devbanane.com/assets/fastify.svg" width="50" height="50" alt="Fastify" />
-  <img src="https://devbanane.com/assets/npmjs.svg" width="50" height="50" alt="npm" />
-  <img src="https://devbanane.com/assets/typescript.svg" width="50" height="50" alt="TypeScript" />
-  <img src="https://devbanane.com/assets/javascript.svg" width="50" height="50" alt="JavaScript" />
-  <img src="https://devbanane.com/assets/html.svg" width="50" height="50" alt="HTML" />
-  <img src="https://devbanane.com/assets/css.svg" width="50" height="50" alt="CSS" />
-  <img src="https://devbanane.com/assets/tailwind.svg" width="50" height="50" alt="Tailwind" />
-  <img src="https://devbanane.com/assets/git.svg" width="50" height="50" alt="Git" />
-  <img src="https://devbanane.com/assets/redis.svg" width="50" height="50" alt="Redis" />
-  <img src="https://devbanane.com/assets/postgresql.svg" width="50" height="50" alt="PostgreSQL" />
-  <img src="https://devbanane.com/assets/mysql.svg" width="50" height="50" alt="MySQL" />
-  <img src="https://devbanane.com/assets/sqlite.svg" width="50" height="50" alt="SQLite" />
-  <img src="https://devbanane.com/assets/mongodb.svg" width="50" height="50" alt="MongoDB" />
-  <img src="https://devbanane.com/assets/supabase.svg" width="50" height="50" alt="Supabase" />
-  <img src="https://devbanane.com/assets/docker.svg" width="50" height="50" alt="Docker" />
-  <img src="https://devbanane.com/assets/dokploy.svg" width="50" height="50" alt="Dokploy" />
-  <img src="https://devbanane.com/assets/nginx.svg" width="50" height="50" alt="Nginx" />
-  <img src="https://devbanane.com/assets/linux.svg" width="50" height="50" alt="Linux" />
-  <img src="https://devbanane.com/assets/http.svg" width="50" height="50" alt="REST" />
-  <img src="https://devbanane.com/assets/cloudflare.svg" width="50" height="50" alt="Cloudflare" />
-  <img src="https://devbanane.com/assets/openwebui.svg" width="50" height="50" alt="OpenWebUI" />
-  <img src="https://devbanane.com/assets/n8n.svg" width="50" height="50" alt="n8n" />
-</p>
+**Languages**
 
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+**Frontend**
+
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vue.js](https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+
+**Backend & Runtime**
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Bun](https://img.shields.io/badge/Bun-000000?style=for-the-badge&logo=bun&logoColor=white)
+![Fastify](https://img.shields.io/badge/Fastify-000000?style=for-the-badge&logo=fastify&logoColor=white)
+![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+
+**Databases**
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+
+**DevOps & Infrastructure**
+
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Dokploy](https://img.shields.io/badge/Dokploy-6B44FF?style=for-the-badge&logoColor=white)
+![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![REST](https://img.shields.io/badge/REST-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+![n8n](https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)
 ---
 
 ### Connect with me
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-devbanane-yellow?logo=buy-me-a-coffee)](https://buymeacoffee.com/devbanane)
-<p>
-  <a href="https://instagram.com/_jakob09" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="_jakob09" height="40" width="40" /></a>
-  <a href="https://discord.com/users/798485492621770792" target="blank"><img align="center" src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-round-color-icon.png" alt="798485492621770792" height="40" width="40" /></a>
-  <a href="https://open.spotify.com/user/31pqvbbf3v2vaiictlvpz6dy4yye?si=d4059a18b49141f7" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/spotify.svg" alt="spotify" height="40" width="40" /></a>
-  <a href="https://steamcommunity.com/profiles/76561199061188081/" target="blank"><img align="center" src="https://cdn.simpleicons.org/steam/ffffff" alt="steam" height="40" width="40" /></a>
-</p>
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-devbanane-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/devbanane)
+[![Instagram](https://img.shields.io/badge/Instagram-_jakob09-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/_jakob09)
+[![Discord](https://img.shields.io/badge/Discord-jakob-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/798485492621770792)
+[![Spotify](https://img.shields.io/badge/Spotify-Profile-1DB954?style=for-the-badge&logo=spotify&logoColor=white)](https://open.spotify.com/user/31pqvbbf3v2vaiictlvpz6dy4yye?si=d4059a18b49141f7)
+[![Steam](https://img.shields.io/badge/Steam-Profile-000000?style=for-the-badge&logo=steam&logoColor=white)](https://steamcommunity.com/profiles/76561199061188081/)
 
