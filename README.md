@@ -9,6 +9,11 @@ Full-stack developer. I build and ship web applications, APIs, and platforms tha
 
 ### Check out my website:  *[devbanane.com](https://devbanane.com)*
 
+<div align="left">
+  <a href="https://widgets.1ceit.com/dev-banane/spotify?open"><img src="https://widgets.1ceit.com/dev-banane/spotify?v=1" alt="Now Playing on Spotify"/></a>
+  <a href="https://widgets.1ceit.com/dev-banane/steam?open"><img src="https://widgets.1ceit.com/dev-banane/steam?v=1" alt="Now Gaming on Steam"/></a>
+</div>
+
 ---
 
 ### Things I've built
