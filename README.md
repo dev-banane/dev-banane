@@ -48,5 +48,3 @@ A Discord bot and management platform for virtual airlines and aviation communit
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-devbanane-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/devbanane)
 [![Instagram](https://img.shields.io/badge/Instagram-_jakob09-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/_jakob09)
 [![Discord](https://img.shields.io/badge/Discord-jakob-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/798485492621770792)
-[![Spotify](https://img.shields.io/badge/Spotify-Profile-1DB954?style=for-the-badge&logo=spotify&logoColor=white)](https://open.spotify.com/user/31pqvbbf3v2vaiictlvpz6dy4yye?si=d4059a18b49141f7)
-[![Steam](https://img.shields.io/badge/Steam-Profile-000000?style=for-the-badge&logo=steam&logoColor=white)](https://steamcommunity.com/profiles/76561199061188081/)
