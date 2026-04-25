@@ -11,37 +11,164 @@ import {
 } from 'lucide-vue-next';
 
 const skills = [
-	{ name: 'Java', icon: '/assets/java.svg', description: 'Object-oriented language for backend and Android.' },
-	{ name: 'Python', icon: '/assets/python.svg', description: 'Versatile language for scripting, APIs, and data.' },
-	{ name: 'React', icon: '/assets/react.svg', description: 'UI library for component-based interfaces.' },
-	{ name: 'Vue.js', icon: '/assets/vue.svg', description: 'Progressive framework for reactive UIs.' },
-	{ name: 'Next.js', icon: '/assets/nextjs.svg', description: 'React framework with SSR and routing.', invertIcon: true },
-	{ name: 'Expo', icon: '/assets/expo.svg', description: 'Toolchain for building React Native apps.' },
-	{ name: 'Vite', icon: '/assets/vite.svg', description: 'Fast dev server and build tool for the frontend.' },
-	{ name: 'Node.js', icon: '/assets/nodejs.svg', description: 'JavaScript runtime for servers and tooling.' },
-	{ name: 'bun.js', icon: '/assets/bunjs.svg', description: 'Fast, low-overhead JavaScript runtime.' },
-	{ name: 'Fastify', icon: '/assets/fastify.svg', description: 'Fast, low-overhead Node.js web framework.', invertIcon: true },
-	{ name: 'npm.js', icon: '/assets/npmjs.svg', description: 'Package manager and registry for JavaScript.' },
-	{ name: 'TypeScript', icon: '/assets/typescript.svg', description: 'Typed superset of JavaScript.' },
-	{ name: 'JavaScript', icon: '/assets/javascript.svg', description: 'Language of the web for logic and interactivity.' },
-	{ name: 'HTML', icon: '/assets/html.svg', description: 'Markup for structure and content.' },
-	{ name: 'CSS', icon: '/assets/css.svg', description: 'Styling and layout for the web.' },
-	{ name: 'Tailwind', icon: '/assets/tailwind.svg', description: 'Utility-first CSS framework.' },
-	{ name: 'Git', icon: '/assets/git.svg', description: 'Version control for code and collaboration.' },
-	{ name: 'Redis', icon: '/assets/redis.svg', description: 'In-memory store for cache and sessions.' },
-	{ name: 'PostgreSQL', icon: '/assets/postgresql.svg', description: 'Robust relational database with SQL.' },
-	{ name: 'MySQL', icon: '/assets/mysql.svg', description: 'Popular relational database server.' },
-	{ name: 'SQLite', icon: '/assets/sqlite.svg', description: 'Embedded, file-based SQL database.' },
-	{ name: 'MongoDB', icon: '/assets/mongodb.svg', description: 'Document-oriented NoSQL database.' },
-	{ name: 'Supabase', icon: '/assets/supabase.svg', description: 'Open-source Firebase alternative (Postgres + auth).' },
-	{ name: 'Docker', icon: '/assets/docker.svg', description: 'Containers for consistent dev and deploy.' },
-	{ name: 'Dokploy', icon: '/assets/dokploy.svg', description: 'Self-hosted PaaS for deploying apps.', invertIcon: true },
-	{ name: 'Nginx', icon: '/assets/nginx.svg', description: 'Web server and reverse proxy.' },
-	{ name: 'Linux', icon: '/assets/linux.svg', description: 'OS and environment for servers and dev.' },
-	{ name: 'REST', icon: '/assets/http.svg', description: 'API design style over HTTP.' },
-	{ name: 'Cloudflare', icon: '/assets/cloudflare.svg', description: 'CDN, DNS, and edge security.' },
-	{ name: 'OpenWebUI', icon: '/assets/openwebui.svg', description: 'Open-source UI for LLM APIs.' },
-	{ name: 'n8n', icon: '/assets/n8n.svg', description: 'Workflow automation and integrations.' }
+	{
+		name: 'Java',
+		icon: '/assets/java.svg',
+		description: 'Object-oriented language for backend and Android.'
+	},
+	{
+		name: 'Python',
+		icon: '/assets/python.svg',
+		description: 'Versatile language for scripting, APIs, and data.'
+	},
+	{
+		name: 'React',
+		icon: '/assets/react.svg',
+		description: 'UI library for component-based interfaces.'
+	},
+	{
+		name: 'Vue.js',
+		icon: '/assets/vue.svg',
+		description: 'Progressive framework for reactive UIs.'
+	},
+	{
+		name: 'Next.js',
+		icon: '/assets/nextjs.svg',
+		description: 'React framework with SSR and routing.',
+		invertIcon: true
+	},
+	{
+		name: 'Expo',
+		icon: '/assets/expo.svg',
+		description: 'Toolchain for building React Native apps.'
+	},
+	{
+		name: 'Vite',
+		icon: '/assets/vite.svg',
+		description: 'Fast dev server and build tool for the frontend.'
+	},
+	{
+		name: 'Node.js',
+		icon: '/assets/nodejs.svg',
+		description: 'JavaScript runtime for servers and tooling.'
+	},
+	{
+		name: 'bun.js',
+		icon: '/assets/bunjs.svg',
+		description: 'Fast, low-overhead JavaScript runtime.'
+	},
+	{
+		name: 'Fastify',
+		icon: '/assets/fastify.svg',
+		description: 'Fast, low-overhead Node.js web framework.',
+		invertIcon: true
+	},
+	{
+		name: 'npm.js',
+		icon: '/assets/npmjs.svg',
+		description: 'Package manager and registry for JavaScript.'
+	},
+	{
+		name: 'TypeScript',
+		icon: '/assets/typescript.svg',
+		description: 'Typed superset of JavaScript.'
+	},
+	{
+		name: 'JavaScript',
+		icon: '/assets/javascript.svg',
+		description: 'Language of the web for logic and interactivity.'
+	},
+	{
+		name: 'HTML',
+		icon: '/assets/html.svg',
+		description: 'Markup for structure and content.'
+	},
+	{
+		name: 'CSS',
+		icon: '/assets/css.svg',
+		description: 'Styling and layout for the web.'
+	},
+	{
+		name: 'Tailwind',
+		icon: '/assets/tailwind.svg',
+		description: 'Utility-first CSS framework.'
+	},
+	{
+		name: 'Git',
+		icon: '/assets/git.svg',
+		description: 'Version control for code and collaboration.'
+	},
+	{
+		name: 'Redis',
+		icon: '/assets/redis.svg',
+		description: 'In-memory store for cache and sessions.'
+	},
+	{
+		name: 'PostgreSQL',
+		icon: '/assets/postgresql.svg',
+		description: 'Robust relational database with SQL.'
+	},
+	{
+		name: 'MySQL',
+		icon: '/assets/mysql.svg',
+		description: 'Popular relational database server.'
+	},
+	{
+		name: 'SQLite',
+		icon: '/assets/sqlite.svg',
+		description: 'Embedded, file-based SQL database.'
+	},
+	{
+		name: 'MongoDB',
+		icon: '/assets/mongodb.svg',
+		description: 'Document-oriented NoSQL database.'
+	},
+	{
+		name: 'Supabase',
+		icon: '/assets/supabase.svg',
+		description: 'Open-source Firebase alternative (Postgres + auth).'
+	},
+	{
+		name: 'Docker',
+		icon: '/assets/docker.svg',
+		description: 'Containers for consistent dev and deploy.'
+	},
+	{
+		name: 'Dokploy',
+		icon: '/assets/dokploy.svg',
+		description: 'Self-hosted PaaS for deploying apps.',
+		invertIcon: true
+	},
+	{
+		name: 'Nginx',
+		icon: '/assets/nginx.svg',
+		description: 'Web server and reverse proxy.'
+	},
+	{
+		name: 'Linux',
+		icon: '/assets/linux.svg',
+		description: 'OS and environment for servers and dev.'
+	},
+	{
+		name: 'REST',
+		icon: '/assets/http.svg',
+		description: 'API design style over HTTP.'
+	},
+	{
+		name: 'Cloudflare',
+		icon: '/assets/cloudflare.svg',
+		description: 'CDN, DNS, and edge security.'
+	},
+	{
+		name: 'OpenWebUI',
+		icon: '/assets/openwebui.svg',
+		description: 'Open-source UI for LLM APIs.'
+	},
+	{
+		name: 'n8n',
+		icon: '/assets/n8n.svg',
+		description: 'Workflow automation and integrations.'
+	}
 ];
 
 const redisSkillIndex = skills.findIndex((s) => s.name === 'Redis');
@@ -104,7 +231,8 @@ const projects = [
 const activeIndex = ref(0);
 
 function prev() {
-	activeIndex.value = (activeIndex.value - 1 + projects.length) % projects.length;
+	activeIndex.value =
+		(activeIndex.value - 1 + projects.length) % projects.length;
 }
 
 function next() {
@@ -118,7 +246,8 @@ function onTouchStart(e: TouchEvent) {
 }
 
 function onTouchEnd(e: TouchEvent) {
-	const delta = touchStartX.value - (e.changedTouches[0]?.clientX ?? touchStartX.value);
+	const delta =
+		touchStartX.value - (e.changedTouches[0]?.clientX ?? touchStartX.value);
 	if (Math.abs(delta) > 40) {
 		delta > 0 ? next() : prev();
 	}
@@ -161,7 +290,10 @@ const socialLinks = [
 					<p
 						class="mt-8 max-w-6xl text-lg leading-relaxed text-black/60 sm:text-xl"
 					>
-						I build and ship web applications, APIs, and platforms that people actually use. From ATC tools with <strong>8,000+ users</strong> to developer APIs and Discord bots for management and moderation.
+						I build and ship web applications, APIs, and platforms
+						that people actually use. From ATC tools with
+						<strong>8,000+ users</strong> to developer APIs and
+						Discord bots for management and moderation.
 						<br />
 						I work at
 						<a
@@ -179,7 +311,8 @@ const socialLinks = [
 							class="underline underline-offset-2 decoration-black/30 hover:decoration-black"
 							>Cephie</a
 						>
-						on the side—products I built from scratch and maintain myself.
+						on the side—products I built from scratch and maintain
+						myself.
 					</p>
 					<div class="mt-10 flex flex-wrap items-center gap-4">
 						<AppButton href="#contact" variant="default">
@@ -233,9 +366,7 @@ const socialLinks = [
 
 			<section id="work" class="bg-white py-20 pt-36 pb-16">
 				<div class="mx-auto max-w-[80%] px-6 mb-10">
-					<div
-						class="flex flex-wrap items-end justify-between gap-6"
-					>
+					<div class="flex flex-wrap items-end justify-between gap-6">
 						<div>
 							<h2
 								class="font-display text-5xl sm:text-6xl font-bold"
@@ -244,12 +375,13 @@ const socialLinks = [
 								<em class="italic font-bold">built.</em>
 							</h2>
 							<p class="mt-4 max-w-xl text-lg text-black/60">
-								Products I've built, shipped, and run—with real users and real impact. From my flagship ATC platform to APIs and tools powering aviation communities.
+								Products I've built, shipped, and run—with real
+								users and real impact. From my flagship ATC
+								platform to APIs and tools powering aviation
+								communities.
 							</p>
 						</div>
-						<div
-							class="flex items-center gap-5 shrink-0 lg:hidden"
-						>
+						<div class="flex items-center gap-5 shrink-0 lg:hidden">
 							<span
 								class="font-mono text-sm tabular-nums text-black/40"
 							>
@@ -383,14 +515,20 @@ const socialLinks = [
 						v-for="(project, i) in projects"
 						:key="project.title"
 						class="relative overflow-hidden rounded-4xl cursor-pointer transition-all duration-500 ease-in-out"
-						:class="activeIndex === i ? 'flex-[4]' : 'flex-[1] hover:flex-[1.3]'"
+						:class="
+							activeIndex === i
+								? 'flex-[4]'
+								: 'flex-[1] hover:flex-[1.3]'
+						"
 						@click="activeIndex = i"
 					>
 						<img
 							:src="project.imgUrl"
 							:alt="project.title"
 							class="absolute inset-0 h-full w-full object-cover transition-transform duration-700"
-							:class="activeIndex === i ? 'scale-100' : 'scale-110'"
+							:class="
+								activeIndex === i ? 'scale-100' : 'scale-110'
+							"
 							loading="lazy"
 						/>
 
@@ -420,15 +558,11 @@ const socialLinks = [
 								class="absolute top-0 right-0 bottom-0 w-[52%] bg-zinc-100 flex flex-col justify-between p-9 xl:p-11"
 							>
 								<div>
-									<div
-										class="mb-6 flex items-center gap-3"
-									>
+									<div class="mb-6 flex items-center gap-3">
 										<span
 											class="font-mono text-xs tabular-nums text-black/25"
 										>
-											{{
-												String(i + 1).padStart(2, '0')
-											}}
+											{{ String(i + 1).padStart(2, '0') }}
 										</span>
 										<div class="h-px flex-1 bg-black/10" />
 									</div>
@@ -488,19 +622,28 @@ const socialLinks = [
 			</section>
 
 			<section class="bg-white py-12 pt-24">
-				<div class="bg-black text-white mx-auto max-w-[95%] rounded-4xl px-6 py-16 sm:py-20">
+				<div
+					class="bg-black text-white mx-auto max-w-[95%] rounded-4xl px-6 py-16 sm:py-20"
+				>
 					<blockquote class="mx-auto max-w-2xl text-center">
-						<p class="font-display text-2xl font-medium italic leading-snug text-white sm:text-3xl md:text-7xl">
+						<p
+							class="font-display text-2xl font-medium italic leading-snug text-white sm:text-3xl md:text-7xl"
+						>
 							Talk is cheap. Show me the code.
 						</p>
-						<cite class="mt-2 block font-mono text-sm text-white/50 not-italic">Linus Torvalds</cite>
+						<cite
+							class="mt-2 block font-mono text-sm text-white/50 not-italic"
+							>Linus Torvalds</cite
+						>
 					</blockquote>
 				</div>
 			</section>
 
 			<section id="skills" class="bg-white">
 				<div class="mx-auto max-w-[80%] px-6 py-24 sm:py-32">
-					<h2 class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+					<h2
+						class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
+					>
 						Skills & technologies.
 					</h2>
 					<p class="mt-4 max-w-2xl text-lg text-black/60">
@@ -532,13 +675,18 @@ const socialLinks = [
 										:src="skill.icon"
 										alt=""
 										class="h-8 w-8 shrink-0 opacity-90"
-										:class="{ 'skill-icon--invert': skill.invertIcon }"
+										:class="{
+											'skill-icon--invert':
+												skill.invertIcon
+										}"
 										loading="lazy"
 									/>
 									<span
 										class="font-semibold text-black/90"
 										:class="
-											redisSkillIndex === i ? 'text-base sm:text-lg' : 'text-sm'
+											redisSkillIndex === i
+												? 'text-base sm:text-lg'
+												: 'text-sm'
 										"
 									>
 										{{ skill.name }}
@@ -554,7 +702,9 @@ const socialLinks = [
 						</div>
 					</div>
 
-					<div class="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:hidden">
+					<div
+						class="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:hidden"
+					>
 						<div
 							v-for="(skill, i) in skills"
 							:key="skill.name"
@@ -567,12 +717,16 @@ const socialLinks = [
 									:src="skill.icon"
 									alt=""
 									class="h-7 w-7 shrink-0 opacity-90"
-									:class="{ 'skill-icon--invert': skill.invertIcon }"
+									:class="{
+										'skill-icon--invert': skill.invertIcon
+									}"
 									loading="lazy"
 								/>
 								<span
 									class="text-sm font-semibold text-black/90"
-									:class="redisSkillIndex === i ? 'text-base' : ''"
+									:class="
+										redisSkillIndex === i ? 'text-base' : ''
+									"
 								>
 									{{ skill.name }}
 								</span>
@@ -590,9 +744,15 @@ const socialLinks = [
 
 			<section id="contact" class="bg-white text-white">
 				<div class="w-full">
-					<div class="bg-black max-w-[95%] mx-auto rounded-4xl">
-						<div class="mx-auto max-w-[80%] px-6 py-24 sm:py-32">
-							<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
+					<div
+						class="relative overflow-visible bg-black max-w-[95%] mx-auto rounded-4xl"
+					>
+						<div
+							class="mx-auto max-w-[80%] px-6 py-24 sm:py-32 xl:pr-[24rem]"
+						>
+							<div
+								class="flex flex-col md:flex-row items-start md:items-center justify-between gap-10"
+							>
 								<div class="flex-1">
 									<h2
 										class="font-display text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
@@ -602,8 +762,9 @@ const socialLinks = [
 									<p
 										class="mt-6 max-w-xl text-lg leading-relaxed text-white/70"
 									>
-										Open to collaboration and new projects. Have an idea or
-										want to build something? Reach out.
+										Open to collaboration and new projects.
+										Have an idea or want to build something?
+										Reach out.
 									</p>
 									<p class="mt-4 text-white/90">
 										Reach me at
@@ -622,33 +783,24 @@ const socialLinks = [
 											rel="noopener noreferrer"
 											lightMode
 										>
-											<component :is="link.icon" class="h-4 w-4" />
+											<component
+												:is="link.icon"
+												class="h-4 w-4"
+											/>
 											{{ link.name }}
 										</AppButton>
 									</div>
 								</div>
-								<div class="hidden xl:block w-full md:w-auto flex justify-center md:justify-end relative">
+								<div
+									class="pointer-events-none absolute right-[10%] bottom-0 hidden xl:flex"
+								>
 									<img
 										src="https://avatars.githubusercontent.com/u/193952663?v=4"
 										alt="Profile picture"
-										class="rounded-full border-4 border-white/10 shadow-xl shadow-black/20 object-cover"
-										style="width: 16rem; height: 16rem;"
+										class="object-cover"
+										style="width: 32rem; height: 32rem"
 										loading="lazy"
 									/>
-									<div 
-										class="absolute left-1/2 -translate-x-1/2 -top-40 md:left-auto md:right-[calc(5rem+2rem)] md:top-50"
-										style="pointer-events: none;"
-									>
-										<svg width="160" height="56" viewBox="0 0 120 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-											<path d="M5 38 Q60 56, 110 22 Q125 11" stroke="#fff" stroke-width="3" fill="none" style="filter: drop-shadow(0 1.5px 0 #0004); stroke-dasharray: 5,3;" />
-										</svg>
-										<div
-											class="font-display italic pl-1 select-none font-semibold text-white text-[1.15rem] absolute left-[-2.3rem] top-[2.6rem] -translate-y-[75%] -translate-x-[60%] text-shadow"
-											style="text-shadow: 0 1px 4px #0008;"
-										>
-											this is me btw
-										</div>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -656,7 +808,9 @@ const socialLinks = [
 							<div
 								class="mx-auto flex max-w-[80%] flex-col items-center justify-between gap-4 px-6 text-sm text-white/50 sm:flex-row"
 							>
-								<p>© {{ new Date().getFullYear() }} devbanane</p>
+								<p>
+									© {{ new Date().getFullYear() }} devbanane
+								</p>
 							</div>
 						</footer>
 					</div>
@@ -734,10 +888,19 @@ const socialLinks = [
 	background: #fafafa;
 }
 .approach-card--featured {
-	background: linear-gradient(145deg, #fafafa 0%, #f5f5f5 50%, var(--accent-bg) 100%);
+	background: linear-gradient(
+		145deg,
+		#fafafa 0%,
+		#f5f5f5 50%,
+		var(--accent-bg) 100%
+	);
 }
 .approach-card__gradient {
-	background: radial-gradient(ellipse 80% 60% at 50% 0%, var(--accent-bg), transparent 70%);
+	background: radial-gradient(
+		ellipse 80% 60% at 50% 0%,
+		var(--accent-bg),
+		transparent 70%
+	);
 }
 .approach-card__corner {
 	background: linear-gradient(135deg, var(--accent) 0%, transparent 50%);
