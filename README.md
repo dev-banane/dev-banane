@@ -1,6 +1,6 @@
 ## Hi there, I'm Jakob 👋
 
-Full-stack developer. I build and ship web applications, APIs, and platforms that people actually use. From ATC tools with 8,000+ users to developer APIs and Discord bots for management and moderation.
+Full-stack developer. I build and ship web applications, APIs, and platforms that people actually use. From ATC tools with 9,000+ users to developer APIs and Discord bots for management and moderation.
 
 -   👀 I'm currently working at [giftGRÜN](https://www.giftgruen.com/) and run [Cephie](https://snap.cephie.app) on the side.
 -   🌱 I'm currently learning Go and C
@@ -19,7 +19,7 @@ Full-stack developer. I build and ship web applications, APIs, and platforms tha
 ### Things I've built
 
 **[PFControl v2](https://pfcontrol.com)**  
-The main product I run. It's the leading ATC strip and flight management platform for Project Flight and Roblox aviation. Controllers and pilots get real-time coordination and a modern, fast interface. I built it from the ground up and it has grown to over 8,000 registered users.
+The main product I run. It's the leading ATC strip and flight management platform for Project Flight and Roblox aviation. Controllers and pilots get real-time coordination and a modern, fast interface. I built it from the ground up and it has grown to over 9,000 registered users.
 
 **[Cephie API](https://api.cephie.app)**  
 A unified API that powers the rest of the Cephie stack: flight tracking, shifts, guilds, images, and flight assets. It comes with full [OpenAPI documentation](https://api.cephie.app/docs) and optional Discord auth for things like transcripts. This is the backbone for aviation and community tools.
