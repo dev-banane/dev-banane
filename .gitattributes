@@ -1,0 +1,2 @@
+# Git hooks are executed with Unix sh; CRLF breaks them on Windows
+.husky/pre-commit text eol=lf

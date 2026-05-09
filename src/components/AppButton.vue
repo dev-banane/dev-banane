@@ -1,15 +1,15 @@
 <script setup lang="ts">
 defineProps<{
-	variant?: 'default' | 'icon' | 'outline' | 'inverted' | 'link';
-	size?: 'sm' | 'md';
-	href?: string;
-	type?: 'button' | 'submit' | 'reset';
-	lightMode?: boolean;
-}>();
+	variant?: 'default' | 'icon' | 'outline' | 'inverted' | 'link'
+	size?: 'sm' | 'md'
+	href?: string
+	type?: 'button' | 'submit' | 'reset'
+	lightMode?: boolean
+}>()
 
 defineOptions({
-	inheritAttrs: false
-});
+	inheritAttrs: false,
+})
 </script>
 
 <template>
@@ -159,8 +159,8 @@ defineOptions({
 .app-button--light.app-button--outline,
 .app-button--outline-light {
 	background-color: transparent;
-	color: rgba(255,255,255,0.8);
-	border: 2px solid rgba(255,255,255,0.2);
+	color: rgba(255, 255, 255, 0.8);
+	border: 2px solid rgba(255, 255, 255, 0.2);
 }
 .app-button--light.app-button--outline:hover,
 .app-button--outline-light:hover {
@@ -172,7 +172,7 @@ defineOptions({
 .app-button--inverted-light {
 	background-color: rgba(0, 0, 0, 0.05);
 	color: #0a0a0a;
-	border: 2px solid rgba(0,0,0,0.3);
+	border: 2px solid rgba(0, 0, 0, 0.3);
 }
 .app-button--light.app-button--inverted:hover,
 .app-button--inverted-light:hover {

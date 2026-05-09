@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+cd "$(dirname "$0")/.." || exit 1
+if [ ! -f node_modules/lint-staged/bin/lint-staged.js ]; then
+	echo "husky - node_modules missing; run npm install"
+	exit 1
+fi
+exec node ./node_modules/lint-staged/bin/lint-staged.js
