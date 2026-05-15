@@ -179,7 +179,7 @@ const projects = [
 		subtitle: 'Leading ATC strip platform',
 		description:
 			'The go-to flight-strip and ATC management platform for Project Flight and Roblox aviation. Real-time coordination between controllers and pilots, modern UI, and the scale to support growing communities. Built and run by me and some friends from the ground up.',
-		stats: '8,000+ registered users',
+		stats: '9,000+ registered users',
 		url: 'https://pfcontrol.com',
 		github: 'https://github.com/cephie-studios/pfcontrol-2',
 		docsUrl: null,
@@ -188,17 +188,16 @@ const projects = [
 		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_4',
 	},
 	{
-		title: 'Cephie API',
-		subtitle: 'Unified developer platform',
+		title: 'Cephie',
+		subtitle: 'Company behind PFControl and Cephie',
 		description:
-			'Single, production-ready API powering Cephie products: flight tracking, shifts, guilds, images, and flight assets. Full OpenAPI docs and optional Discord auth for transcripts. The backbone for aviation and community tools.',
+			'We design and run production software — APIs, dashboards, bots, and hosted services — for communities that need serious tooling.',
 		stats: null,
-		url: 'https://api.cephie.app',
-		github: 'https://github.com/cephie-studios/api',
-		docsUrl: 'https://api.cephie.app/docs',
-		accent: '#6366f1',
-		accentLight: '#eef2ff',
-		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_1',
+		url: 'https://cephie.app',
+		github: 'https://github.com/cephie-studios',
+		accent: '#000000',
+		accentLight: '#ffffff',
+		imgUrl: 'https://api.cephie.app/img/bananensammler_/portfolio_5',
 	},
 	{
 		title: 'Cephie Snap',
@@ -284,7 +283,7 @@ const socialLinks = [
 					<p class="mt-8 max-w-6xl text-lg leading-relaxed text-black/60 sm:text-xl">
 						I build and ship web applications, APIs, and platforms that people actually use. From
 						ATC tools with
-						<strong>8,000+ users</strong> to developer APIs and Discord bots for management and
+						<strong>9,000+ users</strong> to developer APIs and Discord bots for management and
 						moderation.
 						<br />
 						I work at
