@@ -173,7 +173,20 @@ const skills = [
 
 const redisSkillIndex = skills.findIndex((s) => s.name === 'Redis')
 
-const projects = [
+type PortfolioProject = {
+	title: string
+	subtitle: string
+	description: string
+	stats: string | null
+	url: string
+	github: string
+	docsUrl?: string | null
+	accent: string
+	accentLight: string
+	imgUrl: string
+}
+
+const projects: PortfolioProject[] = [
 	{
 		title: 'PFControl v2',
 		subtitle: 'Leading ATC strip platform',
