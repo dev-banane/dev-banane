@@ -1,20 +1,36 @@
 {
-  "name": "dev-banane",
-  "compatibility_date": "2025-04-01",
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "devbanane-comments",
-      "database_id": "5920a303-7bfb-458f-9027-c07423682533",
-      "migrations_dir": "migrations"
-    }
-  ],
-  "r2_buckets": [
-    {
-      "binding": "MEDIA",
-      "bucket_name": "public",
-      "preview_bucket_name": "public",
-      "remote": true
-    }
-  ]
+	"name": "dev-banane",
+	"compatibility_date": "2025-04-01",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "devbanane-comments",
+			"database_id": "5920a303-7bfb-458f-9027-c07423682533",
+			"migrations_dir": "migrations",
+		},
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA",
+			"bucket_name": "public",
+			"jurisdiction": "eu",
+			"preview_bucket_name": "public",
+			"remote": true,
+		},
+	],
+	"observability": {
+		"enabled": false,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"persist": true,
+			"invocation_logs": true,
+		},
+		"traces": {
+			"enabled": false,
+			"persist": true,
+			"head_sampling_rate": 1,
+		},
+	},
 }
