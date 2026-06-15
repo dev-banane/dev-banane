@@ -1,0 +1,1000 @@
+---
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY
+const disableTurnstile =
+	import.meta.env.PUBLIC_DISABLE_TURNSTILE === 'true' ||
+	import.meta.env.PUBLIC_DISABLE_TURNSTILE === '1' ||
+	import.meta.env.DISABLE_TURNSTILE === 'true' ||
+	import.meta.env.DISABLE_TURNSTILE === '1'
+const turnstileEnabled = Boolean(siteKey) && !disableTurnstile
+const maxLen = 280
+const MAX_TEXTAREA_PX = 240
+---
+
+<section class="comments">
+	<div class="comments-header">
+		<h2 class="section-label">Comments</h2>
+		<button
+			id="comments-toggle"
+			class="toggle-btn"
+			aria-expanded="false"
+			aria-label="Add a comment"
+		>
+			<img src="/assets/icons/plus.svg" alt="" width="13" height="13" class="plus-icon" />
+		</button>
+	</div>
+
+	<div id="form-wrapper" class="form-wrapper">
+		<div class="form-inner">
+			<form id="comment-form" class="comment-form">
+				<div class="name-row">
+					<input
+						name="name"
+						type="text"
+						required
+						maxlength="40"
+						placeholder="Your name"
+						class="line-input line-input--name"
+						autocomplete="name"
+						tabindex="-1"
+					/>
+					<button
+						type="button"
+						id="avatar-btn"
+						class="avatar-btn"
+						aria-label="Upload avatar"
+						tabindex="-1"
+					>
+						<img id="avatar-preview" class="avatar-preview" alt="" hidden />
+						<span id="avatar-placeholder" class="avatar-placeholder" aria-hidden="true">
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.75"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path
+									d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"
+								></path>
+								<circle cx="12" cy="13" r="3"></circle>
+							</svg>
+						</span>
+					</button>
+					<input
+						id="avatar-input"
+						type="file"
+						accept="image/jpeg,image/png,image/webp,image/gif"
+						hidden
+					/>
+				</div>
+
+				<div class="social-row">
+					<label class="social-field">
+						<span class="social-input-wrap">
+							<span class="social-prefix" aria-hidden="true">
+								<img src="/assets/socials/github.svg" alt="" width="16" height="16" />
+							</span>
+							<input
+								name="github"
+								type="text"
+								maxlength="80"
+								placeholder="dev-banane"
+								class="line-input line-input--social"
+								autocomplete="off"
+								tabindex="-1"
+							/>
+						</span>
+					</label>
+					<label class="social-field">
+						<span class="social-input-wrap">
+							<span class="social-prefix" aria-hidden="true">
+								<img src="/assets/socials/twitter.svg" alt="" width="16" height="16" />
+							</span>
+							<input
+								name="twitter"
+								type="text"
+								maxlength="80"
+								placeholder="devbanane"
+								class="line-input line-input--social"
+								autocomplete="off"
+								tabindex="-1"
+							/>
+						</span>
+					</label>
+				</div>
+
+				<div class="textarea-wrap">
+					<textarea
+						id="comment-body"
+						name="message"
+						required
+						maxlength={maxLen}
+						placeholder="Say something nice…"
+						class="line-input line-input--area"
+						tabindex="-1"></textarea>
+					<span id="comment-counter" class="char-counter" aria-live="polite"></span>
+				</div>
+
+				<div class="comment-actions">
+					<button type="submit" class="text-action" tabindex="-1">Post</button>
+					<span id="comment-status" class="comment-status" aria-live="polite"></span>
+				</div>
+
+				{turnstileEnabled && <div id="comment-turnstile" class="turnstile-slot" />}
+			</form>
+		</div>
+	</div>
+
+	<ul id="comment-list" class="comment-list">
+		<li class="comment-empty">Loading…</li>
+	</ul>
+	<button type="button" id="comments-expand" class="comments-expand" hidden>
+		Show more comments
+	</button>
+</section>
+
+<style>
+	.comments {
+		margin-top: 3.5rem;
+	}
+
+	.comments-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 1.25rem;
+	}
+
+	.toggle-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.25rem;
+		height: 1.25rem;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		padding: 0;
+		flex-shrink: 0;
+		opacity: 0.6;
+		transition: opacity 0.15s ease;
+	}
+
+	.toggle-btn:hover {
+		opacity: 1;
+	}
+
+	.plus-icon {
+		filter: var(--icon-filter);
+		transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		will-change: transform;
+	}
+
+	.toggle-btn[aria-expanded='true'] .plus-icon {
+		transform: rotate(45deg);
+	}
+
+	.form-wrapper {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition:
+			grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+			margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		margin-top: 0;
+	}
+
+	.form-wrapper.open {
+		grid-template-rows: 1fr;
+		margin-top: 1.25rem;
+	}
+
+	.form-inner {
+		overflow: hidden;
+	}
+
+	.comment-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		padding-bottom: 1.75rem;
+	}
+
+	.name-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.avatar-btn {
+		background: transparent;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		flex-shrink: 0;
+		display: grid;
+		place-items: center;
+		color: var(--fg-dim);
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease,
+			opacity 0.15s ease;
+	}
+
+	.avatar-btn:hover {
+		color: var(--fg);
+	}
+
+	.avatar-btn:has(.avatar-preview:not([hidden])) {
+		width: 2.25rem;
+		height: 2.25rem;
+		border-radius: 9999px;
+		border: 1px solid var(--border);
+		overflow: hidden;
+	}
+
+	.avatar-btn:has(.avatar-preview:not([hidden])):hover {
+		border-color: var(--fg-dim);
+	}
+
+	.avatar-btn.is-uploading {
+		opacity: 0.6;
+		cursor: wait;
+	}
+
+	.avatar-preview {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+
+	.avatar-preview[hidden] {
+		display: none;
+	}
+
+	.avatar-placeholder {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.avatar-placeholder svg {
+		width: 1.375rem;
+		height: 1.375rem;
+	}
+
+	.avatar-placeholder[hidden] {
+		display: none;
+	}
+
+	.line-input--name {
+		flex: 1;
+	}
+
+	.social-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0.75rem;
+	}
+
+	@media (max-width: 520px) {
+		.social-row {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.social-field {
+		display: block;
+		min-width: 0;
+	}
+
+	.social-input-wrap {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		border-bottom: 1px solid var(--border);
+		padding: 0.4rem 0;
+		transition: border-color 0.15s ease;
+	}
+
+	.social-input-wrap:focus-within {
+		border-bottom-color: var(--fg);
+	}
+
+	.social-input-wrap:focus-within .social-prefix {
+		opacity: 0.7;
+	}
+
+  .social-prefix {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    opacity: 0.42;
+  }
+
+  .social-prefix img {
+    filter: var(--icon-filter);
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+
+  .line-input--social {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    padding: 0;
+    padding-left: 0.15rem;
+  }
+
+	.line-input {
+		width: 100%;
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid var(--border);
+		padding: 0.4rem 0;
+		font-family: inherit;
+		font-size: 0.9375rem;
+		color: var(--fg);
+		transition: border-color 0.15s ease;
+	}
+
+	.line-input::placeholder {
+		color: var(--fg-dim);
+	}
+
+	.line-input:focus {
+		outline: none;
+		border-bottom-color: var(--fg);
+	}
+
+	.line-input--social {
+		border-bottom: none;
+	}
+
+	.line-input--area {
+		resize: none;
+		line-height: 1.6;
+		overflow-y: hidden;
+	}
+
+	.line-input--area.scrollable {
+		overflow-y: auto;
+	}
+
+	.textarea-wrap {
+		position: relative;
+	}
+
+	.char-counter {
+		position: absolute;
+		bottom: 0.4rem;
+		right: 0;
+		font-size: 0.75rem;
+		color: var(--fg-dim);
+		pointer-events: none;
+		opacity: 0;
+		transition:
+			opacity 0.15s ease,
+			color 0.15s ease;
+	}
+
+	.char-counter.visible {
+		opacity: 1;
+	}
+
+	.char-counter.warning {
+		color: #f59e0b;
+	}
+
+	.char-counter.critical {
+		color: #ef4444;
+	}
+
+	.turnstile-slot:not(:empty) {
+		margin-top: 0.25rem;
+	}
+
+	.comment-actions {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.text-action {
+		background: none;
+		border: none;
+		padding: 0;
+		font-family: inherit;
+		font-size: 0.9375rem;
+		font-weight: 500;
+		color: var(--fg);
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--fg-dim);
+		transition:
+			text-decoration-color 0.15s ease,
+			opacity 0.15s ease;
+	}
+
+	.text-action:hover {
+		text-decoration-color: var(--fg);
+	}
+
+	.text-action:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+
+	.comment-status {
+		font-size: 0.8125rem;
+		color: var(--fg-muted);
+	}
+
+	.comment-status.is-error {
+		color: #ef4444;
+	}
+
+	.comment-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.comment-list :global(.comment-item) {
+		border-top: 1px solid var(--border);
+		padding-top: 1.25rem;
+	}
+
+	.comment-list :global(.comment-head) {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		flex-wrap: wrap;
+	}
+
+	.comment-list :global(.comment-avatar) {
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 9999px;
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+
+	.comment-list :global(.comment-avatar--empty) {
+		display: inline-grid;
+		place-items: center;
+		background: var(--btn-social-bg);
+		border: 1px solid var(--border);
+		font-size: 0.625rem;
+		font-weight: 600;
+		color: var(--fg-dim);
+		text-transform: uppercase;
+	}
+
+	.comment-list :global(.comment-meta) {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		min-width: 0;
+		flex: 1;
+	}
+
+	.comment-list :global(.comment-socials) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		margin-left: auto;
+	}
+
+	.comment-list :global(.comment-social) {
+		display: inline-flex;
+		opacity: 0.55;
+		transition: opacity 0.15s ease;
+	}
+
+	.comment-list :global(.comment-social:hover) {
+		opacity: 1;
+	}
+
+  .comment-list :global(.comment-social img) {
+    filter: var(--icon-filter);
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+
+	.comment-list :global(.comment-author) {
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: var(--fg);
+	}
+
+	.comment-list :global(.comment-time) {
+		font-size: 0.75rem;
+		color: var(--fg-dim);
+	}
+
+	.comment-list :global(.comment-body) {
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+		margin-top: 0.3rem;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	.comment-list :global(.comment-empty) {
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: var(--fg);
+	}
+
+	.comments-expand {
+		margin-top: 1rem;
+		background: none;
+		border: none;
+		padding: 0;
+		font-family: inherit;
+		font-size: 0.8125rem;
+		color: var(--fg-muted);
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--border);
+		transition:
+			color 0.15s ease,
+			text-decoration-color 0.15s ease;
+	}
+
+	.comments-expand:hover {
+		color: var(--fg);
+		text-decoration-color: var(--fg);
+	}
+
+	.comments-expand[hidden] {
+		display: none;
+	}
+</style>
+
+<script define:vars={{ turnstileEnabled, siteKey, maxLen, MAX_TEXTAREA_PX }}>
+	const INITIAL_COMMENT_LIMIT = 3
+	const wrapper = document.getElementById('form-wrapper')
+	const toggleBtn = document.getElementById('comments-toggle')
+	const form = document.getElementById('comment-form')
+	const listEl = document.getElementById('comment-list')
+	const expandBtn = document.getElementById('comments-expand')
+	const textarea = document.getElementById('comment-body')
+	const statusEl = document.getElementById('comment-status')
+	const submitBtn = form?.querySelector('button[type="submit"]')
+	const avatarBtn = document.getElementById('avatar-btn')
+	const avatarInput = document.getElementById('avatar-input')
+	const avatarPreview = document.getElementById('avatar-preview')
+	const avatarPlaceholder = document.getElementById('avatar-placeholder')
+	let isOpen = false
+	let widgetId = null
+	let turnstileToken = ''
+	let turnstileLoading = false
+	let avatarKey = ''
+	let avatarUploading = false
+	let allComments = []
+	let commentsExpanded = false
+	const DRAFT_KEY = 'comment-draft'
+	const nameInput = form?.querySelector('input[name="name"]')
+	const githubInput = form?.querySelector('input[name="github"]')
+	const twitterInput = form?.querySelector('input[name="twitter"]')
+
+	function loadDraft() {
+		try {
+			const raw = localStorage.getItem(DRAFT_KEY)
+			if (!raw) return
+			const draft = JSON.parse(raw)
+			if (nameInput instanceof HTMLInputElement && typeof draft.name === 'string') {
+				nameInput.value = draft.name
+			}
+			if (githubInput instanceof HTMLInputElement && typeof draft.github === 'string') {
+				githubInput.value = draft.github
+			}
+			if (twitterInput instanceof HTMLInputElement && typeof draft.twitter === 'string') {
+				twitterInput.value = draft.twitter
+			}
+			if (textarea instanceof HTMLTextAreaElement && typeof draft.message === 'string') {
+				textarea.value = draft.message
+				updateTextarea()
+			}
+			if (typeof draft.avatarKey === 'string' && draft.avatarKey) {
+				setAvatarPreview(draft.avatarKey, draft.avatarUrl ?? '')
+			}
+		} catch {}
+	}
+
+	function saveDraft() {
+		try {
+			const name = nameInput instanceof HTMLInputElement ? nameInput.value : ''
+			const github = githubInput instanceof HTMLInputElement ? githubInput.value : ''
+			const twitter = twitterInput instanceof HTMLInputElement ? twitterInput.value : ''
+			const message = textarea instanceof HTMLTextAreaElement ? textarea.value : ''
+			if (!name && !message && !github && !twitter && !avatarKey) {
+				localStorage.removeItem(DRAFT_KEY)
+				return
+			}
+			const avatarUrl =
+				avatarPreview instanceof HTMLImageElement && !avatarPreview.hidden
+					? avatarPreview.src
+					: ''
+			localStorage.setItem(
+				DRAFT_KEY,
+				JSON.stringify({ name, github, twitter, message, avatarKey, avatarUrl })
+			)
+		} catch {}
+	}
+
+	function clearDraft() {
+		try {
+			localStorage.removeItem(DRAFT_KEY)
+		} catch {}
+	}
+
+	function initials(name) {
+		const parts = String(name).trim().split(/\s+/).filter(Boolean)
+		if (!parts.length) return '?'
+		return parts
+			.slice(0, 2)
+			.map((p) => p[0])
+			.join('')
+	}
+
+	function setAvatarPreview(key, url, persist = true) {
+		avatarKey = key
+		if (
+			!(avatarPreview instanceof HTMLImageElement) ||
+			!(avatarPlaceholder instanceof HTMLElement)
+		)
+			return
+		if (key && url) {
+			avatarPreview.src = url
+			avatarPreview.hidden = false
+			avatarPlaceholder.hidden = true
+		} else {
+			avatarPreview.removeAttribute('src')
+			avatarPreview.hidden = true
+			avatarPlaceholder.hidden = false
+		}
+		if (persist) saveDraft()
+	}
+
+	function clearAvatar() {
+		avatarKey = ''
+		setAvatarPreview('', '', false)
+		if (avatarInput instanceof HTMLInputElement) avatarInput.value = ''
+	}
+
+	async function uploadAvatar(file) {
+		if (avatarUploading) return
+		if (turnstileEnabled && !turnstileToken) {
+			setStatus('Complete the verification first.', true)
+			ensureTurnstile()
+			return
+		}
+		avatarUploading = true
+		avatarBtn?.classList.add('is-uploading')
+		setStatus('Uploading image…', false)
+
+		try {
+			const fd = new FormData()
+			fd.append('avatar', file)
+			if (turnstileEnabled && turnstileToken) fd.append('turnstileToken', turnstileToken)
+
+			const res = await fetch('/api/avatar', { method: 'POST', body: fd })
+			const json = await res.json()
+			if (!res.ok || !json.ok) {
+				setStatus(json.error ?? 'Could not upload image.', true)
+				return
+			}
+			setAvatarPreview(json.key, json.url)
+			setStatus('', false)
+		} catch {
+			setStatus('Could not upload image.', true)
+		} finally {
+			avatarUploading = false
+			avatarBtn?.classList.remove('is-uploading')
+		}
+	}
+
+	avatarBtn?.addEventListener('click', () => {
+		if (avatarUploading) return
+		avatarInput?.click()
+	})
+
+	avatarInput?.addEventListener('change', () => {
+		const file = avatarInput instanceof HTMLInputElement ? avatarInput.files?.[0] : null
+		if (file) uploadAvatar(file)
+	})
+
+	function open() {
+		isOpen = true
+		wrapper?.classList.add('open')
+		toggleBtn?.setAttribute('aria-expanded', 'true')
+		form?.querySelectorAll('[tabindex="-1"]').forEach((el) => el.removeAttribute('tabindex'))
+		setTimeout(() => {
+			const first = form?.querySelector('input')
+			if (first instanceof HTMLElement) first.focus({ preventScroll: true })
+		}, 50)
+		ensureTurnstile()
+	}
+
+	function close() {
+		isOpen = false
+		wrapper?.classList.remove('open')
+		toggleBtn?.setAttribute('aria-expanded', 'false')
+		form?.querySelectorAll('input, textarea, button').forEach((el) =>
+			el.setAttribute('tabindex', '-1')
+		)
+	}
+
+	toggleBtn?.addEventListener('click', () => (isOpen ? close() : open()))
+
+	const THRESHOLD = Math.floor(maxLen * 0.8)
+
+	function updateTextarea() {
+		if (!(textarea instanceof HTMLTextAreaElement)) return
+		textarea.style.height = 'auto'
+		const next = Math.min(textarea.scrollHeight, MAX_TEXTAREA_PX)
+		textarea.style.height = `${next}px`
+		textarea.classList.toggle('scrollable', textarea.scrollHeight > MAX_TEXTAREA_PX)
+		if (!counterEl) return
+		const len = textarea.value.length
+		const remaining = maxLen - len
+		if (len >= THRESHOLD) {
+			counterEl.textContent = String(remaining)
+			counterEl.classList.add('visible')
+			counterEl.classList.toggle('warning', remaining <= Math.floor(maxLen * 0.15))
+			counterEl.classList.toggle('critical', remaining <= 10)
+		} else {
+			counterEl.classList.remove('visible', 'warning', 'critical')
+		}
+	}
+	textarea?.addEventListener('input', () => {
+		updateTextarea()
+		saveDraft()
+	})
+	nameInput?.addEventListener('input', saveDraft)
+	githubInput?.addEventListener('input', saveDraft)
+	twitterInput?.addEventListener('input', saveDraft)
+	loadDraft()
+
+	function timeAgo(iso) {
+		const d = new Date(iso).getTime()
+		if (Number.isNaN(d)) return ''
+		const mins = Math.floor(Math.max(0, Date.now() - d) / 60000)
+		if (mins < 1) return 'just now'
+		if (mins < 60) return `${mins}m ago`
+		const hrs = Math.floor(mins / 60)
+		if (hrs < 24) return `${hrs}h ago`
+		const days = Math.floor(hrs / 24)
+		if (days < 30) return `${days}d ago`
+		return new Date(iso).toLocaleDateString()
+	}
+
+	function esc(t) {
+		return t
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+	}
+
+	function commentHtml(c) {
+		const avatar = c.avatarUrl
+			? `<img src="${esc(c.avatarUrl)}" alt="" class="comment-avatar" width="24" height="24" />`
+			: `<span class="comment-avatar comment-avatar--empty" aria-hidden="true">${esc(initials(c.name))}</span>`
+		const socials = [
+			c.github
+				? `<a href="https://github.com/${esc(c.github)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"><img src="/assets/socials/github.svg" alt="" width="16" height="16" /></a>`
+				: '',
+			c.twitter
+				? `<a href="https://x.com/${esc(c.twitter)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="X profile"><img src="/assets/socials/twitter.svg" alt="" width="16" height="16" /></a>`
+				: '',
+		]
+			.filter(Boolean)
+			.join('')
+		return `
+        <li class="comment-item">
+          <div class="comment-head">
+            ${avatar}
+            <div class="comment-meta">
+              <span class="comment-author">${esc(c.name)}</span>
+              <span class="comment-time">${timeAgo(c.createdAt)}</span>
+            </div>
+            ${socials ? `<span class="comment-socials">${socials}</span>` : ''}
+          </div>
+          <p class="comment-body">${esc(c.body)}</p>
+        </li>`
+	}
+
+	function updateExpandBtn() {
+		if (!expandBtn) return
+		const extra = allComments.length - INITIAL_COMMENT_LIMIT
+		if (extra <= 0 || commentsExpanded) {
+			expandBtn.hidden = true
+			return
+		}
+		expandBtn.hidden = false
+		expandBtn.textContent =
+			extra === 1 ? 'Show 1 more comment' : `Show ${extra} more comments`
+	}
+
+	function paintComments() {
+		if (!listEl) return
+		if (!allComments.length) {
+			listEl.innerHTML = '<li class="comment-empty">No comments yet — be the first.</li>'
+			updateExpandBtn()
+			return
+		}
+		const visible = commentsExpanded
+			? allComments
+			: allComments.slice(0, INITIAL_COMMENT_LIMIT)
+		listEl.innerHTML = visible.map(commentHtml).join('')
+		updateExpandBtn()
+	}
+
+	function render(comments) {
+		allComments = comments
+		paintComments()
+	}
+
+	expandBtn?.addEventListener('click', () => {
+		commentsExpanded = true
+		paintComments()
+	})
+
+	function setStatus(msg, isError) {
+		if (!statusEl) return
+		statusEl.textContent = msg
+		statusEl.classList.toggle('is-error', !!isError)
+	}
+
+	function renderTurnstile() {
+		if (!turnstileEnabled || !window.turnstile) return
+		const el = document.getElementById('comment-turnstile')
+		if (!el || widgetId) return
+		widgetId = window.turnstile.render(el, {
+			sitekey: siteKey,
+			theme: 'auto',
+			callback: (t) => (turnstileToken = t),
+			'expired-callback': () => (turnstileToken = ''),
+			'error-callback': () => (turnstileToken = ''),
+		})
+	}
+
+	function ensureTurnstile() {
+		if (!turnstileEnabled || widgetId || turnstileLoading) return
+		turnstileLoading = true
+		if (window.turnstile) {
+			renderTurnstile()
+		} else {
+			const s = document.createElement('script')
+			s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+			s.async = true
+			s.onload = renderTurnstile
+			document.head.appendChild(s)
+		}
+	}
+
+	async function fingerprint() {
+		try {
+			const parts = [
+				navigator.userAgent,
+				navigator.language,
+				screen.width + 'x' + screen.height + 'x' + screen.colorDepth,
+				String(window.devicePixelRatio ?? 1),
+				Intl.DateTimeFormat().resolvedOptions().timeZone,
+				String(navigator.hardwareConcurrency ?? 0),
+				String(navigator.maxTouchPoints ?? 0),
+			]
+			const buf = await crypto.subtle.digest(
+				'SHA-256',
+				new TextEncoder().encode(parts.join('\n'))
+			)
+			return Array.from(new Uint8Array(buf))
+				.map((b) => b.toString(16).padStart(2, '0'))
+				.join('')
+		} catch {
+			return ''
+		}
+	}
+
+	fetch('/api/comments')
+		.then((r) => r.json())
+		.then((d) => render(d.comments ?? []))
+		.catch(() => {
+			if (listEl) listEl.innerHTML = '<li class="comment-empty">Could not load comments.</li>'
+		})
+
+	form?.addEventListener('submit', async (e) => {
+		e.preventDefault()
+		if (!(form instanceof HTMLFormElement) || !submitBtn) return
+
+		const data = new FormData(form)
+		const name = String(data.get('name') ?? '').trim()
+		const body = String(data.get('message') ?? '').trim()
+		const github = String(data.get('github') ?? '').trim()
+		const twitter = String(data.get('twitter') ?? '').trim()
+		if (!name || !body) return
+
+		if (turnstileEnabled && !turnstileToken) {
+			setStatus('Complete the verification first.', true)
+			return
+		}
+
+		if (avatarUploading) {
+			setStatus('Wait for the image upload to finish.', true)
+			return
+		}
+
+		submitBtn.setAttribute('disabled', 'true')
+		submitBtn.textContent = 'Posting…'
+		setStatus('', false)
+
+		const fp = await fingerprint()
+
+		try {
+			const res = await fetch('/api/comments', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name,
+					body,
+					github,
+					twitter,
+					avatarKey,
+					turnstileToken,
+					fingerprint: fp,
+				}),
+			})
+			const json = await res.json()
+
+			if (!res.ok || !json.ok) {
+				setStatus(json.error ?? 'Could not post.', true)
+				if (widgetId && window.turnstile) {
+					window.turnstile.reset(widgetId)
+					turnstileToken = ''
+				}
+				return
+			}
+
+			const refreshed = await fetch('/api/comments').then((r) => r.json())
+			commentsExpanded = false
+			render(refreshed.comments ?? [])
+			form.reset()
+			clearAvatar()
+			clearDraft()
+			if (textarea instanceof HTMLTextAreaElement) {
+				textarea.style.height = ''
+				textarea.classList.remove('scrollable')
+			}
+			if (counterEl) counterEl.classList.remove('visible', 'warning', 'critical')
+			setStatus('Thanks!', false)
+			close()
+			if (toggleBtn) toggleBtn.setAttribute('hidden', '')
+			if (widgetId && window.turnstile) {
+				window.turnstile.reset(widgetId)
+				turnstileToken = ''
+			}
+		} catch {
+			setStatus('Network error. Try again.', true)
+		} finally {
+			submitBtn.removeAttribute('disabled')
+			submitBtn.textContent = 'Post'
+		}
+	})
+</script>

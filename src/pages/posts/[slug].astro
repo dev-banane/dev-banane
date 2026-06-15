@@ -1,0 +1,22 @@
+---
+export const prerender = false;
+
+import Article from '../../layouts/Article.astro';
+import { fetchPost } from '../../lib/posts';
+import { env } from 'cloudflare:workers';
+
+const { slug } = Astro.params;
+if (!slug) {
+  return new Response('Not found', { status: 404 });
+}
+
+const remote = await fetchPost(slug, env.MEDIA);
+if (!remote) {
+  return new Response('Post not found', { status: 404 });
+}
+
+const title = remote.title ?? slug;
+const date = remote.date ?? '';
+---
+
+<Article title={title} date={date} slug={slug} html={remote.html} />

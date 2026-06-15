@@ -1,0 +1,170 @@
+---
+import Layout from './Layout.astro';
+import PostStats from '../components/PostStats.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+
+interface Props {
+  title: string;
+  date: string;
+  slug: string;
+  html?: string;
+}
+
+const { title, date, slug, html } = Astro.props;
+const formatted = new Date(date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title={`${title} · Jakob`}>
+  <ThemeToggle fixed />
+
+  <div class="page">
+    <article class="article">
+      <a href="/" class="back">
+        <img src="/assets/icons/arrow.svg" alt="" width="14" height="14" class="back-arrow" />
+        Back
+      </a>
+      <h1 class="title">{title}</h1>
+      <p class="date">{formatted}</p>
+      <PostStats slug={slug} />
+      <div class="prose">
+        {html ? <div set:html={html} /> : <slot />}
+      </div>
+    </article>
+  </div>
+</Layout>
+
+<style>
+  .page {
+    display: flex;
+    justify-content: center;
+    padding: 5rem 1.5rem;
+  }
+
+  .article {
+    width: 100%;
+    max-width: 40rem;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: var(--fg-muted);
+  }
+
+  .back:hover {
+    color: var(--fg);
+  }
+
+  .back-arrow {
+    transform: rotate(180deg);
+    filter: var(--icon-filter);
+    opacity: 0.7;
+  }
+
+  .title {
+    font-size: 1.875rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--fg);
+    margin-top: 1.5rem;
+  }
+
+  .date {
+    font-size: 0.875rem;
+    color: var(--fg-dim);
+    margin-top: 0.5rem;
+  }
+
+  .prose {
+    margin-top: 2.5rem;
+  }
+
+  .prose > :global(div) {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .prose :global(p) {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--fg-muted);
+    margin: 0;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  .prose :global(p.md-gap) {
+    padding: 0;
+    min-height: 1.75em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .prose :global(h2) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--fg);
+    margin: 0;
+  }
+
+  .prose :global(a) {
+    color: var(--fg);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--fg-dim);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--fg-muted);
+    margin: 0;
+  }
+
+  .prose :global(li + li) {
+    margin-top: 0.35rem;
+  }
+
+  .prose :global(blockquote) {
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+    color: var(--fg-dim);
+    font-style: italic;
+  }
+
+  .prose :global(code) {
+    font-size: 0.9em;
+    background: var(--btn-social-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 0.25rem;
+  }
+
+  .prose :global(pre) {
+    overflow-x: auto;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--btn-social-bg);
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    padding: 0;
+  }
+
+  .prose :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+</style>

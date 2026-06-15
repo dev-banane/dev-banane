@@ -1,1 +1,130 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --bg: #0f0f0f;
+  --fg: #e4e4e7;
+  --fg-muted: #71717a;
+  --fg-dim: #52525b;
+  --border: rgba(255, 255, 255, 0.07);
+  --btn-social-bg: #18181b;
+  --btn-social-border: rgba(255, 255, 255, 0.12);
+  --btn-social-hover: #27272a;
+  --btn-social-color: #ffffff;
+  --icon-filter: brightness(0) invert(1);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --fg: #18181b;
+  --fg-muted: #52525b;
+  --fg-dim: #a1a1aa;
+  --border: rgba(0, 0, 0, 0.08);
+  --btn-social-bg: #f4f4f5;
+  --btn-social-border: rgba(0, 0, 0, 0.09);
+  --btn-social-hover: #e4e4e7;
+  --btn-social-color: #18181b;
+  --icon-filter: brightness(0);
+  color-scheme: light;
+}
+
+@layer base {
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  ::selection {
+    background-color: rgba(128, 128, 128, 0.2);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fg-muted);
+    outline-offset: 2px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+@layer components {
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+  }
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.125rem 0.625rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 400;
+    font-family: inherit;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .btn--social {
+    color: var(--btn-social-color);
+    background: var(--btn-social-bg);
+    border: 1px solid var(--btn-social-border);
+  }
+
+  .btn--social:hover {
+    background: var(--btn-social-hover);
+  }
+
+  .btn-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: var(--icon-filter);
+    margin-left: -0.1rem;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a transparent;
+}

@@ -1,0 +1,135 @@
+---
+import '../styles/global.css'
+import { ClientRouter } from 'astro:transitions'
+
+interface Props {
+	title?: string
+	description?: string
+}
+
+const { title = 'Jakob Pütz', description = '17 y/o full-stack developer from Aachen.' } =
+	Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content={description} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+			rel="stylesheet"
+		/>
+		<ClientRouter />
+		<script is:inline>
+			;(function () {
+				var theme = localStorage.getItem('theme') || 'light'
+				document.documentElement.setAttribute('data-theme', theme)
+			})()
+		</script>
+		<script is:inline>
+			document.addEventListener('astro:before-swap', function (e) {
+				var theme = document.documentElement.getAttribute('data-theme')
+				if (theme) e.newDocument.documentElement.setAttribute('data-theme', theme)
+			})
+		</script>
+	</head>
+	<body>
+		<slot />
+
+		<script>
+			document.addEventListener('astro:page-load', () => {
+				const toggle = document.getElementById('theme-toggle')
+				if (!toggle) return
+
+				const fresh = toggle.cloneNode(true) as Element
+				toggle.replaceWith(fresh)
+
+				function current() {
+					return document.documentElement.getAttribute('data-theme') ?? 'light'
+				}
+				fresh.setAttribute('aria-checked', String(current() === 'dark'))
+				fresh.addEventListener('click', () => {
+					const next = current() === 'dark' ? 'light' : 'dark'
+					document.documentElement.setAttribute('data-theme', next)
+					localStorage.setItem('theme', next)
+					fresh.setAttribute('aria-checked', String(next === 'dark'))
+				})
+			})
+		</script>
+	</body>
+</html>
+
+<style is:global>
+	.theme-toggle {
+		border: none;
+		background: none;
+		padding: 0;
+		cursor: pointer;
+		flex-shrink: 0;
+	}
+
+	.theme-toggle__track {
+		--toggle-width: 3.25rem;
+		--knob-size: 1.3rem;
+		--knob-inset: 0.2rem;
+		--knob-travel: 1.5rem;
+		position: relative;
+		display: block;
+		width: var(--toggle-width);
+		height: 1.75rem;
+		border-radius: 9999px;
+		border: 1px solid var(--border);
+		background: var(--btn-social-bg);
+		transition:
+			background 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.theme-toggle__icon {
+		position: absolute;
+		top: 50%;
+		width: 13px;
+		height: 13px;
+		color: var(--fg-dim);
+		transform: translate(-50%, -50%);
+		z-index: 3;
+		pointer-events: none;
+	}
+
+	.theme-toggle__icon.icon-sun {
+		left: calc(var(--knob-inset) + var(--knob-size) / 2);
+	}
+
+	.theme-toggle__icon.icon-moon {
+		left: calc(var(--knob-inset) + var(--knob-travel) + var(--knob-size) / 2);
+	}
+
+	[data-theme='light'] .theme-toggle__icon.icon-sun,
+	[data-theme='dark'] .theme-toggle__icon.icon-moon {
+		color: var(--bg);
+	}
+
+	.theme-toggle__knob {
+		position: absolute;
+		top: 50%;
+		left: var(--knob-inset);
+		width: var(--knob-size);
+		height: var(--knob-size);
+		border-radius: 9999px;
+		background: var(--fg);
+		transform: translateY(-50%);
+		transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+		z-index: 2;
+	}
+
+	[data-theme='dark'] .theme-toggle__knob {
+		transform: translate(calc(var(--knob-travel)), -50%);
+	}
+</style>

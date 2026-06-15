@@ -1,17 +1,344 @@
 ---
+export const prerender = false
 
+import Layout from '../layouts/Layout.astro'
+import Comments from '../components/Comments.astro'
+import ThemeToggle from '../components/ThemeToggle.astro'
+import { socials } from '../data/site'
+import { fetchPostList } from '../lib/posts'
+import { env } from 'cloudflare:workers'
+
+const posts = await fetchPostList(env.MEDIA)
+
+function formatDate(iso: string) {
+	return new Date(iso).toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	})
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Jakob Pütz">
+	<div class="page">
+		<div class="grid">
+			<article class="about">
+				<div class="name-row">
+					<div>
+						<h1 class="name">Jakob Pütz</h1>
+						<p class="role">Full-stack developer · Aachen, Germany</p>
+					</div>
+					<img
+						src="/assets/avatar.jpg"
+						alt="Jakob Pütz"
+						class="profile-avatar"
+						width="52"
+						height="52"
+					/>
+				</div>
+
+				<div class="prose">
+					<p>
+						Hey, I'm an 17-year-old developer and I've been building software since my
+						early teens, and what started as curiosity quickly turned into a serious
+						passion for making things people actually use.
+					</p>
+					<p>
+						Right now I'm building <a
+							href="https://pfcontrol.app"
+							target="_blank"
+							rel="noopener"
+							class="link">PFControl</a
+						>, an ATC strip management platform I've been working on since I was 15 with
+						thousands of registered users and ~500 daily actives, and <a
+							href="/posts/petal"
+							class="link">Petal</a
+						>, a unified AI workspace I'm developing from the ground up.
+					</p>
+					<p>
+						I work across the full stack with TypeScript, Next.js, Postgres, and
+						whatever else the problem needs. Outside of code I'm interested in aviation,
+						space as well as photography. <a href="mailto:me@devbanane.com" class="link"
+							>Feel free to contact me!</a
+						>
+					</p>
+				</div>
+
+				<div class="socials">
+					{
+						socials.map((s) => (
+							<a
+								href={s.href}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="btn btn--social"
+							>
+								<img src={s.icon} alt="" width={28} height={28} class="btn-icon" />
+								{s.label}
+							</a>
+						))
+					}
+				</div>
+			</article>
+
+			<aside class="writing">
+				<div class="writing-header">
+					<h2 class="section-label">Writing</h2>
+					<ThemeToggle />
+				</div>
+				{
+					posts.length === 0 ? (
+						<p class="empty">Nothing published yet.</p>
+					) : (
+						<div class="post-scroll-wrap" id="post-scroll-wrap">
+							<ul class="post-list" id="post-scroll" data-count={posts.length}>
+								{posts.map((p) => (
+									<li>
+										<a href={`/posts/${p.slug}`} class="post-link">
+											<span class="post-title">{p.title}</span>
+											<span class="post-date">{formatDate(p.date)}</span>
+										</a>
+									</li>
+								))}
+							</ul>
+						</div>
+					)
+				}
+
+				<Comments />
+			</aside>
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.page {
+		min-height: 100vh;
+		padding: 4rem 1.5rem;
+	}
+
+	.grid {
+		width: 100%;
+		max-width: 64rem;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 3.5rem;
+	}
+
+	@media (min-width: 820px) {
+		.grid {
+			grid-template-columns: 1.3fr 1fr;
+			gap: 5rem;
+			align-items: start;
+		}
+	}
+
+	.about {
+		width: 100%;
+	}
+
+	.name-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+	}
+
+	.profile-avatar {
+		width: 3.25rem;
+		height: 3.25rem;
+		border-radius: 50%;
+		object-fit: cover;
+		flex-shrink: 0;
+		display: block;
+	}
+
+	.name {
+		font-size: 1.75rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		color: var(--fg);
+	}
+
+	.role {
+		font-size: 0.9375rem;
+		color: var(--fg-muted);
+		margin-top: 0.4rem;
+	}
+
+	.prose {
+		margin-top: 1.75rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.1rem;
+	}
+
+	.prose p {
+		font-size: 1.0625rem;
+		line-height: 1.7;
+		color: var(--fg-muted);
+		text-align: justify;
+		hyphens: auto;
+	}
+
+	.link {
+		color: var(--fg);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--fg-dim);
+	}
+
+	.link:hover {
+		text-decoration-color: var(--fg);
+	}
+
+	.socials {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.625rem;
+		margin-top: 2rem;
+	}
+
+	.writing {
+		padding-top: 0;
+	}
+
+	.writing-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 1.25rem;
+	}
+
+	.post-scroll-wrap {
+		position: relative;
+		margin-bottom: 0.25rem;
+	}
+
+	.post-scroll-wrap::before,
+	.post-scroll-wrap::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		height: 3.5rem;
+		pointer-events: none;
+		z-index: 1;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+
+	.post-scroll-wrap::before {
+		top: 0;
+		background: linear-gradient(to bottom, var(--bg), transparent);
+	}
+
+	.post-scroll-wrap::after {
+		bottom: 0;
+		background: linear-gradient(to top, var(--bg), transparent);
+	}
+
+	.post-scroll-wrap.grad-top::before {
+		opacity: 1;
+	}
+	.post-scroll-wrap.grad-bottom::after {
+		opacity: 1;
+	}
+
+	.post-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		max-height: 15.5rem;
+		overflow-y: auto;
+		scrollbar-width: none;
+	}
+
+	.post-list::-webkit-scrollbar {
+		display: none;
+	}
+
+	.post-link {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		padding: 0.9rem 0;
+		border-top: 1px solid var(--border);
+		transition: opacity 0.15s ease;
+	}
+
+	.post-list li:last-child .post-link {
+		border-bottom: 1px solid var(--border);
+	}
+
+	.post-link:hover {
+		opacity: 0.65;
+	}
+
+	.post-title {
+		font-size: 0.9375rem;
+		line-height: 1.5;
+		color: var(--fg);
+	}
+
+	.post-date {
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.empty {
+		font-size: 0.9rem;
+		color: var(--fg-dim);
+	}
+</style>
+
+<script>
+	const wrap = document.getElementById('post-scroll-wrap')
+	const list = document.getElementById('post-scroll')
+	const count = Number(list?.dataset.count ?? 0)
+
+	if (list && wrap && count >= 4) {
+		function syncGrads() {
+			const { scrollTop, scrollHeight, clientHeight } = list!
+			wrap!.classList.toggle('grad-top', scrollTop > 2)
+			wrap!.classList.toggle('grad-bottom', scrollTop + clientHeight < scrollHeight - 2)
+		}
+		syncGrads()
+		list.addEventListener('scroll', syncGrads, { passive: true })
+	}
+
+	function syncColumnOffset() {
+		const page = document.querySelector<HTMLElement>('.page')
+		const about = document.querySelector<HTMLElement>('.about')
+		const writing = document.querySelector<HTMLElement>('.writing')
+		if (!page || !about || !writing) return
+
+		if (window.innerWidth < 820) {
+			about.style.paddingTop = ''
+			writing.style.paddingTop = ''
+			return
+		}
+
+		const style = getComputedStyle(page)
+		const padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
+		const rail = window.innerHeight - padY
+		const offset = Math.max(0, (rail - about.offsetHeight) / 2)
+		const top = `${offset}px`
+		about.style.paddingTop = top
+		writing.style.paddingTop = top
+	}
+
+	syncColumnOffset()
+	window.addEventListener('resize', syncColumnOffset, { passive: true })
+	document.addEventListener('astro:page-load', syncColumnOffset)
+
+	const aboutEl = document.querySelector('.about')
+	const writingEl = document.querySelector('.writing')
+	if (aboutEl && writingEl && 'ResizeObserver' in window) {
+		const ro = new ResizeObserver(syncColumnOffset)
+		ro.observe(aboutEl)
+		ro.observe(writingEl)
+	}
+</script>
