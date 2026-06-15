@@ -871,8 +871,14 @@ const MAX_TEXTAREA_PX = 240
 			sitekey: siteKey,
 			theme: 'auto',
 			callback: (t) => (turnstileToken = t),
-			'expired-callback': () => (turnstileToken = ''),
-			'error-callback': () => (turnstileToken = ''),
+			'expired-callback': () => {
+				turnstileToken = ''
+				setStatus('Verification expired. Try again.', true)
+			},
+			'error-callback': () => {
+				turnstileToken = ''
+				setStatus('Verification failed to load. Check your connection or try again later.', true)
+			},
 		})
 	}
 

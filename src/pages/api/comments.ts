@@ -122,7 +122,12 @@ export const POST: APIRoute = async ({ request }) => {
       }
       const v = await verifyTurnstileToken(turnstileToken, env.TURNSTILE_SECRET_KEY, ip);
       if (!v.success) {
-        return Response.json({ error: 'Verification failed. Try again.' }, { status: 403 });
+        const detail = v.errorCodes?.includes('invalid-input-secret')
+          ? 'Server verification is misconfigured.'
+          : v.errorCodes?.includes('timeout-or-duplicate')
+            ? 'Verification expired. Refresh and try again.'
+            : 'Verification failed. Try again.';
+        return Response.json({ error: detail }, { status: 403 });
       }
     }
 

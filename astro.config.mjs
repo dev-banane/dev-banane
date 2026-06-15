@@ -4,7 +4,7 @@ import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://devbanane.com',
+  site: 'https://devjakob.com',
   adapter: cloudflare(),
   vite: {
     plugins: [tailwindcss()],

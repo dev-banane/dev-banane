@@ -16,6 +16,15 @@ const formatted = new Date(date).toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric',
 });
+
+function estimateReadingMinutes(content?: string): number {
+  if (!content) return 1;
+  const text = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = text ? text.split(' ').filter(Boolean).length : 0;
+  return Math.max(1, Math.round(words / 200));
+}
+
+const readingMinutes = estimateReadingMinutes(html);
 ---
 
 <Layout title={`${title} · Jakob`}>
@@ -29,7 +38,7 @@ const formatted = new Date(date).toLocaleDateString('en-US', {
       </a>
       <h1 class="title">{title}</h1>
       <p class="date">{formatted}</p>
-      <PostStats slug={slug} />
+      <PostStats slug={slug} readingMinutes={readingMinutes} />
       <div class="prose">
         {html ? <div set:html={html} /> : <slot />}
       </div>
