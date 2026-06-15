@@ -17,6 +17,7 @@ const { title = 'Jakob Pütz', description = '17 y/o full-stack developer from A
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content={description} />
+		<meta id="theme-color-meta" name="theme-color" content="#ffffff" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<title>{title}</title>
@@ -29,14 +30,23 @@ const { title = 'Jakob Pütz', description = '17 y/o full-stack developer from A
 		<ClientRouter />
 		<script is:inline>
 			;(function () {
-				var theme = localStorage.getItem('theme') || 'light'
-				document.documentElement.setAttribute('data-theme', theme)
+				var THEME_COLORS = { light: '#ffffff', dark: '#0f0f0f' }
+				function applyTheme(theme) {
+					document.documentElement.setAttribute('data-theme', theme)
+					var meta = document.getElementById('theme-color-meta')
+					if (meta) meta.content = THEME_COLORS[theme] || THEME_COLORS.light
+				}
+				window.__applyTheme = applyTheme
+				applyTheme(localStorage.getItem('theme') || 'light')
 			})()
 		</script>
 		<script is:inline>
 			document.addEventListener('astro:before-swap', function (e) {
 				var theme = document.documentElement.getAttribute('data-theme')
-				if (theme) e.newDocument.documentElement.setAttribute('data-theme', theme)
+				if (!theme) return
+				e.newDocument.documentElement.setAttribute('data-theme', theme)
+				var meta = e.newDocument.getElementById('theme-color-meta')
+				if (meta) meta.content = theme === 'dark' ? '#0f0f0f' : '#ffffff'
 			})
 		</script>
 	</head>
@@ -57,8 +67,8 @@ const { title = 'Jakob Pütz', description = '17 y/o full-stack developer from A
 				fresh.setAttribute('aria-checked', String(current() === 'dark'))
 				fresh.addEventListener('click', () => {
 					const next = current() === 'dark' ? 'light' : 'dark'
-					document.documentElement.setAttribute('data-theme', next)
 					localStorage.setItem('theme', next)
+					;(window as Window & { __applyTheme?: (theme: string) => void }).__applyTheme?.(next)
 					fresh.setAttribute('aria-checked', String(next === 'dark'))
 				})
 			})

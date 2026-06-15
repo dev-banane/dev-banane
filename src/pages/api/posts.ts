@@ -102,43 +102,32 @@ export const POST: APIRoute = async ({ request }) => {
     const ip = request.headers.get('CF-Connecting-IP') ?? '0.0.0.0';
     const ipHash = await hashIp(ip, salt);
 
-    const prevRow = await db
-      .prepare(`SELECT vote FROM post_votes WHERE slug = ?1 AND ip_hash = ?2`)
-      .bind(slug, ipHash)
-      .first<{ vote: number }>();
-    const prev = prevRow?.vote ?? 0;
+    const voteStatement =
+      vote === 0
+        ? db
+            .prepare(`DELETE FROM post_votes WHERE slug = ?1 AND ip_hash = ?2`)
+            .bind(slug, ipHash)
+        : db
+            .prepare(
+              `INSERT INTO post_votes (slug, ip_hash, vote) VALUES (?1, ?2, ?3)
+               ON CONFLICT(slug, ip_hash) DO UPDATE SET vote = ?3`
+            )
+            .bind(slug, ipHash, vote);
 
-    const upDelta = (vote === 1 ? 1 : 0) - (prev === 1 ? 1 : 0);
-    const downDelta = (vote === -1 ? 1 : 0) - (prev === -1 ? 1 : 0);
-
-    const statements = [
+    await db.batch([
+      db
+        .prepare(`INSERT INTO post_stats (slug) VALUES (?1) ON CONFLICT(slug) DO NOTHING`)
+        .bind(slug),
+      voteStatement,
       db
         .prepare(
-          `INSERT INTO post_stats (slug, upvotes, downvotes)
-           VALUES (?1, MAX(?2, 0), MAX(?3, 0))
-           ON CONFLICT(slug) DO UPDATE SET
-             upvotes = MAX(upvotes + ?2, 0),
-             downvotes = MAX(downvotes + ?3, 0)`
+          `UPDATE post_stats SET
+             upvotes = (SELECT COUNT(*) FROM post_votes WHERE slug = ?1 AND vote = 1),
+             downvotes = (SELECT COUNT(*) FROM post_votes WHERE slug = ?1 AND vote = -1)
+           WHERE slug = ?1`
         )
-        .bind(slug, upDelta, downDelta),
-    ];
-
-    if (vote === 0) {
-      statements.push(
-        db.prepare(`DELETE FROM post_votes WHERE slug = ?1 AND ip_hash = ?2`).bind(slug, ipHash)
-      );
-    } else {
-      statements.push(
-        db
-          .prepare(
-            `INSERT INTO post_votes (slug, ip_hash, vote) VALUES (?1, ?2, ?3)
-             ON CONFLICT(slug, ip_hash) DO UPDATE SET vote = ?3`
-          )
-          .bind(slug, ipHash, vote)
-      );
-    }
-
-    await db.batch(statements);
+        .bind(slug),
+    ]);
 
     const stats = await readStats(db, slug);
     return Response.json({ ok: true, ...stats, myVote: vote });

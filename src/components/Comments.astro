@@ -10,7 +10,13 @@ const maxLen = 280
 const MAX_TEXTAREA_PX = 240
 ---
 
-<section class="comments">
+<section
+	class="comments"
+	data-turnstile-enabled={String(turnstileEnabled)}
+	data-site-key={siteKey ?? ''}
+	data-max-len={String(maxLen)}
+	data-max-textarea={String(MAX_TEXTAREA_PX)}
+>
 	<div class="comments-header">
 		<h2 class="section-label">Comments</h2>
 		<button
@@ -73,7 +79,12 @@ const MAX_TEXTAREA_PX = 240
 					<label class="social-field">
 						<span class="social-input-wrap">
 							<span class="social-prefix" aria-hidden="true">
-								<img src="/assets/socials/github.svg" alt="" width="16" height="16" />
+								<img
+									src="/assets/socials/github.svg"
+									alt=""
+									width="16"
+									height="16"
+								/>
 							</span>
 							<input
 								name="github"
@@ -89,7 +100,12 @@ const MAX_TEXTAREA_PX = 240
 					<label class="social-field">
 						<span class="social-input-wrap">
 							<span class="social-prefix" aria-hidden="true">
-								<img src="/assets/socials/twitter.svg" alt="" width="16" height="16" />
+								<img
+									src="/assets/socials/twitter.svg"
+									alt=""
+									width="16"
+									height="16"
+								/>
 							</span>
 							<input
 								name="twitter"
@@ -306,31 +322,31 @@ const MAX_TEXTAREA_PX = 240
 		opacity: 0.7;
 	}
 
-  .social-prefix {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    pointer-events: none;
-    opacity: 0.42;
-  }
+	.social-prefix {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: 16px;
+		height: 16px;
+		pointer-events: none;
+		opacity: 0.42;
+	}
 
-  .social-prefix img {
-    filter: var(--icon-filter);
-    display: block;
-    width: 16px;
-    height: 16px;
-  }
+	.social-prefix img {
+		filter: var(--icon-filter);
+		display: block;
+		width: 16px;
+		height: 16px;
+	}
 
-  .line-input--social {
-    flex: 1;
-    min-width: 0;
-    border: none;
-    padding: 0;
-    padding-left: 0.15rem;
-  }
+	.line-input--social {
+		flex: 1;
+		min-width: 0;
+		border: none;
+		padding: 0;
+		padding-left: 0.15rem;
+	}
 
 	.line-input {
 		width: 100%;
@@ -506,12 +522,12 @@ const MAX_TEXTAREA_PX = 240
 		opacity: 1;
 	}
 
-  .comment-list :global(.comment-social img) {
-    filter: var(--icon-filter);
-    display: block;
-    width: 16px;
-    height: 16px;
-  }
+	.comment-list :global(.comment-social img) {
+		filter: var(--icon-filter);
+		display: block;
+		width: 16px;
+		height: 16px;
+	}
 
 	.comment-list :global(.comment-author) {
 		font-size: 0.875rem;
@@ -566,248 +582,338 @@ const MAX_TEXTAREA_PX = 240
 	}
 </style>
 
-<script define:vars={{ turnstileEnabled, siteKey, maxLen, MAX_TEXTAREA_PX }}>
+<script>
+	interface TurnstileApi {
+		render(el: HTMLElement, opts: Record<string, unknown>): string
+		reset(id?: string): void
+		remove(id?: string): void
+	}
+	declare global {
+		interface Window {
+			turnstile?: TurnstileApi
+		}
+	}
+
+	type Comment = {
+		id: number
+		name: string
+		body: string
+		createdAt: string
+		avatarUrl: string
+		github: string
+		twitter: string
+	}
+	type TokenWaiter = { resolve: (t: string) => void; reject: (e: Error) => void }
+
 	const INITIAL_COMMENT_LIMIT = 3
-	const wrapper = document.getElementById('form-wrapper')
-	const toggleBtn = document.getElementById('comments-toggle')
-	const form = document.getElementById('comment-form')
-	const listEl = document.getElementById('comment-list')
-	const expandBtn = document.getElementById('comments-expand')
-	const textarea = document.getElementById('comment-body')
-	const statusEl = document.getElementById('comment-status')
-	const submitBtn = form?.querySelector('button[type="submit"]')
-	const avatarBtn = document.getElementById('avatar-btn')
-	const avatarInput = document.getElementById('avatar-input')
-	const avatarPreview = document.getElementById('avatar-preview')
-	const avatarPlaceholder = document.getElementById('avatar-placeholder')
-	let isOpen = false
-	let widgetId = null
-	let turnstileToken = ''
-	let turnstileLoading = false
-	let avatarKey = ''
-	let avatarUploading = false
-	let allComments = []
-	let commentsExpanded = false
 	const DRAFT_KEY = 'comment-draft'
-	const nameInput = form?.querySelector('input[name="name"]')
-	const githubInput = form?.querySelector('input[name="github"]')
-	const twitterInput = form?.querySelector('input[name="twitter"]')
+	let commentsCache: Comment[] | null = null
 
-	function loadDraft() {
-		try {
-			const raw = localStorage.getItem(DRAFT_KEY)
-			if (!raw) return
-			const draft = JSON.parse(raw)
-			if (nameInput instanceof HTMLInputElement && typeof draft.name === 'string') {
-				nameInput.value = draft.name
-			}
-			if (githubInput instanceof HTMLInputElement && typeof draft.github === 'string') {
-				githubInput.value = draft.github
-			}
-			if (twitterInput instanceof HTMLInputElement && typeof draft.twitter === 'string') {
-				twitterInput.value = draft.twitter
-			}
-			if (textarea instanceof HTMLTextAreaElement && typeof draft.message === 'string') {
-				textarea.value = draft.message
-				updateTextarea()
-			}
-			if (typeof draft.avatarKey === 'string' && draft.avatarKey) {
-				setAvatarPreview(draft.avatarKey, draft.avatarUrl ?? '')
-			}
-		} catch {}
+	function afterTransition(fn: () => void) {
+		requestAnimationFrame(() => requestAnimationFrame(fn))
 	}
 
-	function saveDraft() {
-		try {
-			const name = nameInput instanceof HTMLInputElement ? nameInput.value : ''
-			const github = githubInput instanceof HTMLInputElement ? githubInput.value : ''
-			const twitter = twitterInput instanceof HTMLInputElement ? twitterInput.value : ''
-			const message = textarea instanceof HTMLTextAreaElement ? textarea.value : ''
-			if (!name && !message && !github && !twitter && !avatarKey) {
-				localStorage.removeItem(DRAFT_KEY)
-				return
-			}
-			const avatarUrl =
-				avatarPreview instanceof HTMLImageElement && !avatarPreview.hidden
-					? avatarPreview.src
-					: ''
-			localStorage.setItem(
-				DRAFT_KEY,
-				JSON.stringify({ name, github, twitter, message, avatarKey, avatarUrl })
-			)
-		} catch {}
-	}
+	function initComments() {
+		const section = document.querySelector('.comments')
+		if (!(section instanceof HTMLElement)) return
+		if (section.dataset.initialized === '1') return
+		section.dataset.initialized = '1'
 
-	function clearDraft() {
-		try {
-			localStorage.removeItem(DRAFT_KEY)
-		} catch {}
-	}
+		const turnstileEnabled = section.dataset.turnstileEnabled === 'true'
+		const siteKey = section.dataset.siteKey ?? ''
+		const maxLen = Number(section.dataset.maxLen) || 280
+		const MAX_TEXTAREA_PX = Number(section.dataset.maxTextarea) || 240
 
-	function initials(name) {
-		const parts = String(name).trim().split(/\s+/).filter(Boolean)
-		if (!parts.length) return '?'
-		return parts
-			.slice(0, 2)
-			.map((p) => p[0])
-			.join('')
-	}
+		const wrapper = document.getElementById('form-wrapper')
+		const toggleBtn = document.getElementById('comments-toggle')
+		const form = document.getElementById('comment-form')
+		const listEl = document.getElementById('comment-list')
+		const expandBtn = document.getElementById('comments-expand')
+		const textarea = document.getElementById('comment-body')
+		const statusEl = document.getElementById('comment-status')
+		const submitBtn = form?.querySelector('button[type="submit"]')
+		const avatarBtn = document.getElementById('avatar-btn')
+		const avatarInput = document.getElementById('avatar-input')
+		const avatarPreview = document.getElementById('avatar-preview')
+		const avatarPlaceholder = document.getElementById('avatar-placeholder')
+		const counterEl = document.getElementById('comment-counter')
+		let isOpen = false
+		let widgetId: string | null = null
+		let turnstileLoading = false
+		let avatarKey = ''
+		let avatarUploading = false
+		let allComments: Comment[] = []
+		let commentsExpanded = false
+		let submitting = false
+		const nameInput = form?.querySelector('input[name="name"]')
+		const githubInput = form?.querySelector('input[name="github"]')
+		const twitterInput = form?.querySelector('input[name="twitter"]')
 
-	function setAvatarPreview(key, url, persist = true) {
-		avatarKey = key
-		if (
-			!(avatarPreview instanceof HTMLImageElement) ||
-			!(avatarPlaceholder instanceof HTMLElement)
-		)
-			return
-		if (key && url) {
-			avatarPreview.src = url
-			avatarPreview.hidden = false
-			avatarPlaceholder.hidden = true
-		} else {
-			avatarPreview.removeAttribute('src')
-			avatarPreview.hidden = true
-			avatarPlaceholder.hidden = false
+		let currentToken = ''
+		let tokenWaiters: TokenWaiter[] = []
+
+		function onTokenSolved(t: string) {
+			currentToken = t || ''
+			const waiters = tokenWaiters
+			tokenWaiters = []
+			waiters.forEach((w) => w.resolve(currentToken))
 		}
-		if (persist) saveDraft()
-	}
 
-	function clearAvatar() {
-		avatarKey = ''
-		setAvatarPreview('', '', false)
-		if (avatarInput instanceof HTMLInputElement) avatarInput.value = ''
-	}
+		function resetTurnstile() {
+			currentToken = ''
+			if (widgetId !== null && window.turnstile) {
+				try {
+					window.turnstile.reset(widgetId)
+				} catch {}
+			}
+		}
 
-	async function uploadAvatar(file) {
-		if (avatarUploading) return
-		if (turnstileEnabled && !turnstileToken) {
-			setStatus('Complete the verification first.', true)
+		function waitForToken(timeoutMs = 20000): Promise<string> {
+			if (currentToken) return Promise.resolve(currentToken)
 			ensureTurnstile()
-			return
+			return new Promise<string>((resolve, reject) => {
+				const waiter: TokenWaiter = { resolve, reject }
+				tokenWaiters.push(waiter)
+				window.setTimeout(() => {
+					const idx = tokenWaiters.indexOf(waiter)
+					if (idx !== -1) {
+						tokenWaiters.splice(idx, 1)
+						reject(new Error('turnstile-timeout'))
+					}
+				}, timeoutMs)
+			})
 		}
-		avatarUploading = true
-		avatarBtn?.classList.add('is-uploading')
-		setStatus('Uploading image…', false)
 
-		try {
-			const fd = new FormData()
-			fd.append('avatar', file)
-			if (turnstileEnabled && turnstileToken) fd.append('turnstileToken', turnstileToken)
+		async function consumeToken(prefetchNext: boolean): Promise<string> {
+			if (!turnstileEnabled) return ''
+			const token = await waitForToken()
+			currentToken = ''
+			if (prefetchNext) resetTurnstile()
+			return token
+		}
 
-			const res = await fetch('/api/avatar', { method: 'POST', body: fd })
-			const json = await res.json()
-			if (!res.ok || !json.ok) {
-				setStatus(json.error ?? 'Could not upload image.', true)
+		function loadDraft() {
+			try {
+				const raw = localStorage.getItem(DRAFT_KEY)
+				if (!raw) return
+				const draft = JSON.parse(raw)
+				if (nameInput instanceof HTMLInputElement && typeof draft.name === 'string') {
+					nameInput.value = draft.name
+				}
+				if (githubInput instanceof HTMLInputElement && typeof draft.github === 'string') {
+					githubInput.value = draft.github
+				}
+				if (twitterInput instanceof HTMLInputElement && typeof draft.twitter === 'string') {
+					twitterInput.value = draft.twitter
+				}
+				if (textarea instanceof HTMLTextAreaElement && typeof draft.message === 'string') {
+					textarea.value = draft.message
+					updateTextarea()
+				}
+				if (typeof draft.avatarKey === 'string' && draft.avatarKey) {
+					setAvatarPreview(draft.avatarKey, draft.avatarUrl ?? '')
+				}
+			} catch {}
+		}
+
+		function saveDraft() {
+			try {
+				const name = nameInput instanceof HTMLInputElement ? nameInput.value : ''
+				const github = githubInput instanceof HTMLInputElement ? githubInput.value : ''
+				const twitter = twitterInput instanceof HTMLInputElement ? twitterInput.value : ''
+				const message = textarea instanceof HTMLTextAreaElement ? textarea.value : ''
+				if (!name && !message && !github && !twitter && !avatarKey) {
+					localStorage.removeItem(DRAFT_KEY)
+					return
+				}
+				const avatarUrl =
+					avatarPreview instanceof HTMLImageElement && !avatarPreview.hidden
+						? avatarPreview.src
+						: ''
+				localStorage.setItem(
+					DRAFT_KEY,
+					JSON.stringify({ name, github, twitter, message, avatarKey, avatarUrl })
+				)
+			} catch {}
+		}
+
+		function clearDraft() {
+			try {
+				localStorage.removeItem(DRAFT_KEY)
+			} catch {}
+		}
+
+		function initials(name: string) {
+			const parts = String(name).trim().split(/\s+/).filter(Boolean)
+			if (!parts.length) return '?'
+			return parts
+				.slice(0, 2)
+				.map((p) => p[0])
+				.join('')
+		}
+
+		function setAvatarPreview(key: string, url: string, persist = true) {
+			avatarKey = key
+			if (
+				!(avatarPreview instanceof HTMLImageElement) ||
+				!(avatarPlaceholder instanceof HTMLElement)
+			)
 				return
+			if (key && url) {
+				avatarPreview.src = url
+				avatarPreview.hidden = false
+				avatarPlaceholder.hidden = true
+			} else {
+				avatarPreview.removeAttribute('src')
+				avatarPreview.hidden = true
+				avatarPlaceholder.hidden = false
 			}
-			setAvatarPreview(json.key, json.url)
-			setStatus('', false)
-		} catch {
-			setStatus('Could not upload image.', true)
-		} finally {
-			avatarUploading = false
-			avatarBtn?.classList.remove('is-uploading')
+			if (persist) saveDraft()
 		}
-	}
 
-	avatarBtn?.addEventListener('click', () => {
-		if (avatarUploading) return
-		avatarInput?.click()
-	})
-
-	avatarInput?.addEventListener('change', () => {
-		const file = avatarInput instanceof HTMLInputElement ? avatarInput.files?.[0] : null
-		if (file) uploadAvatar(file)
-	})
-
-	function open() {
-		isOpen = true
-		wrapper?.classList.add('open')
-		toggleBtn?.setAttribute('aria-expanded', 'true')
-		form?.querySelectorAll('[tabindex="-1"]').forEach((el) => el.removeAttribute('tabindex'))
-		setTimeout(() => {
-			const first = form?.querySelector('input')
-			if (first instanceof HTMLElement) first.focus({ preventScroll: true })
-		}, 50)
-		ensureTurnstile()
-	}
-
-	function close() {
-		isOpen = false
-		wrapper?.classList.remove('open')
-		toggleBtn?.setAttribute('aria-expanded', 'false')
-		form?.querySelectorAll('input, textarea, button').forEach((el) =>
-			el.setAttribute('tabindex', '-1')
-		)
-	}
-
-	toggleBtn?.addEventListener('click', () => (isOpen ? close() : open()))
-
-	const THRESHOLD = Math.floor(maxLen * 0.8)
-
-	function updateTextarea() {
-		if (!(textarea instanceof HTMLTextAreaElement)) return
-		textarea.style.height = 'auto'
-		const next = Math.min(textarea.scrollHeight, MAX_TEXTAREA_PX)
-		textarea.style.height = `${next}px`
-		textarea.classList.toggle('scrollable', textarea.scrollHeight > MAX_TEXTAREA_PX)
-		if (!counterEl) return
-		const len = textarea.value.length
-		const remaining = maxLen - len
-		if (len >= THRESHOLD) {
-			counterEl.textContent = String(remaining)
-			counterEl.classList.add('visible')
-			counterEl.classList.toggle('warning', remaining <= Math.floor(maxLen * 0.15))
-			counterEl.classList.toggle('critical', remaining <= 10)
-		} else {
-			counterEl.classList.remove('visible', 'warning', 'critical')
+		function clearAvatar() {
+			avatarKey = ''
+			setAvatarPreview('', '', false)
+			if (avatarInput instanceof HTMLInputElement) avatarInput.value = ''
 		}
-	}
-	textarea?.addEventListener('input', () => {
-		updateTextarea()
-		saveDraft()
-	})
-	nameInput?.addEventListener('input', saveDraft)
-	githubInput?.addEventListener('input', saveDraft)
-	twitterInput?.addEventListener('input', saveDraft)
-	loadDraft()
 
-	function timeAgo(iso) {
-		const d = new Date(iso).getTime()
-		if (Number.isNaN(d)) return ''
-		const mins = Math.floor(Math.max(0, Date.now() - d) / 60000)
-		if (mins < 1) return 'just now'
-		if (mins < 60) return `${mins}m ago`
-		const hrs = Math.floor(mins / 60)
-		if (hrs < 24) return `${hrs}h ago`
-		const days = Math.floor(hrs / 24)
-		if (days < 30) return `${days}d ago`
-		return new Date(iso).toLocaleDateString()
-	}
+		async function uploadAvatar(file: File) {
+			if (avatarUploading) return
+			avatarUploading = true
+			avatarBtn?.classList.add('is-uploading')
+			setStatus(turnstileEnabled ? 'Verifying…' : 'Uploading image…', false)
 
-	function esc(t) {
-		return t
-			.replaceAll('&', '&amp;')
-			.replaceAll('<', '&lt;')
-			.replaceAll('>', '&gt;')
-			.replaceAll('"', '&quot;')
-	}
+			try {
+				const fd = new FormData()
+				fd.append('avatar', file)
+				if (turnstileEnabled) {
+					let token = ''
+					try {
+						token = await consumeToken(true)
+					} catch {
+						setStatus('Verification timed out. Try again.', true)
+						return
+					}
+					fd.append('turnstileToken', token)
+				}
+				setStatus('Uploading image…', false)
 
-	function commentHtml(c) {
-		const avatar = c.avatarUrl
-			? `<img src="${esc(c.avatarUrl)}" alt="" class="comment-avatar" width="24" height="24" />`
-			: `<span class="comment-avatar comment-avatar--empty" aria-hidden="true">${esc(initials(c.name))}</span>`
-		const socials = [
-			c.github
-				? `<a href="https://github.com/${esc(c.github)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"><img src="/assets/socials/github.svg" alt="" width="16" height="16" /></a>`
-				: '',
-			c.twitter
-				? `<a href="https://x.com/${esc(c.twitter)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="X profile"><img src="/assets/socials/twitter.svg" alt="" width="16" height="16" /></a>`
-				: '',
-		]
-			.filter(Boolean)
-			.join('')
-		return `
+				const res = await fetch('/api/avatar', { method: 'POST', body: fd })
+				const json = await res.json().catch(() => null)
+				if (!res.ok || !json?.ok) {
+					setStatus(json?.error ?? 'Could not upload image.', true)
+					return
+				}
+				setAvatarPreview(json.key, json.url)
+				setStatus('', false)
+			} catch {
+				setStatus('Could not upload image.', true)
+			} finally {
+				avatarUploading = false
+				avatarBtn?.classList.remove('is-uploading')
+			}
+		}
+
+		avatarBtn?.addEventListener('click', () => {
+			if (avatarUploading) return
+			avatarInput?.click()
+		})
+
+		avatarInput?.addEventListener('change', () => {
+			const file = avatarInput instanceof HTMLInputElement ? avatarInput.files?.[0] : null
+			if (file) uploadAvatar(file)
+		})
+
+		function open() {
+			isOpen = true
+			wrapper?.classList.add('open')
+			toggleBtn?.setAttribute('aria-expanded', 'true')
+			form?.querySelectorAll('[tabindex="-1"]').forEach((el) =>
+				el.removeAttribute('tabindex')
+			)
+			setTimeout(() => {
+				const first = form?.querySelector('input')
+				if (first instanceof HTMLElement) first.focus({ preventScroll: true })
+			}, 50)
+			ensureTurnstile()
+		}
+
+		function close() {
+			isOpen = false
+			wrapper?.classList.remove('open')
+			toggleBtn?.setAttribute('aria-expanded', 'false')
+			form?.querySelectorAll('input, textarea, button').forEach((el) =>
+				el.setAttribute('tabindex', '-1')
+			)
+		}
+
+		toggleBtn?.addEventListener('click', () => (isOpen ? close() : open()))
+
+		const THRESHOLD = Math.floor(maxLen * 0.8)
+
+		function updateTextarea() {
+			if (!(textarea instanceof HTMLTextAreaElement)) return
+			textarea.style.height = 'auto'
+			const next = Math.min(textarea.scrollHeight, MAX_TEXTAREA_PX)
+			textarea.style.height = `${next}px`
+			textarea.classList.toggle('scrollable', textarea.scrollHeight > MAX_TEXTAREA_PX)
+			if (!counterEl) return
+			const len = textarea.value.length
+			const remaining = maxLen - len
+			if (len >= THRESHOLD) {
+				counterEl.textContent = String(remaining)
+				counterEl.classList.add('visible')
+				counterEl.classList.toggle('warning', remaining <= Math.floor(maxLen * 0.15))
+				counterEl.classList.toggle('critical', remaining <= 10)
+			} else {
+				counterEl.classList.remove('visible', 'warning', 'critical')
+			}
+		}
+		textarea?.addEventListener('input', () => {
+			updateTextarea()
+			saveDraft()
+		})
+		nameInput?.addEventListener('input', saveDraft)
+		githubInput?.addEventListener('input', saveDraft)
+		twitterInput?.addEventListener('input', saveDraft)
+		loadDraft()
+
+		function timeAgo(iso: string) {
+			const d = new Date(iso).getTime()
+			if (Number.isNaN(d)) return ''
+			const mins = Math.floor(Math.max(0, Date.now() - d) / 60000)
+			if (mins < 1) return 'just now'
+			if (mins < 60) return `${mins}m ago`
+			const hrs = Math.floor(mins / 60)
+			if (hrs < 24) return `${hrs}h ago`
+			const days = Math.floor(hrs / 24)
+			if (days < 30) return `${days}d ago`
+			return new Date(iso).toLocaleDateString()
+		}
+
+		function esc(t: string) {
+			return t
+				.replaceAll('&', '&amp;')
+				.replaceAll('<', '&lt;')
+				.replaceAll('>', '&gt;')
+				.replaceAll('"', '&quot;')
+		}
+
+		function commentHtml(c: Comment) {
+			const avatar = c.avatarUrl
+				? `<img src="${esc(c.avatarUrl)}" alt="" class="comment-avatar" width="24" height="24" />`
+				: `<span class="comment-avatar comment-avatar--empty" aria-hidden="true">${esc(initials(c.name))}</span>`
+			const socials = [
+				c.github
+					? `<a href="https://github.com/${esc(c.github)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"><img src="/assets/socials/github.svg" alt="" width="16" height="16" /></a>`
+					: '',
+				c.twitter
+					? `<a href="https://x.com/${esc(c.twitter)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="X profile"><img src="/assets/socials/twitter.svg" alt="" width="16" height="16" /></a>`
+					: '',
+			]
+				.filter(Boolean)
+				.join('')
+			return `
         <li class="comment-item">
           <div class="comment-head">
             ${avatar}
@@ -819,188 +925,261 @@ const MAX_TEXTAREA_PX = 240
           </div>
           <p class="comment-body">${esc(c.body)}</p>
         </li>`
-	}
-
-	function updateExpandBtn() {
-		if (!expandBtn) return
-		const extra = allComments.length - INITIAL_COMMENT_LIMIT
-		if (extra <= 0 || commentsExpanded) {
-			expandBtn.hidden = true
-			return
 		}
-		expandBtn.hidden = false
-		expandBtn.textContent =
-			extra === 1 ? 'Show 1 more comment' : `Show ${extra} more comments`
-	}
 
-	function paintComments() {
-		if (!listEl) return
-		if (!allComments.length) {
-			listEl.innerHTML = '<li class="comment-empty">No comments yet — be the first.</li>'
+		function updateExpandBtn() {
+			if (!expandBtn) return
+			const extra = allComments.length - INITIAL_COMMENT_LIMIT
+			if (extra <= 0 || commentsExpanded) {
+				expandBtn.hidden = true
+				return
+			}
+			expandBtn.hidden = false
+			expandBtn.textContent =
+				extra === 1 ? 'Show 1 more comment' : `Show ${extra} more comments`
+		}
+
+		function paintComments() {
+			if (!listEl) return
+			if (!allComments.length) {
+				listEl.innerHTML = '<li class="comment-empty">No comments yet — be the first.</li>'
+				updateExpandBtn()
+				return
+			}
+			const visible = commentsExpanded
+				? allComments
+				: allComments.slice(0, INITIAL_COMMENT_LIMIT)
+			listEl.innerHTML = visible.map(commentHtml).join('')
 			updateExpandBtn()
-			return
 		}
-		const visible = commentsExpanded
-			? allComments
-			: allComments.slice(0, INITIAL_COMMENT_LIMIT)
-		listEl.innerHTML = visible.map(commentHtml).join('')
-		updateExpandBtn()
-	}
 
-	function render(comments) {
-		allComments = comments
-		paintComments()
-	}
+		function render(comments: Comment[]) {
+			allComments = comments
+			paintComments()
+		}
 
-	expandBtn?.addEventListener('click', () => {
-		commentsExpanded = true
-		paintComments()
-	})
-
-	function setStatus(msg, isError) {
-		if (!statusEl) return
-		statusEl.textContent = msg
-		statusEl.classList.toggle('is-error', !!isError)
-	}
-
-	function renderTurnstile() {
-		if (!turnstileEnabled || !window.turnstile) return
-		const el = document.getElementById('comment-turnstile')
-		if (!el || widgetId) return
-		widgetId = window.turnstile.render(el, {
-			sitekey: siteKey,
-			theme: 'auto',
-			callback: (t) => (turnstileToken = t),
-			'expired-callback': () => {
-				turnstileToken = ''
-				setStatus('Verification expired. Try again.', true)
-			},
-			'error-callback': () => {
-				turnstileToken = ''
-				setStatus('Verification failed to load. Check your connection or try again later.', true)
-			},
+		expandBtn?.addEventListener('click', () => {
+			commentsExpanded = true
+			paintComments()
 		})
-	}
 
-	function ensureTurnstile() {
-		if (!turnstileEnabled || widgetId || turnstileLoading) return
-		turnstileLoading = true
-		if (window.turnstile) {
-			renderTurnstile()
-		} else {
+		function setStatus(msg: string, isError: boolean) {
+			if (!statusEl) return
+			statusEl.textContent = msg
+			statusEl.classList.toggle('is-error', !!isError)
+		}
+
+		function renderTurnstile() {
+			if (!turnstileEnabled || !window.turnstile) return
+			const el = document.getElementById('comment-turnstile')
+			if (!el || widgetId !== null) return
+			widgetId = window.turnstile.render(el, {
+				sitekey: siteKey,
+				theme: 'auto',
+				'refresh-expired': 'auto',
+				callback: (t: string) => onTokenSolved(t),
+				'expired-callback': () => {
+					currentToken = ''
+				},
+				'error-callback': () => {
+					currentToken = ''
+					const waiters = tokenWaiters
+					tokenWaiters = []
+					waiters.forEach((w) => w.reject(new Error('turnstile-error')))
+					return true
+				},
+			})
+		}
+
+		function ensureTurnstile() {
+			if (!turnstileEnabled || widgetId !== null) return
+			if (window.turnstile) {
+				renderTurnstile()
+				return
+			}
+			if (turnstileLoading) return
+			turnstileLoading = true
+			const existing = document.querySelector('script[data-turnstile]')
+			if (existing) {
+				existing.addEventListener('load', renderTurnstile)
+				if (window.turnstile) renderTurnstile()
+				return
+			}
 			const s = document.createElement('script')
 			s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
 			s.async = true
+			s.dataset.turnstile = '1'
 			s.onload = renderTurnstile
+			s.onerror = () => {
+				turnstileLoading = false
+				setStatus('Verification failed to load. Check your connection or try again.', true)
+			}
 			document.head.appendChild(s)
 		}
-	}
 
-	async function fingerprint() {
-		try {
-			const parts = [
-				navigator.userAgent,
-				navigator.language,
-				screen.width + 'x' + screen.height + 'x' + screen.colorDepth,
-				String(window.devicePixelRatio ?? 1),
-				Intl.DateTimeFormat().resolvedOptions().timeZone,
-				String(navigator.hardwareConcurrency ?? 0),
-				String(navigator.maxTouchPoints ?? 0),
-			]
-			const buf = await crypto.subtle.digest(
-				'SHA-256',
-				new TextEncoder().encode(parts.join('\n'))
-			)
-			return Array.from(new Uint8Array(buf))
-				.map((b) => b.toString(16).padStart(2, '0'))
-				.join('')
-		} catch {
-			return ''
-		}
-	}
-
-	fetch('/api/comments')
-		.then((r) => r.json())
-		.then((d) => render(d.comments ?? []))
-		.catch(() => {
-			if (listEl) listEl.innerHTML = '<li class="comment-empty">Could not load comments.</li>'
-		})
-
-	form?.addEventListener('submit', async (e) => {
-		e.preventDefault()
-		if (!(form instanceof HTMLFormElement) || !submitBtn) return
-
-		const data = new FormData(form)
-		const name = String(data.get('name') ?? '').trim()
-		const body = String(data.get('message') ?? '').trim()
-		const github = String(data.get('github') ?? '').trim()
-		const twitter = String(data.get('twitter') ?? '').trim()
-		if (!name || !body) return
-
-		if (turnstileEnabled && !turnstileToken) {
-			setStatus('Complete the verification first.', true)
-			return
+		async function fingerprint() {
+			try {
+				const parts = [
+					navigator.userAgent,
+					navigator.language,
+					screen.width + 'x' + screen.height + 'x' + screen.colorDepth,
+					String(window.devicePixelRatio ?? 1),
+					Intl.DateTimeFormat().resolvedOptions().timeZone,
+					String(navigator.hardwareConcurrency ?? 0),
+					String(navigator.maxTouchPoints ?? 0),
+				]
+				const buf = await crypto.subtle.digest(
+					'SHA-256',
+					new TextEncoder().encode(parts.join('\n'))
+				)
+				return Array.from(new Uint8Array(buf))
+					.map((b) => b.toString(16).padStart(2, '0'))
+					.join('')
+			} catch {
+				return ''
+			}
 		}
 
-		if (avatarUploading) {
-			setStatus('Wait for the image upload to finish.', true)
-			return
+		async function fetchComments(timeoutMs = 10000) {
+			const ctrl = new AbortController()
+			const timer = window.setTimeout(() => ctrl.abort(), timeoutMs)
+			try {
+				const res = await fetch('/api/comments', {
+					signal: ctrl.signal,
+					cache: 'no-store',
+				})
+				if (!res.ok) throw new Error(`status ${res.status}`)
+				const data = await res.json()
+				return Array.isArray(data?.comments) ? data.comments : []
+			} finally {
+				window.clearTimeout(timer)
+			}
 		}
 
-		submitBtn.setAttribute('disabled', 'true')
-		submitBtn.textContent = 'Posting…'
-		setStatus('', false)
+		function showLoadError() {
+			if (!listEl) return
+			listEl.innerHTML =
+				'<li class="comment-empty">Couldn\'t load comments. <button type="button" class="comment-retry">Retry</button></li>'
+			listEl
+				.querySelector('.comment-retry')
+				?.addEventListener('click', () => loadComments(true), { once: true })
+		}
 
-		const fp = await fingerprint()
-
-		try {
-			const res = await fetch('/api/comments', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					name,
-					body,
-					github,
-					twitter,
-					avatarKey,
-					turnstileToken,
-					fingerprint: fp,
-				}),
-			})
-			const json = await res.json()
-
-			if (!res.ok || !json.ok) {
-				setStatus(json.error ?? 'Could not post.', true)
-				if (widgetId && window.turnstile) {
-					window.turnstile.reset(widgetId)
-					turnstileToken = ''
+		async function loadComments(forceLoading = false) {
+			if (forceLoading && listEl) {
+				listEl.innerHTML = '<li class="comment-empty">Loading…</li>'
+			}
+			for (let attempt = 0; attempt < 2; attempt++) {
+				try {
+					const comments = await fetchComments()
+					commentsCache = comments
+					render(comments)
+					return
+				} catch (err) {
+					if (attempt === 0) {
+						await new Promise((r) => window.setTimeout(r, 600))
+						continue
+					}
+					showLoadError()
 				}
+			}
+		}
+
+		if (commentsCache) render(commentsCache)
+		afterTransition(() => loadComments())
+
+		form?.addEventListener('submit', async (e) => {
+			e.preventDefault()
+			if (!(form instanceof HTMLFormElement) || !submitBtn) return
+			if (submitting) return
+
+			const data = new FormData(form)
+			const name = String(data.get('name') ?? '').trim()
+			const body = String(data.get('message') ?? '').trim()
+			const github = String(data.get('github') ?? '').trim()
+			const twitter = String(data.get('twitter') ?? '').trim()
+			if (!name || !body) return
+
+			if (avatarUploading) {
+				setStatus('Wait for the image upload to finish.', true)
 				return
 			}
 
-			const refreshed = await fetch('/api/comments').then((r) => r.json())
-			commentsExpanded = false
-			render(refreshed.comments ?? [])
-			form.reset()
-			clearAvatar()
-			clearDraft()
-			if (textarea instanceof HTMLTextAreaElement) {
-				textarea.style.height = ''
-				textarea.classList.remove('scrollable')
+			submitting = true
+			submitBtn.setAttribute('disabled', 'true')
+			submitBtn.textContent = 'Posting…'
+			setStatus('', false)
+
+			try {
+				let token = ''
+				if (turnstileEnabled) {
+					setStatus('Verifying…', false)
+					try {
+						token = await consumeToken(false)
+					} catch {
+						setStatus('Verification timed out. Try again.', true)
+						return
+					}
+					setStatus('Posting…', false)
+				}
+
+				const fp = await fingerprint()
+
+				const res = await fetch('/api/comments', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						name,
+						body,
+						github,
+						twitter,
+						avatarKey,
+						turnstileToken: token,
+						fingerprint: fp,
+					}),
+				})
+				const json = await res.json().catch(() => null)
+
+				if (!res.ok || !json?.ok) {
+					setStatus(json?.error ?? 'Could not post.', true)
+					if (turnstileEnabled) resetTurnstile()
+					return
+				}
+
+				commentsExpanded = false
+				if (json.comment) {
+					const next = [json.comment, ...allComments]
+					commentsCache = next
+					render(next)
+				}
+				fetchComments()
+					.then((list) => {
+						commentsCache = list
+						if (list.length) render(list)
+					})
+					.catch(() => {})
+
+				form.reset()
+				clearAvatar()
+				clearDraft()
+				if (textarea instanceof HTMLTextAreaElement) {
+					textarea.style.height = ''
+					textarea.classList.remove('scrollable')
+				}
+				if (counterEl) counterEl.classList.remove('visible', 'warning', 'critical')
+				setStatus('Thanks!', false)
+				close()
+				if (toggleBtn) toggleBtn.setAttribute('hidden', '')
+			} catch {
+				setStatus('Network error. Try again.', true)
+				if (turnstileEnabled) resetTurnstile()
+			} finally {
+				submitting = false
+				submitBtn.removeAttribute('disabled')
+				submitBtn.textContent = 'Post'
 			}
-			if (counterEl) counterEl.classList.remove('visible', 'warning', 'critical')
-			setStatus('Thanks!', false)
-			close()
-			if (toggleBtn) toggleBtn.setAttribute('hidden', '')
-			if (widgetId && window.turnstile) {
-				window.turnstile.reset(widgetId)
-				turnstileToken = ''
-			}
-		} catch {
-			setStatus('Network error. Try again.', true)
-		} finally {
-			submitBtn.removeAttribute('disabled')
-			submitBtn.textContent = 'Post'
-		}
-	})
+		})
+	}
+
+	document.addEventListener('astro:page-load', initComments)
 </script>

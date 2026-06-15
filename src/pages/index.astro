@@ -295,50 +295,73 @@ function formatDate(iso: string) {
 </style>
 
 <script>
-	const wrap = document.getElementById('post-scroll-wrap')
-	const list = document.getElementById('post-scroll')
-	const count = Number(list?.dataset.count ?? 0)
+	let cleanups: Array<() => void> = []
+	let layoutGen = 0
 
-	if (list && wrap && count >= 4) {
-		function syncGrads() {
-			const { scrollTop, scrollHeight, clientHeight } = list!
-			wrap!.classList.toggle('grad-top', scrollTop > 2)
-			wrap!.classList.toggle('grad-bottom', scrollTop + clientHeight < scrollHeight - 2)
+	function afterTransition(fn: () => void) {
+		requestAnimationFrame(() => requestAnimationFrame(fn))
+	}
+
+	function initWriting() {
+		cleanups.forEach((fn) => fn())
+		cleanups = []
+		const gen = ++layoutGen
+
+		const wrap = document.getElementById('post-scroll-wrap')
+		const list = document.getElementById('post-scroll')
+		const count = Number(list?.dataset.count ?? 0)
+
+		if (list && wrap && count >= 4) {
+			const syncGrads = () => {
+				const { scrollTop, scrollHeight, clientHeight } = list
+				wrap.classList.toggle('grad-top', scrollTop > 2)
+				wrap.classList.toggle('grad-bottom', scrollTop + clientHeight < scrollHeight - 2)
+			}
+			afterTransition(() => {
+				if (gen !== layoutGen) return
+				syncGrads()
+			})
+			list.addEventListener('scroll', syncGrads, { passive: true })
+			cleanups.push(() => list.removeEventListener('scroll', syncGrads))
 		}
-		syncGrads()
-		list.addEventListener('scroll', syncGrads, { passive: true })
-	}
 
-	function syncColumnOffset() {
-		const page = document.querySelector<HTMLElement>('.page')
-		const about = document.querySelector<HTMLElement>('.about')
-		const writing = document.querySelector<HTMLElement>('.writing')
-		if (!page || !about || !writing) return
+		const syncColumnOffset = () => {
+			const page = document.querySelector<HTMLElement>('.page')
+			const about = document.querySelector<HTMLElement>('.about')
+			const writing = document.querySelector<HTMLElement>('.writing')
+			if (!page || !about || !writing) return
 
-		if (window.innerWidth < 820) {
-			about.style.paddingTop = ''
-			writing.style.paddingTop = ''
-			return
+			if (window.innerWidth < 820) {
+				about.style.paddingTop = ''
+				writing.style.paddingTop = ''
+				return
+			}
+
+			const style = getComputedStyle(page)
+			const padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
+			const rail = window.innerHeight - padY
+			const offset = Math.max(0, (rail - about.offsetHeight) / 2)
+			const top = `${offset}px`
+			about.style.paddingTop = top
+			writing.style.paddingTop = top
 		}
 
-		const style = getComputedStyle(page)
-		const padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
-		const rail = window.innerHeight - padY
-		const offset = Math.max(0, (rail - about.offsetHeight) / 2)
-		const top = `${offset}px`
-		about.style.paddingTop = top
-		writing.style.paddingTop = top
+		afterTransition(() => {
+			if (gen !== layoutGen) return
+			syncColumnOffset()
+			window.addEventListener('resize', syncColumnOffset, { passive: true })
+			cleanups.push(() => window.removeEventListener('resize', syncColumnOffset))
+
+			const aboutEl = document.querySelector('.about')
+			const writingEl = document.querySelector('.writing')
+			if (aboutEl && writingEl && 'ResizeObserver' in window) {
+				const ro = new ResizeObserver(syncColumnOffset)
+				ro.observe(aboutEl)
+				ro.observe(writingEl)
+				cleanups.push(() => ro.disconnect())
+			}
+		})
 	}
 
-	syncColumnOffset()
-	window.addEventListener('resize', syncColumnOffset, { passive: true })
-	document.addEventListener('astro:page-load', syncColumnOffset)
-
-	const aboutEl = document.querySelector('.about')
-	const writingEl = document.querySelector('.writing')
-	if (aboutEl && writingEl && 'ResizeObserver' in window) {
-		const ro = new ResizeObserver(syncColumnOffset)
-		ro.observe(aboutEl)
-		ro.observe(writingEl)
-	}
+	document.addEventListener('astro:page-load', initWriting)
 </script>

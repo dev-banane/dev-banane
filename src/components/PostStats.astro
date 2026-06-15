@@ -1,307 +1,430 @@
 ---
 interface Props {
-  slug: string;
-  readingMinutes?: number;
+	slug: string
+	readingMinutes?: number
 }
 
-const { slug, readingMinutes = 1 } = Astro.props;
-const site = Astro.site?.toString().replace(/\/$/, '') ?? '';
-const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname;
+const { slug, readingMinutes = 1 } = Astro.props
+const site = Astro.site?.toString().replace(/\/$/, '') ?? ''
+const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 ---
 
-<div
-  class="post-stats"
-  data-slug={slug}
-  data-url={canonical}
->
-  <div class="meta-row">
-    <span class="meta reading-time">{readingMinutes} min read</span>
-    <span class="dot">·</span>
-    <span class="meta"><span class="view-count">0</span> views</span>
-  </div>
+<div class="post-stats" data-slug={slug} data-url={canonical}>
+	<div class="meta-row">
+		<span class="meta reading-time">{readingMinutes} min read</span>
+		<span class="dot">·</span>
+		<span class="meta"><span class="view-count">0</span> views</span>
+	</div>
 
-  <div class="action-bar">
-    <div class="votes">
-      <button class="vote vote-up" aria-label="Upvote" aria-pressed="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 19V5M5 12l7-7 7 7"/>
-        </svg>
-        <span class="up-count">0</span>
-      </button>
-      <button class="vote vote-down" aria-label="Downvote" aria-pressed="false">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 5v14M19 12l-7 7-7-7"/>
-        </svg>
-        <span class="down-count">0</span>
-      </button>
-    </div>
+	<div class="action-bar">
+		<div class="votes">
+			<button class="vote vote-up" aria-label="Upvote" aria-pressed="false">
+				<svg
+					width="15"
+					height="15"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M12 19V5M5 12l7-7 7 7"></path>
+				</svg>
+				<span class="up-count">0</span>
+			</button>
+			<button class="vote vote-down" aria-label="Downvote" aria-pressed="false">
+				<svg
+					width="15"
+					height="15"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M12 5v14M19 12l-7 7-7-7"></path>
+				</svg>
+				<span class="down-count">0</span>
+			</button>
+		</div>
 
-    <div class="links">
-      <button type="button" class="text-link copy-link">Copy link</button>
-    </div>
-  </div>
+		<div class="links">
+			<button type="button" class="text-link copy-link">Copy link</button>
+		</div>
+	</div>
 </div>
 
 <button type="button" class="highlight-link" hidden>
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-    <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-  </svg>
-  <span class="highlight-label">Link to highlight</span>
+	<svg
+		width="13"
+		height="13"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+		<path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+	</svg>
+	<span class="highlight-label">Link to highlight</span>
 </button>
 
 <style>
-  .post-stats {
-    margin-top: 1.5rem;
-    padding-bottom: 1.75rem;
-    border-bottom: 1px solid var(--border);
-  }
+	.post-stats {
+		margin-top: 1.5rem;
+		padding-bottom: 1.75rem;
+		border-bottom: 1px solid var(--border);
+	}
 
-  .meta-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8125rem;
-    color: var(--fg-dim);
-  }
+	.meta-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+	}
 
-  .action-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
+	.action-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: 1rem;
+	}
 
-  .votes {
-    display: flex;
-    gap: 0.5rem;
-  }
+	.votes {
+		display: flex;
+		gap: 0.5rem;
+	}
 
-  .vote {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.75rem;
-    border-radius: 9999px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--fg-muted);
-    font-family: inherit;
-    font-size: 0.8125rem;
-    font-variant-numeric: tabular-nums;
-    cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-  }
+	.vote {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.35rem 0.75rem;
+		border-radius: 9999px;
+		border: 1px solid var(--border);
+		background: transparent;
+		color: var(--fg-muted);
+		font-family: inherit;
+		font-size: 0.8125rem;
+		font-variant-numeric: tabular-nums;
+		cursor: pointer;
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease,
+			background 0.15s ease;
+	}
 
-  .vote:hover {
-    color: var(--fg);
-    border-color: var(--fg-dim);
-  }
+	.vote:hover {
+		color: var(--fg);
+		border-color: var(--fg-dim);
+	}
 
-  .vote[aria-pressed='true'] {
-    color: var(--fg);
-    border-color: var(--fg);
-    background: var(--btn-social-bg);
-  }
+	.vote[aria-pressed='true'] {
+		color: var(--fg);
+		border-color: var(--fg);
+		background: var(--btn-social-bg);
+	}
 
-  .vote.is-error {
-    border-color: #e5484d;
-    color: #e5484d;
-  }
+	.vote.is-error {
+		border-color: #e5484d;
+		color: #e5484d;
+	}
 
-  .links {
-    display: flex;
-    gap: 1rem;
-  }
+	.links {
+		display: flex;
+		gap: 1rem;
+	}
 
-  .text-link {
-    background: none;
-    border: none;
-    padding: 0;
-    font-family: inherit;
-    font-size: 0.8125rem;
-    color: var(--fg-muted);
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: var(--border);
-    transition: color 0.15s ease, text-decoration-color 0.15s ease;
-  }
+	.text-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font-family: inherit;
+		font-size: 0.8125rem;
+		color: var(--fg-muted);
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--border);
+		transition:
+			color 0.15s ease,
+			text-decoration-color 0.15s ease;
+	}
 
-  .text-link:hover {
-    color: var(--fg);
-    text-decoration-color: var(--fg);
-  }
+	.text-link:hover {
+		color: var(--fg);
+		text-decoration-color: var(--fg);
+	}
 
-  .text-link.is-copied {
-    color: var(--fg);
-    text-decoration-color: var(--fg);
-  }
+	.text-link.is-copied {
+		color: var(--fg);
+		text-decoration-color: var(--fg);
+	}
 
-  .highlight-link {
-    position: absolute;
-    z-index: 30;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.75rem;
-    border-radius: 9999px;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--fg);
-    font-family: inherit;
-    font-size: 0.8125rem;
-    cursor: pointer;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
-    transform: translate(-50%, -120%);
-  }
+	.highlight-link {
+		position: absolute;
+		z-index: 30;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.45rem 0.75rem;
+		border-radius: 9999px;
+		border: 1px solid var(--border);
+		background: var(--bg);
+		color: var(--fg);
+		font-family: inherit;
+		font-size: 0.8125rem;
+		cursor: pointer;
+		box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+		transform: translate(-50%, -120%);
+	}
 
-  .highlight-link[hidden] {
-    display: none;
-  }
+	.highlight-link[hidden] {
+		display: none;
+	}
 </style>
 
 <script>
-  function pageUrl(root: HTMLElement): string {
-    const fromData = root.dataset.url?.trim();
-    if (fromData?.startsWith('http')) return fromData;
-    return `${location.origin}${location.pathname}`;
-  }
+	type Stats = { views: number; upvotes: number; downvotes: number; myVote: number }
 
-  async function copyText(text: string): Promise<boolean> {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      try {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.setAttribute('readonly', '');
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        const ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        return ok;
-      } catch {
-        return false;
-      }
-    }
-  }
+	function pageUrl(root: HTMLElement): string {
+		const fromData = root.dataset.url?.trim()
+		if (fromData?.startsWith('http')) return fromData
+		return `${location.origin}${location.pathname}`
+	}
 
-  function initPostStats() {
-    const root = document.querySelector('.post-stats') as HTMLElement | null;
-    if (!root) return;
+	async function copyText(text: string): Promise<boolean> {
+		try {
+			await navigator.clipboard.writeText(text)
+			return true
+		} catch {
+			try {
+				const ta = document.createElement('textarea')
+				ta.value = text
+				ta.setAttribute('readonly', '')
+				ta.style.position = 'fixed'
+				ta.style.opacity = '0'
+				document.body.appendChild(ta)
+				ta.select()
+				const ok = document.execCommand('copy')
+				document.body.removeChild(ta)
+				return ok
+			} catch {
+				return false
+			}
+		}
+	}
 
-    const slug = root.dataset.slug ?? '';
-    const url = pageUrl(root);
-    const prose = document.querySelector('.prose');
+	async function fetchJson(input: string, init?: RequestInit, timeoutMs = 10000) {
+		const ctrl = new AbortController()
+		const timer = window.setTimeout(() => ctrl.abort(), timeoutMs)
+		try {
+			const res = await fetch(input, { ...init, signal: ctrl.signal })
+			const data = await res.json().catch(() => null)
+			return { ok: res.ok, data } as { ok: boolean; data: any }
+		} finally {
+			window.clearTimeout(timer)
+		}
+	}
 
-    const viewEl = root.querySelector('.view-count');
-    const upBtn = root.querySelector('.vote-up');
-    const downBtn = root.querySelector('.vote-down');
-    const upEl = root.querySelector('.up-count');
-    const downEl = root.querySelector('.down-count');
-    const rtEl = root.querySelector('.reading-time');
-    let myVote = 0;
+	let cleanups: Array<() => void> = []
+	const statsCache = new Map<string, Stats>()
 
-    if (prose && rtEl) {
-      const words = (prose.textContent ?? '').trim().split(/\s+/).filter(Boolean).length;
-      rtEl.textContent = `${Math.max(1, Math.round(words / 200))} min read`;
-    }
+	function afterTransition(fn: () => void) {
+		requestAnimationFrame(() => requestAnimationFrame(fn))
+	}
+	function on<K extends keyof DocumentEventMap>(
+		target: Document | Window,
+		type: K | string,
+		handler: EventListenerOrEventListenerObject,
+		opts?: AddEventListenerOptions
+	) {
+		target.addEventListener(type, handler, opts)
+		cleanups.push(() => target.removeEventListener(type, handler, opts))
+	}
 
-    function paint(d: { views: number; upvotes: number; downvotes: number; myVote: number }) {
-      if (viewEl) viewEl.textContent = String(d.views);
-      if (upEl) upEl.textContent = String(d.upvotes);
-      if (downEl) downEl.textContent = String(d.downvotes);
-      myVote = d.myVote ?? 0;
-      upBtn?.setAttribute('aria-pressed', String(myVote === 1));
-      downBtn?.setAttribute('aria-pressed', String(myVote === -1));
-    }
+	function initPostStats() {
+		cleanups.forEach((fn) => fn())
+		cleanups = []
 
-    function flashVoteError(btn: Element | null) {
-      if (!btn) return;
-      btn.classList.add('is-error');
-      window.setTimeout(() => btn.classList.remove('is-error'), 1500);
-    }
+		const root = document.querySelector('.post-stats') as HTMLElement | null
+		if (!root) return
 
-    fetch(`/api/posts?slug=${encodeURIComponent(slug)}`)
-      .then((r) => r.json())
-      .then(paint)
-      .catch(() => {});
+		const slug = root.dataset.slug ?? ''
+		const url = pageUrl(root)
+		const prose = document.querySelector('.prose')
 
-    async function vote(dir: number) {
-      const next = myVote === dir ? 0 : dir;
-      const btn = dir === 1 ? upBtn : downBtn;
-      try {
-        const res = await fetch('/api/posts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ slug, vote: next }),
-        });
-        const d = await res.json();
-        if (res.ok && d.ok) {
-          paint(d);
-        } else {
-          flashVoteError(btn);
-        }
-      } catch {
-        flashVoteError(btn);
-      }
-    }
+		const viewEl = root.querySelector('.view-count')
+		const upBtn = root.querySelector('.vote-up')
+		const downBtn = root.querySelector('.vote-down')
+		const upEl = root.querySelector('.up-count')
+		const downEl = root.querySelector('.down-count')
+		const rtEl = root.querySelector('.reading-time')
 
-    upBtn?.addEventListener('click', () => vote(1));
-    downBtn?.addEventListener('click', () => vote(-1));
+		if (prose && rtEl) {
+			afterTransition(() => {
+				const words = (prose.textContent ?? '').trim().split(/\s+/).filter(Boolean).length
+				rtEl.textContent = `${Math.max(1, Math.round(words / 200))} min read`
+			})
+		}
 
-    const copyBtn = root.querySelector('.copy-link');
-    copyBtn?.addEventListener('click', async () => {
-      await copyText(url);
-      const prev = copyBtn.textContent;
-      copyBtn.textContent = 'Copied!';
-      copyBtn.classList.add('is-copied');
-      window.setTimeout(() => {
-        copyBtn.textContent = prev;
-        copyBtn.classList.remove('is-copied');
-      }, 1500);
-    });
+		let confirmed: Stats = statsCache.get(slug) ?? {
+			views: 0,
+			upvotes: 0,
+			downvotes: 0,
+			myVote: 0,
+		}
+		let pendingVote: number | null = null
+		let syncTimer = 0
+		let inflight: AbortController | null = null
+		let reqSeq = 0
 
-    const hlBtn = document.querySelector('.highlight-link') as HTMLButtonElement | null;
-    const hlLabel = hlBtn?.querySelector('.highlight-label');
-    function clearHl() {
-      hlBtn?.setAttribute('hidden', '');
-    }
-    document.addEventListener('selectionchange', () => {
-      const sel = window.getSelection();
-      const text = sel?.toString().trim() ?? '';
-      if (!sel || !text || text.length < 4 || !prose) return clearHl();
-      const anchor = sel.anchorNode;
-      if (!anchor || !prose.contains(anchor)) return clearHl();
+		function desiredVote(): number {
+			return pendingVote === null ? confirmed.myVote : pendingVote
+		}
 
-      const rect = sel.getRangeAt(0).getBoundingClientRect();
-      if (!rect.width) return clearHl();
-      if (hlBtn && hlLabel) {
-        hlLabel.textContent = 'Link to highlight';
-        hlBtn.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`;
-        hlBtn.style.top = `${rect.top + window.scrollY}px`;
-        hlBtn.removeAttribute('hidden');
-      }
-    });
-    hlBtn?.addEventListener('click', async () => {
-      const text = window.getSelection()?.toString().trim() ?? '';
-      if (!text || !hlLabel) return;
-      const frag = `${url.split('#')[0]}#:~:text=${encodeURIComponent(text)}`;
-      await copyText(frag);
-      hlLabel.textContent = 'Copied!';
-      window.setTimeout(clearHl, 1200);
-    });
-    document.addEventListener('scroll', clearHl, { passive: true });
-  }
+		function render() {
+			const desired = desiredVote()
+			let up = confirmed.upvotes
+			let down = confirmed.downvotes
+			if (confirmed.myVote === 1) up--
+			else if (confirmed.myVote === -1) down--
+			if (desired === 1) up++
+			else if (desired === -1) down--
+			up = Math.max(0, up)
+			down = Math.max(0, down)
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPostStats, { once: true });
-  } else {
-    initPostStats();
-  }
+			if (viewEl) viewEl.textContent = String(confirmed.views)
+			if (upEl) upEl.textContent = String(up)
+			if (downEl) downEl.textContent = String(down)
+			upBtn?.setAttribute('aria-pressed', String(desired === 1))
+			downBtn?.setAttribute('aria-pressed', String(desired === -1))
+		}
+
+		function normalize(d: any): Stats {
+			return {
+				views: Number(d?.views) || 0,
+				upvotes: Number(d?.upvotes) || 0,
+				downvotes: Number(d?.downvotes) || 0,
+				myVote: [1, -1].includes(Number(d?.myVote)) ? Number(d.myVote) : 0,
+			}
+		}
+
+		function flashVoteError() {
+			const btn = desiredVote() === -1 ? downBtn : upBtn
+			if (!btn) return
+			btn.classList.add('is-error')
+			window.setTimeout(() => btn.classList.remove('is-error'), 1500)
+		}
+
+		async function syncVote() {
+			if (pendingVote === null) return
+			const target = pendingVote
+			const seq = ++reqSeq
+			inflight?.abort()
+			const ctrl = new AbortController()
+			inflight = ctrl
+
+			try {
+				const res = await fetch('/api/posts', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ slug, vote: target }),
+					signal: ctrl.signal,
+				})
+				const d = await res.json().catch(() => null)
+				if (seq !== reqSeq) return
+
+				if (res.ok && d?.ok) {
+					confirmed = normalize(d)
+					statsCache.set(slug, confirmed)
+					if (pendingVote === target) pendingVote = null
+					render()
+				} else {
+					throw new Error('vote-failed')
+				}
+			} catch (err) {
+				if ((err as Error)?.name === 'AbortError' || seq !== reqSeq) return
+				pendingVote = null
+				render()
+				flashVoteError()
+			} finally {
+				if (inflight === ctrl) inflight = null
+			}
+		}
+
+		function vote(dir: number) {
+			pendingVote = desiredVote() === dir ? 0 : dir
+			render()
+			window.clearTimeout(syncTimer)
+			syncTimer = window.setTimeout(syncVote, 350)
+		}
+
+		upBtn?.addEventListener('click', () => vote(1))
+		downBtn?.addEventListener('click', () => vote(-1))
+
+		render()
+
+		afterTransition(() => {
+			fetchJson(`/api/posts?slug=${encodeURIComponent(slug)}`)
+				.then(({ ok, data }) => {
+					if (!ok || !data) return
+					confirmed = normalize(data)
+					statsCache.set(slug, confirmed)
+					if (pendingVote === null) render()
+				})
+				.catch(() => {})
+		})
+
+		const copyBtn = root.querySelector('.copy-link')
+		copyBtn?.addEventListener('click', async () => {
+			await copyText(url)
+			const prev = copyBtn.textContent
+			copyBtn.textContent = 'Copied!'
+			copyBtn.classList.add('is-copied')
+			window.setTimeout(() => {
+				copyBtn.textContent = prev
+				copyBtn.classList.remove('is-copied')
+			}, 1500)
+		})
+
+		const hlBtn = document.querySelector('.highlight-link') as HTMLButtonElement | null
+		const hlLabel = hlBtn?.querySelector('.highlight-label')
+		function clearHl() {
+			hlBtn?.setAttribute('hidden', '')
+		}
+		on(document, 'selectionchange', () => {
+			const sel = window.getSelection()
+			const text = sel?.toString().trim() ?? ''
+			if (!sel || !text || text.length < 4 || !prose) return clearHl()
+			const anchor = sel.anchorNode
+			if (!anchor || !prose.contains(anchor)) return clearHl()
+
+			const rect = sel.getRangeAt(0).getBoundingClientRect()
+			if (!rect.width) return clearHl()
+			if (hlBtn && hlLabel) {
+				hlLabel.textContent = 'Link to highlight'
+				hlBtn.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`
+				hlBtn.style.top = `${rect.top + window.scrollY}px`
+				hlBtn.removeAttribute('hidden')
+			}
+		})
+		hlBtn?.addEventListener('click', async () => {
+			const text = window.getSelection()?.toString().trim() ?? ''
+			if (!text || !hlLabel) return
+			const frag = `${url.split('#')[0]}#:~:text=${encodeURIComponent(text)}`
+			await copyText(frag)
+			hlLabel.textContent = 'Copied!'
+			window.setTimeout(clearHl, 1200)
+		})
+		on(document, 'scroll', clearHl, { passive: true })
+	}
+
+	document.addEventListener('astro:page-load', initPostStats)
 </script>
