@@ -12,8 +12,8 @@
   "r2_buckets": [
     {
       "binding": "MEDIA",
-      "bucket_name": "media",
-      "preview_bucket_name": "media"
+      "bucket_name": "public",
+      "preview_bucket_name": "public"
     }
   ]
 }
