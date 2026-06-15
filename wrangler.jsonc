@@ -13,7 +13,8 @@
     {
       "binding": "MEDIA",
       "bucket_name": "public",
-      "preview_bucket_name": "public"
+      "preview_bucket_name": "public",
+      "remote": true
     }
   ]
 }
