@@ -1,179 +1,245 @@
 ---
-import Layout from './Layout.astro';
-import PostStats from '../components/PostStats.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
+import Layout from './Layout.astro'
+import PostStats from '../components/PostStats.astro'
+import Comments from '../components/Comments.astro'
+import ThemeToggle from '../components/ThemeToggle.astro'
 
 interface Props {
-  title: string;
-  date: string;
-  slug: string;
-  html?: string;
+	title: string
+	date: string
+	slug: string
+	html?: string
 }
 
-const { title, date, slug, html } = Astro.props;
+const { title, date, slug, html } = Astro.props
 const formatted = new Date(date).toLocaleDateString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+})
 
 function estimateReadingMinutes(content?: string): number {
-  if (!content) return 1;
-  const text = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  const words = text ? text.split(' ').filter(Boolean).length : 0;
-  return Math.max(1, Math.round(words / 200));
+	if (!content) return 1
+	const text = content
+		.replace(/<[^>]+>/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim()
+	const words = text ? text.split(' ').filter(Boolean).length : 0
+	return Math.max(1, Math.round(words / 200))
 }
 
-const readingMinutes = estimateReadingMinutes(html);
+const readingMinutes = estimateReadingMinutes(html)
 ---
 
 <Layout title={`${title} · Jakob`}>
-  <ThemeToggle fixed />
+	<header class="article-top">
+		<div class="article-top__inner">
+			<a href="/" class="back">
+				<img
+					src="/assets/icons/arrow.svg"
+					alt=""
+					width="14"
+					height="14"
+					class="back-arrow"
+				/>
+				Back
+			</a>
+			<ThemeToggle />
+		</div>
+	</header>
 
-  <div class="page">
-    <article class="article">
-      <a href="/" class="back">
-        <img src="/assets/icons/arrow.svg" alt="" width="14" height="14" class="back-arrow" />
-        Back
-      </a>
-      <h1 class="title">{title}</h1>
-      <p class="date">{formatted}</p>
-      <PostStats slug={slug} readingMinutes={readingMinutes} />
-      <div class="prose">
-        {html ? <div set:html={html} /> : <slot />}
-      </div>
-    </article>
-  </div>
+	<div class="page">
+		<div class="grid">
+			<article class="article">
+				<h1 class="title">{title}</h1>
+				<p class="date">{formatted}</p>
+				<PostStats slug={slug} readingMinutes={readingMinutes} />
+				<div class="prose">
+					{html ? <div set:html={html} /> : <slot />}
+				</div>
+			</article>
+
+			<aside class="comments-aside">
+				<Comments slug={slug} />
+			</aside>
+		</div>
+	</div>
 </Layout>
 
 <style>
-  .page {
-    display: flex;
-    justify-content: center;
-    padding: 5rem 1.5rem;
-  }
+	.article-top {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 20;
+		padding: 1.5rem;
+		background: var(--bg);
+		border-bottom: 1px solid transparent;
+	}
 
-  .article {
-    width: 100%;
-    max-width: 40rem;
-  }
+	.article-top__inner {
+		width: 100%;
+		max-width: 72rem;
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
 
-  .back {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.875rem;
-    color: var(--fg-muted);
-  }
+	.back {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.875rem;
+		color: var(--fg-muted);
+	}
 
-  .back:hover {
-    color: var(--fg);
-  }
+	.back:hover {
+		color: var(--fg);
+	}
 
-  .back-arrow {
-    transform: rotate(180deg);
-    filter: var(--icon-filter);
-    opacity: 0.7;
-  }
+	.back-arrow {
+		transform: rotate(180deg);
+		filter: var(--icon-filter);
+		opacity: 0.7;
+	}
 
-  .title {
-    font-size: 1.875rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    color: var(--fg);
-    margin-top: 1.5rem;
-  }
+	.page {
+		min-height: 100vh;
+		padding: 5rem 1.5rem 4rem;
+	}
 
-  .date {
-    font-size: 0.875rem;
-    color: var(--fg-dim);
-    margin-top: 0.5rem;
-  }
+	.grid {
+		width: 100%;
+		max-width: 72rem;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 3.5rem;
+	}
 
-  .prose {
-    margin-top: 2.5rem;
-  }
+	@media (min-width: 820px) {
+		.grid {
+			grid-template-columns: minmax(0, 1.85fr) minmax(0, 0.75fr);
+			gap: 4rem;
+			align-items: start;
+		}
+	}
 
-  .prose > :global(div) {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
+	.article {
+		width: 100%;
+		min-width: 0;
+	}
 
-  .prose :global(p) {
-    font-size: 1.0625rem;
-    line-height: 1.75;
-    color: var(--fg-muted);
-    margin: 0;
-    text-align: justify;
-    hyphens: auto;
-  }
+	.comments-aside {
+		min-width: 0;
+		max-width: 20rem;
+	}
 
-  .prose :global(p.md-gap) {
-    padding: 0;
-    min-height: 1.75em;
-    pointer-events: none;
-    user-select: none;
-  }
+	.comments-aside :global(.comments) {
+		margin-top: 0;
+		width: 100%;
+	}
 
-  .prose :global(h2) {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--fg);
-    margin: 0;
-  }
+	.title {
+		font-size: 1.875rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		line-height: 1.2;
+		color: var(--fg);
+	}
 
-  .prose :global(a) {
-    color: var(--fg);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: var(--fg-dim);
-  }
+	.date {
+		font-size: 0.875rem;
+		color: var(--fg-dim);
+		margin-top: 0.5rem;
+	}
 
-  .prose :global(ul),
-  .prose :global(ol) {
-    padding-left: 1.25rem;
-    font-size: 1.0625rem;
-    line-height: 1.75;
-    color: var(--fg-muted);
-    margin: 0;
-  }
+	.prose {
+		margin-top: 2.5rem;
+	}
 
-  .prose :global(li + li) {
-    margin-top: 0.35rem;
-  }
+	.prose > :global(div) {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
 
-  .prose :global(blockquote) {
-    border-left: 2px solid var(--border);
-    padding-left: 1rem;
-    color: var(--fg-dim);
-    font-style: italic;
-  }
+	.prose :global(p) {
+		font-size: 1.0625rem;
+		line-height: 1.75;
+		color: var(--fg-muted);
+		margin: 0;
+		text-align: justify;
+		hyphens: auto;
+	}
 
-  .prose :global(code) {
-    font-size: 0.9em;
-    background: var(--btn-social-bg);
-    padding: 0.1em 0.35em;
-    border-radius: 0.25rem;
-  }
+	.prose :global(p.md-gap) {
+		padding: 0;
+		min-height: 1.75em;
+		pointer-events: none;
+		user-select: none;
+	}
 
-  .prose :global(pre) {
-    overflow-x: auto;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border);
-    background: var(--btn-social-bg);
-  }
+	.prose :global(h2) {
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--fg);
+		margin: 0;
+	}
 
-  .prose :global(pre code) {
-    background: none;
-    padding: 0;
-  }
+	.prose :global(a) {
+		color: var(--fg);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--fg-dim);
+	}
 
-  .prose :global(img) {
-    max-width: 100%;
-    height: auto;
-    border-radius: 0.5rem;
-  }
+	.prose :global(ul),
+	.prose :global(ol) {
+		padding-left: 1.25rem;
+		font-size: 1.0625rem;
+		line-height: 1.75;
+		color: var(--fg-muted);
+		margin: 0;
+	}
+
+	.prose :global(li + li) {
+		margin-top: 0.35rem;
+	}
+
+	.prose :global(blockquote) {
+		border-left: 2px solid var(--border);
+		padding-left: 1rem;
+		color: var(--fg-dim);
+		font-style: italic;
+	}
+
+	.prose :global(code) {
+		font-size: 0.9em;
+		background: var(--btn-social-bg);
+		padding: 0.1em 0.35em;
+		border-radius: 0.25rem;
+	}
+
+	.prose :global(pre) {
+		overflow-x: auto;
+		padding: 1rem;
+		border-radius: 0.5rem;
+		border: 1px solid var(--border);
+		background: var(--btn-social-bg);
+	}
+
+	.prose :global(pre code) {
+		background: none;
+		padding: 0;
+	}
+
+	.prose :global(img) {
+		max-width: 100%;
+		height: auto;
+		border-radius: 0.5rem;
+	}
 </style>

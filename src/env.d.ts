@@ -48,6 +48,9 @@ type Env = {
   COMMENTS_SALT?: string;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_AI_TOKEN?: string;
+  GITHUB_CLIENT_ID?: string;
+  GITHUB_CLIENT_SECRET?: string;
+  AUTH_SECRET?: string;
   DB: D1Database;
   MEDIA?: R2Bucket;
 };

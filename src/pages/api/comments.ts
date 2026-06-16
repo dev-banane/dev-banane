@@ -6,9 +6,11 @@ import { moderateText } from '../../lib/moderation';
 import { avatarServeUrl, isValidAvatarKey, resolveAvatarUrl } from '../../lib/avatar';
 import { normalizeGithub, normalizeTwitter } from '../../lib/socials';
 import { getCommentsSalt } from '../../lib/salt';
+import { getSessionUser, isGithubAuthEnabled } from '../../lib/auth';
 
 export const prerender = false;
 
+const SLUG_RE = /^[a-z0-9-]{1,64}$/;
 const MAX_NAME = 40;
 const MAX_BODY = 280;
 const MEDIA_BASE = (
@@ -23,7 +25,12 @@ type CommentRow = {
   avatar_url: string | null;
   github: string | null;
   twitter: string | null;
+  ip_hash: string | null;
 };
+
+function isValidSlug(slug: string): boolean {
+  return slug === '' || SLUG_RE.test(slug);
+}
 
 async function sha256hex(value: string, salt: string): Promise<string> {
   const data = new TextEncoder().encode(`${salt}:${value}`);
@@ -33,7 +40,7 @@ async function sha256hex(value: string, salt: string): Promise<string> {
     .join('');
 }
 
-function mapComment(row: CommentRow) {
+function mapComment(row: CommentRow, viewerKey: string | null) {
   return {
     id: row.id,
     name: row.name,
@@ -42,53 +49,140 @@ function mapComment(row: CommentRow) {
     avatarUrl: resolveAvatarUrl(row.avatar_url, MEDIA_BASE),
     github: row.github ?? '',
     twitter: row.twitter ?? '',
+    canDelete: viewerKey !== null && row.ip_hash === viewerKey,
   };
 }
 
-export const GET: APIRoute = async () => {
+function missingSaltResponse() {
+  return Response.json(
+    { error: 'Service not configured. Set COMMENTS_SALT.' },
+    { status: 503 }
+  );
+}
+
+export const GET: APIRoute = async ({ url, cookies }) => {
   const db = env.DB;
   if (!db) return Response.json({ comments: [] });
 
+  const slugParam = url.searchParams.get('slug');
+  if (slugParam === null) return Response.json({ comments: [] });
+  const slug = slugParam;
+  if (!isValidSlug(slug)) return Response.json({ comments: [] });
+
   try {
+    const user = await getSessionUser(cookies, env);
+    const viewerKey = user ? `gh:${user.id}` : null;
+
     const { results } = await db
       .prepare(
-        `SELECT id, name, body, created_at, avatar_url, github, twitter
+        `SELECT id, name, body, created_at, avatar_url, github, twitter, ip_hash
          FROM comments
-         WHERE status = 'approved'
+         WHERE status = 'approved' AND slug = ?1
          ORDER BY id DESC LIMIT 50`
       )
+      .bind(slug)
       .all<CommentRow>();
 
     return Response.json({
-      comments: results.map(mapComment),
+      comments: results.map((row) => mapComment(row, viewerKey)),
     });
   } catch {
     return Response.json({ comments: [] });
   }
 };
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const db = env.DB;
     if (!db) return Response.json({ error: 'Comments not configured.' }, { status: 503 });
 
     const body = await request.json();
-    const name = String(body.name ?? '').trim();
+    const slug = String(body.slug ?? '');
     const note = String(body.body ?? '').trim();
+    const authEnabled = isGithubAuthEnabled(env);
+    const user = authEnabled ? await getSessionUser(cookies, env) : null;
+
+    if (!isValidSlug(slug)) {
+      return Response.json({ error: 'Invalid post.' }, { status: 400 });
+    }
+    if (!note) {
+      return Response.json({ error: 'Comment is required.' }, { status: 400 });
+    }
+    if (note.length > MAX_BODY) {
+      return Response.json({ error: 'Note is too long.' }, { status: 400 });
+    }
+
+    const salt = getCommentsSalt(env);
+    if (!salt) return missingSaltResponse();
+
+    const devMode = isTruthyFlag(env.DISABLE_TURNSTILE);
+
+    if (authEnabled) {
+      if (!user) {
+        return Response.json(
+          { error: 'Sign in to comment.', code: 'auth' },
+          { status: 401 }
+        );
+      }
+
+      const identityKey = `gh:${user.id}`;
+      const seen = await db
+        .prepare(`SELECT 1 FROM comments WHERE slug = ?1 AND ip_hash = ?2 LIMIT 1`)
+        .bind(slug, identityKey)
+        .first();
+      if (seen) {
+        return Response.json(
+          { error: 'You\'ve already left a comment here — thanks!' },
+          { status: 429 }
+        );
+      }
+
+      if (!devMode) {
+        const moderation = await moderateText(
+          { accountId: env.CLOUDFLARE_ACCOUNT_ID, apiToken: env.CLOUDFLARE_AI_TOKEN },
+          note
+        );
+        if (!moderation.allowed) {
+          return Response.json(
+            { error: 'Your note was flagged as inappropriate and was not posted.' },
+            { status: 422 }
+          );
+        }
+      }
+
+      const name = (user.name || user.login).slice(0, MAX_NAME);
+      const github = normalizeGithub(user.login);
+      const avatarUrl = user.avatar || null;
+
+      const inserted = await db
+        .prepare(
+          `INSERT INTO comments (name, body, status, ip_hash, fp_hash, avatar_url, github, twitter, slug)
+           VALUES (?1, ?2, 'approved', ?3, NULL, ?4, ?5, NULL, ?6)
+           RETURNING id, name, body, created_at, avatar_url, github, twitter, ip_hash`
+        )
+        .bind(name, note, identityKey, avatarUrl, github, slug)
+        .first<CommentRow>();
+
+      if (!inserted) {
+        return Response.json({ error: 'Could not save your note.' }, { status: 500 });
+      }
+
+      return Response.json({ ok: true, comment: mapComment(inserted, identityKey) });
+    }
+
+    // Anonymous fallback when GitHub auth is disabled (local dev).
+    const name = String(body.name ?? '').trim();
     const turnstileToken = String(body.turnstileToken ?? '');
     const rawFp = String(body.fingerprint ?? '').trim().slice(0, 128);
     const avatarKey = String(body.avatarKey ?? '').trim();
     const github = normalizeGithub(String(body.github ?? ''));
     const twitter = normalizeTwitter(String(body.twitter ?? ''));
 
-    if (!name || !note) {
+    if (!name) {
       return Response.json({ error: 'Name and note are required.' }, { status: 400 });
     }
     if (name.length > MAX_NAME) {
       return Response.json({ error: 'Name is too long.' }, { status: 400 });
-    }
-    if (note.length > MAX_BODY) {
-      return Response.json({ error: 'Note is too long.' }, { status: 400 });
     }
     if (avatarKey && !isValidAvatarKey(avatarKey)) {
       return Response.json({ error: 'Invalid avatar.' }, { status: 400 });
@@ -102,17 +196,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     const avatarUrl = avatarKey ? avatarServeUrl(avatarKey) : '';
 
-    const devMode = isTruthyFlag(env.DISABLE_TURNSTILE);
-
-    const cookieHeader = request.headers.get('Cookie') ?? '';
-    if (!devMode && cookieHeader.includes('site_commented=1')) {
-      return Response.json({ error: 'You\'ve already left a comment — thanks!' }, { status: 429 });
-    }
-
-    const salt = getCommentsSalt(env);
-    if (!salt) {
-      return Response.json({ error: 'Comments not configured.' }, { status: 503 });
-    }
     const ip = request.headers.get('CF-Connecting-IP') ?? '0.0.0.0';
     const ipHash = await sha256hex(ip, salt);
 
@@ -133,11 +216,14 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!devMode) {
       const ipSeen = await db
-        .prepare(`SELECT 1 FROM comments WHERE ip_hash = ?1 LIMIT 1`)
-        .bind(ipHash)
+        .prepare(`SELECT 1 FROM comments WHERE slug = ?1 AND ip_hash = ?2 LIMIT 1`)
+        .bind(slug, ipHash)
         .first();
       if (ipSeen) {
-        return Response.json({ error: 'You\'ve already left a comment — thanks!' }, { status: 429 });
+        return Response.json(
+          { error: 'You\'ve already left a comment here — thanks!' },
+          { status: 429 }
+        );
       }
     }
 
@@ -145,11 +231,14 @@ export const POST: APIRoute = async ({ request }) => {
     if (!devMode && rawFp) {
       fpHash = await sha256hex(rawFp, salt);
       const fpSeen = await db
-        .prepare(`SELECT 1 FROM comments WHERE fp_hash = ?1 LIMIT 1`)
-        .bind(fpHash)
+        .prepare(`SELECT 1 FROM comments WHERE slug = ?1 AND fp_hash = ?2 LIMIT 1`)
+        .bind(slug, fpHash)
         .first();
       if (fpSeen) {
-        return Response.json({ error: 'You\'ve already left a comment — thanks!' }, { status: 429 });
+        return Response.json(
+          { error: 'You\'ve already left a comment here — thanks!' },
+          { status: 429 }
+        );
       }
     }
 
@@ -168,9 +257,9 @@ export const POST: APIRoute = async ({ request }) => {
 
     const inserted = await db
       .prepare(
-        `INSERT INTO comments (name, body, status, ip_hash, fp_hash, avatar_url, github, twitter)
-         VALUES (?1, ?2, 'approved', ?3, ?4, ?5, ?6, ?7)
-         RETURNING id, name, body, created_at, avatar_url, github, twitter`
+        `INSERT INTO comments (name, body, status, ip_hash, fp_hash, avatar_url, github, twitter, slug)
+         VALUES (?1, ?2, 'approved', ?3, ?4, ?5, ?6, ?7, ?8)
+         RETURNING id, name, body, created_at, avatar_url, github, twitter, ip_hash`
       )
       .bind(
         name,
@@ -179,7 +268,8 @@ export const POST: APIRoute = async ({ request }) => {
         fpHash || null,
         avatarUrl || null,
         github || null,
-        twitter || null
+        twitter || null,
+        slug
       )
       .first<CommentRow>();
 
@@ -187,26 +277,55 @@ export const POST: APIRoute = async ({ request }) => {
       return Response.json({ error: 'Could not save your note.' }, { status: 500 });
     }
 
-    const headers: Record<string, string> = {};
-    if (!devMode) {
-      headers['Set-Cookie'] = [
-        'site_commented=1',
-        'HttpOnly',
-        'SameSite=Strict',
-        'Max-Age=31536000',
-        'Path=/',
-      ].join('; ');
-    }
-
-    return Response.json(
-      {
-        ok: true,
-        comment: mapComment(inserted),
-      },
-      { headers }
-    );
+    return Response.json({ ok: true, comment: mapComment(inserted, null) });
   } catch (err) {
     console.error('[comments] POST failed:', err);
+    return Response.json({ error: 'Internal server error.' }, { status: 500 });
+  }
+};
+
+export const DELETE: APIRoute = async ({ request, cookies }) => {
+  try {
+    const db = env.DB;
+    if (!db) return Response.json({ error: 'Comments not configured.' }, { status: 503 });
+
+    if (!isGithubAuthEnabled(env)) {
+      return Response.json({ error: 'Sign in to manage comments.' }, { status: 401 });
+    }
+
+    const user = await getSessionUser(cookies, env);
+    if (!user) {
+      return Response.json({ error: 'Sign in to delete your comment.', code: 'auth' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const id = Number(body.id);
+    const slug = String(body.slug ?? '');
+
+    if (!Number.isInteger(id) || id < 1) {
+      return Response.json({ error: 'Invalid comment.' }, { status: 400 });
+    }
+    if (!isValidSlug(slug)) {
+      return Response.json({ error: 'Invalid post.' }, { status: 400 });
+    }
+
+    const identityKey = `gh:${user.id}`;
+    const row = await db
+      .prepare(
+        `SELECT id FROM comments
+         WHERE id = ?1 AND slug = ?2 AND status = 'approved' AND ip_hash = ?3`
+      )
+      .bind(id, slug, identityKey)
+      .first<{ id: number }>();
+
+    if (!row) {
+      return Response.json({ error: 'Comment not found.' }, { status: 404 });
+    }
+
+    await db.prepare(`DELETE FROM comments WHERE id = ?1`).bind(id).run();
+    return Response.json({ ok: true });
+  } catch (err) {
+    console.error('[comments] DELETE failed:', err);
     return Response.json({ error: 'Internal server error.' }, { status: 500 });
   }
 };

@@ -131,6 +131,12 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 		background: var(--btn-social-bg);
 	}
 
+	.vote:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+
 	.vote.is-error {
 		border-color: #e5484d;
 		color: #e5484d;
@@ -168,7 +174,7 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 	}
 
 	.highlight-link {
-		position: absolute;
+		position: fixed;
 		z-index: 30;
 		display: inline-flex;
 		align-items: center;
@@ -191,12 +197,23 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 </style>
 
 <script>
+	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup.ts'
+
 	type Stats = { views: number; upvotes: number; downvotes: number; myVote: number }
 
 	function pageUrl(root: HTMLElement): string {
 		const fromData = root.dataset.url?.trim()
 		if (fromData?.startsWith('http')) return fromData
 		return `${location.origin}${location.pathname}`
+	}
+
+	function encodeTextFragment(text: string): string {
+		return encodeURIComponent(text).replace(/-/g, '%2D')
+	}
+
+	function selectionInProse(sel: Selection, prose: Element): boolean {
+		if (!sel.rangeCount) return false
+		return prose.contains(sel.getRangeAt(0).commonAncestorContainer)
 	}
 
 	async function copyText(text: string): Promise<boolean> {
@@ -239,9 +256,9 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 	function afterTransition(fn: () => void) {
 		requestAnimationFrame(() => requestAnimationFrame(fn))
 	}
-	function on<K extends keyof DocumentEventMap>(
-		target: Document | Window,
-		type: K | string,
+	function on(
+		target: EventTarget,
+		type: string,
 		handler: EventListenerOrEventListenerObject,
 		opts?: AddEventListenerOptions
 	) {
@@ -285,6 +302,51 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 		let inflight: AbortController | null = null
 		let reqSeq = 0
 
+		type AuthState = { enabled: boolean; user: AuthUser | null }
+		let auth: AuthState = { enabled: false, user: null }
+		let pendingDirAfterLogin: number | null = null
+		let votingEnabled = true
+
+		function setVotingEnabled(enabled: boolean) {
+			votingEnabled = enabled
+			upBtn?.toggleAttribute('disabled', !enabled)
+			downBtn?.toggleAttribute('disabled', !enabled)
+			const title = enabled ? null : 'Voting unavailable'
+			if (title) {
+				upBtn?.setAttribute('title', title)
+				downBtn?.setAttribute('title', title)
+			} else {
+				upBtn?.removeAttribute('title')
+				downBtn?.removeAttribute('title')
+			}
+		}
+
+		function refreshStats() {
+			return fetchJson(`/api/posts?slug=${encodeURIComponent(slug)}`).then(({ ok, data }) => {
+				if (!ok || !data || data.error || !('myVote' in data)) {
+					setVotingEnabled(false)
+					return
+				}
+				setVotingEnabled(true)
+				confirmed = normalize(data)
+				statsCache.set(slug, confirmed)
+				if (pendingVote === null) render()
+			})
+		}
+
+		cleanups.push(
+			onAuthMessage((user) => {
+				auth = { enabled: true, user }
+				refreshStats().then(() => {
+					if (pendingDirAfterLogin !== null) {
+						const dir = pendingDirAfterLogin
+						pendingDirAfterLogin = null
+						vote(dir)
+					}
+				})
+			})
+		)
+
 		function desiredVote(): number {
 			return pendingVote === null ? confirmed.myVote : pendingVote
 		}
@@ -296,7 +358,7 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 			if (confirmed.myVote === 1) up--
 			else if (confirmed.myVote === -1) down--
 			if (desired === 1) up++
-			else if (desired === -1) down--
+			else if (desired === -1) down++
 			up = Math.max(0, up)
 			down = Math.max(0, down)
 
@@ -341,6 +403,15 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 				const d = await res.json().catch(() => null)
 				if (seq !== reqSeq) return
 
+				if (res.status === 401) {
+					auth = { enabled: true, user: null }
+					pendingDirAfterLogin = target
+					pendingVote = null
+					render()
+					openLoginPopup()
+					return
+				}
+
 				if (res.ok && d?.ok) {
 					confirmed = normalize(d)
 					statsCache.set(slug, confirmed)
@@ -360,6 +431,12 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 		}
 
 		function vote(dir: number) {
+			if (!votingEnabled) return
+			if (auth.enabled && !auth.user) {
+				pendingDirAfterLogin = dir
+				openLoginPopup()
+				return
+			}
 			pendingVote = desiredVote() === dir ? 0 : dir
 			render()
 			window.clearTimeout(syncTimer)
@@ -371,15 +448,35 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 
 		render()
 
+		async function loadAuth() {
+			const { ok, data } = await fetchJson('/api/auth/me')
+			if (!ok || !data) return
+			auth = {
+				enabled: !!data.enabled,
+				user: data.user
+					? {
+							login: String(data.user.login ?? ''),
+							name: String(data.user.name ?? ''),
+							avatar: String(data.user.avatar ?? ''),
+						}
+					: null,
+			}
+		}
+
 		afterTransition(() => {
+			loadAuth().catch(() => {})
 			fetchJson(`/api/posts?slug=${encodeURIComponent(slug)}`)
 				.then(({ ok, data }) => {
-					if (!ok || !data) return
+					if (!ok || !data || data.error || !('myVote' in data)) {
+						setVotingEnabled(false)
+						return
+					}
+					setVotingEnabled(true)
 					confirmed = normalize(data)
 					statsCache.set(slug, confirmed)
 					if (pendingVote === null) render()
 				})
-				.catch(() => {})
+				.catch(() => setVotingEnabled(false))
 		})
 
 		const copyBtn = root.querySelector('.copy-link')
@@ -396,33 +493,51 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 
 		const hlBtn = document.querySelector('.highlight-link') as HTMLButtonElement | null
 		const hlLabel = hlBtn?.querySelector('.highlight-label')
+		let highlightText = ''
+
+		if (hlBtn && hlBtn.parentElement !== document.body) {
+			document.body.appendChild(hlBtn)
+		}
+
 		function clearHl() {
+			highlightText = ''
 			hlBtn?.setAttribute('hidden', '')
 		}
+
+		function showHl(rect: DOMRect) {
+			if (!hlBtn || !hlLabel) return
+			hlLabel.textContent = 'Link to highlight'
+			hlBtn.style.left = `${rect.left + rect.width / 2}px`
+			hlBtn.style.top = `${rect.top}px`
+			hlBtn.removeAttribute('hidden')
+		}
+
 		on(document, 'selectionchange', () => {
+			if (!prose) return clearHl()
 			const sel = window.getSelection()
 			const text = sel?.toString().trim() ?? ''
-			if (!sel || !text || text.length < 4 || !prose) return clearHl()
-			const anchor = sel.anchorNode
-			if (!anchor || !prose.contains(anchor)) return clearHl()
+			if (!sel || !text || text.length < 4 || !selectionInProse(sel, prose)) return clearHl()
 
 			const rect = sel.getRangeAt(0).getBoundingClientRect()
 			if (!rect.width) return clearHl()
-			if (hlBtn && hlLabel) {
-				hlLabel.textContent = 'Link to highlight'
-				hlBtn.style.left = `${rect.left + rect.width / 2 + window.scrollX}px`
-				hlBtn.style.top = `${rect.top + window.scrollY}px`
-				hlBtn.removeAttribute('hidden')
-			}
+
+			highlightText = text
+			showHl(rect)
 		})
-		hlBtn?.addEventListener('click', async () => {
-			const text = window.getSelection()?.toString().trim() ?? ''
-			if (!text || !hlLabel) return
-			const frag = `${url.split('#')[0]}#:~:text=${encodeURIComponent(text)}`
-			await copyText(frag)
-			hlLabel.textContent = 'Copied!'
-			window.setTimeout(clearHl, 1200)
-		})
+
+		if (hlBtn) {
+			on(hlBtn, 'mousedown', (e) => e.preventDefault())
+			on(hlBtn, 'click', async () => {
+				const text = highlightText.trim()
+				if (!text || !hlLabel) return
+				const frag = `${url.split('#')[0]}#:~:text=${encodeTextFragment(text)}`
+				const copied = await copyText(frag)
+				if (!copied) return
+				hlLabel.textContent = 'Copied!'
+				window.setTimeout(clearHl, 1200)
+			})
+		}
+
 		on(document, 'scroll', clearHl, { passive: true })
 	}
 

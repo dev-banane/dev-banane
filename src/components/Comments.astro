@@ -1,4 +1,9 @@
 ---
+interface Props {
+	slug?: string
+}
+
+const { slug = '' } = Astro.props
 const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY
 const disableTurnstile =
 	import.meta.env.PUBLIC_DISABLE_TURNSTILE === 'true' ||
@@ -12,6 +17,7 @@ const MAX_TEXTAREA_PX = 240
 
 <section
 	class="comments"
+	data-slug={slug}
 	data-turnstile-enabled={String(turnstileEnabled)}
 	data-site-key={siteKey ?? ''}
 	data-max-len={String(maxLen)}
@@ -32,112 +38,131 @@ const MAX_TEXTAREA_PX = 240
 	<div id="form-wrapper" class="form-wrapper">
 		<div class="form-inner">
 			<form id="comment-form" class="comment-form">
-				<div class="name-row">
-					<input
-						name="name"
-						type="text"
-						required
-						maxlength="40"
-						placeholder="Your name"
-						class="line-input line-input--name"
-						autocomplete="name"
-						tabindex="-1"
-					/>
-					<button
-						type="button"
-						id="avatar-btn"
-						class="avatar-btn"
-						aria-label="Upload avatar"
-						tabindex="-1"
-					>
-						<img id="avatar-preview" class="avatar-preview" alt="" hidden />
-						<span id="avatar-placeholder" class="avatar-placeholder" aria-hidden="true">
-							<svg
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.75"
-								stroke-linecap="round"
-								stroke-linejoin="round"
+				<div id="auth-form">
+					<div id="auth-user-header" class="auth-user-header" hidden>
+						<img
+							id="auth-user-avatar"
+							class="auth-user-avatar"
+							alt=""
+							width="24"
+							height="24"
+						/>
+						<span id="auth-user-label" class="auth-user-label"></span>
+					</div>
+
+					<div class="form-anonymous">
+						<div class="name-row">
+							<input
+								name="name"
+								type="text"
+								required
+								maxlength="40"
+								placeholder="Your name"
+								class="line-input line-input--name"
+								autocomplete="name"
+								tabindex="-1"
+							/>
+							<button
+								type="button"
+								id="avatar-btn"
+								class="avatar-btn"
+								aria-label="Upload avatar"
+								tabindex="-1"
 							>
-								<path
-									d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"
-								></path>
-								<circle cx="12" cy="13" r="3"></circle>
-							</svg>
-						</span>
-					</button>
-					<input
-						id="avatar-input"
-						type="file"
-						accept="image/jpeg,image/png,image/webp,image/gif"
-						hidden
-					/>
-				</div>
-
-				<div class="social-row">
-					<label class="social-field">
-						<span class="social-input-wrap">
-							<span class="social-prefix" aria-hidden="true">
-								<img
-									src="/assets/socials/github.svg"
-									alt=""
-									width="16"
-									height="16"
-								/>
-							</span>
+								<img id="avatar-preview" class="avatar-preview" alt="" hidden />
+								<span
+									id="avatar-placeholder"
+									class="avatar-placeholder"
+									aria-hidden="true"
+								>
+									<svg
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.75"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"
+										></path>
+										<circle cx="12" cy="13" r="3"></circle>
+									</svg>
+								</span>
+							</button>
 							<input
-								name="github"
-								type="text"
-								maxlength="80"
-								placeholder="dev-banane"
-								class="line-input line-input--social"
-								autocomplete="off"
-								tabindex="-1"
+								id="avatar-input"
+								type="file"
+								accept="image/jpeg,image/png,image/webp,image/gif"
+								hidden
 							/>
-						</span>
-					</label>
-					<label class="social-field">
-						<span class="social-input-wrap">
-							<span class="social-prefix" aria-hidden="true">
-								<img
-									src="/assets/socials/twitter.svg"
-									alt=""
-									width="16"
-									height="16"
-								/>
-							</span>
-							<input
-								name="twitter"
-								type="text"
-								maxlength="80"
-								placeholder="devbanane"
-								class="line-input line-input--social"
-								autocomplete="off"
-								tabindex="-1"
-							/>
-						</span>
-					</label>
-				</div>
+						</div>
 
-				<div class="textarea-wrap">
-					<textarea
-						id="comment-body"
-						name="message"
-						required
-						maxlength={maxLen}
-						placeholder="Say something nice…"
-						class="line-input line-input--area"
-						tabindex="-1"></textarea>
-					<span id="comment-counter" class="char-counter" aria-live="polite"></span>
-				</div>
+						<div class="social-row">
+							<label class="social-field">
+								<span class="social-input-wrap">
+									<span class="social-prefix" aria-hidden="true">
+										<img
+											src="/assets/socials/github.svg"
+											alt=""
+											width="16"
+											height="16"
+										/>
+									</span>
+									<input
+										name="github"
+										type="text"
+										maxlength="80"
+										placeholder="dev-banane"
+										class="line-input line-input--social"
+										autocomplete="off"
+										tabindex="-1"
+									/>
+								</span>
+							</label>
+							<label class="social-field">
+								<span class="social-input-wrap">
+									<span class="social-prefix" aria-hidden="true">
+										<img
+											src="/assets/socials/twitter.svg"
+											alt=""
+											width="16"
+											height="16"
+										/>
+									</span>
+									<input
+										name="twitter"
+										type="text"
+										maxlength="80"
+										placeholder="devbanane"
+										class="line-input line-input--social"
+										autocomplete="off"
+										tabindex="-1"
+									/>
+								</span>
+							</label>
+						</div>
+					</div>
 
-				<div class="comment-actions">
-					<button type="submit" class="text-action" tabindex="-1">Post</button>
-					<span id="comment-status" class="comment-status" aria-live="polite"></span>
-				</div>
+					<div class="textarea-wrap">
+						<textarea
+							id="comment-body"
+							name="message"
+							required
+							maxlength={maxLen}
+							placeholder="Say something nice…"
+							class="line-input line-input--area"
+							tabindex="-1"></textarea>
+						<span id="comment-counter" class="char-counter" aria-live="polite"></span>
+					</div>
 
-				{turnstileEnabled && <div id="comment-turnstile" class="turnstile-slot" />}
+					<div class="comment-actions">
+						<button type="submit" class="text-action" tabindex="-1">Post</button>
+						<span id="comment-status" class="comment-status" aria-live="polite"></span>
+					</div>
+
+					{turnstileEnabled && <div id="comment-turnstile" class="turnstile-slot" />}
+				</div>
 			</form>
 		</div>
 	</div>
@@ -207,6 +232,40 @@ const MAX_TEXTAREA_PX = 240
 
 	.form-inner {
 		overflow: hidden;
+	}
+
+	.form-anonymous[hidden],
+	.auth-user-header[hidden] {
+		display: none;
+	}
+
+	.auth-user-header {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+	}
+
+	.auth-user-header:not([hidden]) {
+		margin-bottom: 0.5rem;
+	}
+
+	#auth-form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.auth-user-avatar {
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 9999px;
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+
+	.auth-user-label {
+		font-size: 0.875rem;
+		color: var(--fg-muted);
 	}
 
 	.comment-form {
@@ -555,6 +614,32 @@ const MAX_TEXTAREA_PX = 240
 		color: var(--fg);
 	}
 
+	.comment-list :global(.comment-delete) {
+		background: none;
+		border: none;
+		padding: 0;
+		font-family: inherit;
+		font-size: 0.75rem;
+		color: var(--fg-dim);
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--border);
+		transition:
+			color 0.15s ease,
+			text-decoration-color 0.15s ease;
+	}
+
+	.comment-list :global(.comment-delete:hover) {
+		color: #ef4444;
+		text-decoration-color: #ef4444;
+	}
+
+	.comment-list :global(.comment-delete:disabled) {
+		opacity: 0.5;
+		cursor: wait;
+	}
+
 	.comments-expand {
 		margin-top: 1rem;
 		background: none;
@@ -583,6 +668,8 @@ const MAX_TEXTAREA_PX = 240
 </style>
 
 <script>
+	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup.ts'
+
 	interface TurnstileApi {
 		render(el: HTMLElement, opts: Record<string, unknown>): string
 		reset(id?: string): void
@@ -602,12 +689,12 @@ const MAX_TEXTAREA_PX = 240
 		avatarUrl: string
 		github: string
 		twitter: string
+		canDelete?: boolean
 	}
 	type TokenWaiter = { resolve: (t: string) => void; reject: (e: Error) => void }
 
 	const INITIAL_COMMENT_LIMIT = 3
-	const DRAFT_KEY = 'comment-draft'
-	let commentsCache: Comment[] | null = null
+	const commentsCacheBySlug = new Map<string, Comment[]>()
 
 	function afterTransition(fn: () => void) {
 		requestAnimationFrame(() => requestAnimationFrame(fn))
@@ -619,6 +706,8 @@ const MAX_TEXTAREA_PX = 240
 		if (section.dataset.initialized === '1') return
 		section.dataset.initialized = '1'
 
+		const slug = section.dataset.slug ?? ''
+		const draftKey = slug ? `comment-draft:${slug}` : 'comment-draft'
 		const turnstileEnabled = section.dataset.turnstileEnabled === 'true'
 		const siteKey = section.dataset.siteKey ?? ''
 		const maxLen = Number(section.dataset.maxLen) || 280
@@ -637,6 +726,10 @@ const MAX_TEXTAREA_PX = 240
 		const avatarPreview = document.getElementById('avatar-preview')
 		const avatarPlaceholder = document.getElementById('avatar-placeholder')
 		const counterEl = document.getElementById('comment-counter')
+		const authUserHeader = document.getElementById('auth-user-header')
+		const authUserAvatar = document.getElementById('auth-user-avatar')
+		const authUserLabel = document.getElementById('auth-user-label')
+		const formAnonymous = section.querySelector('.form-anonymous')
 		let isOpen = false
 		let widgetId: string | null = null
 		let turnstileLoading = false
@@ -645,6 +738,9 @@ const MAX_TEXTAREA_PX = 240
 		let allComments: Comment[] = []
 		let commentsExpanded = false
 		let submitting = false
+		let pendingSubmitAfterLogin = false
+		type AuthState = { enabled: boolean; user: AuthUser | null }
+		let auth: AuthState = { enabled: false, user: null }
 		const nameInput = form?.querySelector('input[name="name"]')
 		const githubInput = form?.querySelector('input[name="github"]')
 		const twitterInput = form?.querySelector('input[name="twitter"]')
@@ -692,9 +788,70 @@ const MAX_TEXTAREA_PX = 240
 			return token
 		}
 
+		function updateFormMode() {
+			if (auth.enabled) {
+				formAnonymous?.setAttribute('hidden', '')
+				if (nameInput instanceof HTMLInputElement) nameInput.removeAttribute('required')
+
+				if (auth.user) {
+					authUserHeader?.removeAttribute('hidden')
+					if (authUserAvatar instanceof HTMLImageElement && auth.user.avatar) {
+						authUserAvatar.src = auth.user.avatar
+						authUserAvatar.hidden = false
+					} else if (authUserAvatar instanceof HTMLImageElement) {
+						authUserAvatar.hidden = true
+					}
+					if (authUserLabel) {
+						authUserLabel.textContent = `Posting as @${auth.user.login}`
+					}
+					if (submitBtn instanceof HTMLButtonElement) submitBtn.textContent = 'Post'
+				} else {
+					authUserHeader?.setAttribute('hidden', '')
+					if (submitBtn instanceof HTMLButtonElement) {
+						submitBtn.textContent = 'Sign in with GitHub to post'
+					}
+				}
+				return
+			}
+
+			formAnonymous?.removeAttribute('hidden')
+			authUserHeader?.setAttribute('hidden', '')
+			if (nameInput instanceof HTMLInputElement) nameInput.setAttribute('required', '')
+			if (submitBtn instanceof HTMLButtonElement) submitBtn.textContent = 'Post'
+		}
+
+		async function loadAuth() {
+			try {
+				const res = await fetch('/api/auth/me')
+				const data = await res.json().catch(() => null)
+				if (!data) return
+				auth = {
+					enabled: !!data.enabled,
+					user: data.user
+						? {
+								login: String(data.user.login ?? ''),
+								name: String(data.user.name ?? ''),
+								avatar: String(data.user.avatar ?? ''),
+							}
+						: null,
+				}
+				updateFormMode()
+			} catch {}
+		}
+
+		onAuthMessage((user) => {
+			auth = { enabled: true, user }
+			updateFormMode()
+			loadComments().catch(() => {})
+			if (pendingSubmitAfterLogin && form instanceof HTMLFormElement) {
+				pendingSubmitAfterLogin = false
+				form.requestSubmit()
+			}
+		})
+
 		function loadDraft() {
 			try {
-				const raw = localStorage.getItem(DRAFT_KEY)
+				const raw = localStorage.getItem(draftKey)
 				if (!raw) return
 				const draft = JSON.parse(raw)
 				if (nameInput instanceof HTMLInputElement && typeof draft.name === 'string') {
@@ -718,12 +875,21 @@ const MAX_TEXTAREA_PX = 240
 
 		function saveDraft() {
 			try {
+				if (auth.enabled) {
+					const message = textarea instanceof HTMLTextAreaElement ? textarea.value : ''
+					if (!message) {
+						localStorage.removeItem(draftKey)
+						return
+					}
+					localStorage.setItem(draftKey, JSON.stringify({ message }))
+					return
+				}
 				const name = nameInput instanceof HTMLInputElement ? nameInput.value : ''
 				const github = githubInput instanceof HTMLInputElement ? githubInput.value : ''
 				const twitter = twitterInput instanceof HTMLInputElement ? twitterInput.value : ''
 				const message = textarea instanceof HTMLTextAreaElement ? textarea.value : ''
 				if (!name && !message && !github && !twitter && !avatarKey) {
-					localStorage.removeItem(DRAFT_KEY)
+					localStorage.removeItem(draftKey)
 					return
 				}
 				const avatarUrl =
@@ -731,7 +897,7 @@ const MAX_TEXTAREA_PX = 240
 						? avatarPreview.src
 						: ''
 				localStorage.setItem(
-					DRAFT_KEY,
+					draftKey,
 					JSON.stringify({ name, github, twitter, message, avatarKey, avatarUrl })
 				)
 			} catch {}
@@ -739,7 +905,7 @@ const MAX_TEXTAREA_PX = 240
 
 		function clearDraft() {
 			try {
-				localStorage.removeItem(DRAFT_KEY)
+				localStorage.removeItem(draftKey)
 			} catch {}
 		}
 
@@ -832,10 +998,13 @@ const MAX_TEXTAREA_PX = 240
 				el.removeAttribute('tabindex')
 			)
 			setTimeout(() => {
-				const first = form?.querySelector('input')
-				if (first instanceof HTMLElement) first.focus({ preventScroll: true })
+				const focusEl =
+					auth.enabled || !(form?.querySelector('input') instanceof HTMLElement)
+						? textarea
+						: form?.querySelector('input')
+				if (focusEl instanceof HTMLElement) focusEl.focus({ preventScroll: true })
 			}, 50)
-			ensureTurnstile()
+			if (!auth.enabled) ensureTurnstile()
 		}
 
 		function close() {
@@ -913,14 +1082,18 @@ const MAX_TEXTAREA_PX = 240
 			]
 				.filter(Boolean)
 				.join('')
+			const deleteBtn = c.canDelete
+				? `<button type="button" class="comment-delete" data-id="${c.id}" aria-label="Delete your comment">Delete</button>`
+				: ''
 			return `
-        <li class="comment-item">
+        <li class="comment-item" data-id="${c.id}">
           <div class="comment-head">
             ${avatar}
             <div class="comment-meta">
               <span class="comment-author">${esc(c.name)}</span>
               <span class="comment-time">${timeAgo(c.createdAt)}</span>
             </div>
+            ${deleteBtn}
             ${socials ? `<span class="comment-socials">${socials}</span>` : ''}
           </div>
           <p class="comment-body">${esc(c.body)}</p>
@@ -961,6 +1134,35 @@ const MAX_TEXTAREA_PX = 240
 		expandBtn?.addEventListener('click', () => {
 			commentsExpanded = true
 			paintComments()
+		})
+
+		listEl?.addEventListener('click', async (e) => {
+			const btn = (e.target as Element).closest('.comment-delete')
+			if (!(btn instanceof HTMLButtonElement) || btn.disabled) return
+			const id = Number(btn.dataset.id)
+			if (!id) return
+
+			btn.disabled = true
+			try {
+				const res = await fetch('/api/comments', {
+					method: 'DELETE',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id, slug }),
+				})
+				const json = await res.json().catch(() => null)
+				if (!res.ok || !json?.ok) {
+					setStatus(json?.error ?? 'Could not delete comment.', true)
+					btn.disabled = false
+					return
+				}
+				allComments = allComments.filter((c) => c.id !== id)
+				commentsCacheBySlug.set(slug, allComments)
+				paintComments()
+				setStatus('', false)
+			} catch {
+				setStatus('Network error. Try again.', true)
+				btn.disabled = false
+			}
 		})
 
 		function setStatus(msg: string, isError: boolean) {
@@ -1043,23 +1245,26 @@ const MAX_TEXTAREA_PX = 240
 		async function fetchComments(timeoutMs = 10000) {
 			const ctrl = new AbortController()
 			const timer = window.setTimeout(() => ctrl.abort(), timeoutMs)
+			const qs = `?slug=${encodeURIComponent(slug)}`
 			try {
-				const res = await fetch('/api/comments', {
+				const res = await fetch(`/api/comments${qs}`, {
 					signal: ctrl.signal,
 					cache: 'no-store',
 				})
-				if (!res.ok) throw new Error(`status ${res.status}`)
-				const data = await res.json()
+				const data = await res.json().catch(() => null)
+				if (!res.ok) {
+					throw new Error(data?.error ?? `status ${res.status}`)
+				}
 				return Array.isArray(data?.comments) ? data.comments : []
 			} finally {
 				window.clearTimeout(timer)
 			}
 		}
 
-		function showLoadError() {
+		function showLoadError(message?: string) {
 			if (!listEl) return
-			listEl.innerHTML =
-				'<li class="comment-empty">Couldn\'t load comments. <button type="button" class="comment-retry">Retry</button></li>'
+			const text = message ?? "Couldn't load comments."
+			listEl.innerHTML = `<li class="comment-empty">${esc(text)} <button type="button" class="comment-retry">Retry</button></li>`
 			listEl
 				.querySelector('.comment-retry')
 				?.addEventListener('click', () => loadComments(true), { once: true })
@@ -1072,7 +1277,7 @@ const MAX_TEXTAREA_PX = 240
 			for (let attempt = 0; attempt < 2; attempt++) {
 				try {
 					const comments = await fetchComments()
-					commentsCache = comments
+					commentsCacheBySlug.set(slug, comments)
 					render(comments)
 					return
 				} catch (err) {
@@ -1080,27 +1285,46 @@ const MAX_TEXTAREA_PX = 240
 						await new Promise((r) => window.setTimeout(r, 600))
 						continue
 					}
-					showLoadError()
+					showLoadError(err instanceof Error ? err.message : undefined)
 				}
 			}
 		}
 
-		if (commentsCache) render(commentsCache)
-		afterTransition(() => loadComments())
+		const cached = commentsCacheBySlug.get(slug)
+		if (cached) render(cached)
+		afterTransition(async () => {
+			await loadAuth().catch(() => {})
+			await loadComments()
+		})
 
 		form?.addEventListener('submit', async (e) => {
 			e.preventDefault()
 			if (!(form instanceof HTMLFormElement) || !submitBtn) return
 			if (submitting) return
 
+			const body = String(
+				textarea instanceof HTMLTextAreaElement ? textarea.value : ''
+			).trim()
+
+			if (auth.enabled && !auth.user) {
+				if (!body) {
+					setStatus('Write something first.', true)
+					return
+				}
+				saveDraft()
+				pendingSubmitAfterLogin = true
+				openLoginPopup()
+				return
+			}
+
 			const data = new FormData(form)
 			const name = String(data.get('name') ?? '').trim()
-			const body = String(data.get('message') ?? '').trim()
 			const github = String(data.get('github') ?? '').trim()
 			const twitter = String(data.get('twitter') ?? '').trim()
-			if (!name || !body) return
+			if (!body) return
+			if (!auth.enabled && !name) return
 
-			if (avatarUploading) {
+			if (!auth.enabled && avatarUploading) {
 				setStatus('Wait for the image upload to finish.', true)
 				return
 			}
@@ -1112,7 +1336,7 @@ const MAX_TEXTAREA_PX = 240
 
 			try {
 				let token = ''
-				if (turnstileEnabled) {
+				if (turnstileEnabled && !(auth.enabled && auth.user)) {
 					setStatus('Verifying…', false)
 					try {
 						token = await consumeToken(false)
@@ -1123,38 +1347,49 @@ const MAX_TEXTAREA_PX = 240
 					setStatus('Posting…', false)
 				}
 
-				const fp = await fingerprint()
+				const fp = auth.enabled && auth.user ? '' : await fingerprint()
+
+				const payload: Record<string, string> = { body, slug }
+				if (!auth.enabled) {
+					payload.name = name
+					payload.github = github
+					payload.twitter = twitter
+					if (avatarKey) payload.avatarKey = avatarKey
+					if (token) payload.turnstileToken = token
+					if (fp) payload.fingerprint = fp
+				}
 
 				const res = await fetch('/api/comments', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						name,
-						body,
-						github,
-						twitter,
-						avatarKey,
-						turnstileToken: token,
-						fingerprint: fp,
-					}),
+					body: JSON.stringify(payload),
 				})
 				const json = await res.json().catch(() => null)
 
+				if (res.status === 401) {
+					auth = { enabled: true, user: null }
+					updateFormMode()
+					pendingSubmitAfterLogin = true
+					openLoginPopup()
+					setStatus(json?.error ?? 'Sign in to comment.', true)
+					return
+				}
+
 				if (!res.ok || !json?.ok) {
 					setStatus(json?.error ?? 'Could not post.', true)
-					if (turnstileEnabled) resetTurnstile()
+					if (turnstileEnabled && !(auth.enabled && auth.user)) resetTurnstile()
 					return
 				}
 
 				commentsExpanded = false
 				if (json.comment) {
 					const next = [json.comment, ...allComments]
-					commentsCache = next
+					commentsCacheBySlug.set(slug, next)
 					render(next)
 				}
 				fetchComments()
 					.then((list) => {
-						commentsCache = list
+						commentsCacheBySlug.set(slug, list)
 						if (list.length) render(list)
 					})
 					.catch(() => {})
@@ -1172,11 +1407,11 @@ const MAX_TEXTAREA_PX = 240
 				if (toggleBtn) toggleBtn.setAttribute('hidden', '')
 			} catch {
 				setStatus('Network error. Try again.', true)
-				if (turnstileEnabled) resetTurnstile()
+				if (turnstileEnabled && !(auth.enabled && auth.user)) resetTurnstile()
 			} finally {
 				submitting = false
 				submitBtn.removeAttribute('disabled')
-				submitBtn.textContent = 'Post'
+				updateFormMode()
 			}
 		})
 	}
