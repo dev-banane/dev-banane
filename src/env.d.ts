@@ -42,12 +42,22 @@ interface R2ObjectBody {
   writeHttpMetadata(headers: Headers): void;
 }
 
+interface Ai {
+  run(
+    model: string,
+    inputs: Record<string, unknown>,
+    options?: Record<string, unknown>
+  ): Promise<Record<string, unknown>>;
+}
+
 type Env = {
   DISABLE_TURNSTILE?: string;
+  DISABLE_MODERATION?: string;
   TURNSTILE_SECRET_KEY: string;
   COMMENTS_SALT?: string;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_AI_TOKEN?: string;
+  AI?: Ai;
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
   AUTH_SECRET?: string;

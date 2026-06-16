@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { verifyTurnstileToken } from '../../lib/turnstile';
 import { isTurnstileEnabled, isTruthyFlag } from '../../lib/turnstile-config';
-import { moderateText } from '../../lib/moderation';
+import { moderateText, isModerationEnabled } from '../../lib/moderation';
 import { avatarServeUrl, isValidAvatarKey, resolveAvatarUrl } from '../../lib/avatar';
 import { normalizeGithub, normalizeTwitter } from '../../lib/socials';
 import { getCommentsSalt } from '../../lib/salt';
@@ -116,6 +116,19 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (!salt) return missingSaltResponse();
 
     const devMode = isTruthyFlag(env.DISABLE_TURNSTILE);
+    const moderationEnabled = isModerationEnabled(env);
+
+    async function rejectIfFlagged(note: string): Promise<Response | null> {
+      if (!moderationEnabled) return null;
+      const moderation = await moderateText(env, note);
+      if (!moderation.allowed) {
+        return Response.json(
+          { error: 'Your note was flagged as inappropriate and was not posted.' },
+          { status: 422 }
+        );
+      }
+      return null;
+    }
 
     if (authEnabled) {
       if (!user) {
@@ -137,18 +150,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         );
       }
 
-      if (!devMode) {
-        const moderation = await moderateText(
-          { accountId: env.CLOUDFLARE_ACCOUNT_ID, apiToken: env.CLOUDFLARE_AI_TOKEN },
-          note
-        );
-        if (!moderation.allowed) {
-          return Response.json(
-            { error: 'Your note was flagged as inappropriate and was not posted.' },
-            { status: 422 }
-          );
-        }
-      }
+      const flagged = await rejectIfFlagged(note);
+      if (flagged) return flagged;
 
       const name = (user.name || user.login).slice(0, MAX_NAME);
       const github = normalizeGithub(user.login);
@@ -242,18 +245,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     }
 
-    if (!devMode) {
-      const moderation = await moderateText(
-        { accountId: env.CLOUDFLARE_ACCOUNT_ID, apiToken: env.CLOUDFLARE_AI_TOKEN },
-        note
-      );
-      if (!moderation.allowed) {
-        return Response.json(
-          { error: 'Your note was flagged as inappropriate and was not posted.' },
-          { status: 422 }
-        );
-      }
-    }
+    const flagged = await rejectIfFlagged(note);
+    if (flagged) return flagged;
 
     const inserted = await db
       .prepare(

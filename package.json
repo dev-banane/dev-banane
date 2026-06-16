@@ -19,6 +19,7 @@
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.4.3",
     "marked": "^18.0.5",
+    "obscenity": "^0.4.6",
     "tailwindcss": "^4.3.0"
   }
 }

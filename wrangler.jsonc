@@ -1,6 +1,9 @@
 {
 	"name": "dev-banane",
 	"compatibility_date": "2025-04-01",
+	"ai": {
+		"binding": "AI",
+	},
 	"d1_databases": [
 		{
 			"binding": "DB",
