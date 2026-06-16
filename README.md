@@ -7,7 +7,7 @@ Full-stack developer. I build and ship web applications, APIs, and platforms tha
 -   💞️ I love collaborating on open source projects!
 -   🤝 Let me know if you want to start a project together!
 
-### Check out my website: *[devbanane.com](https://devbanane.com)*
+### Check out my website: *[devjakob.com](https://devjakob.com)*
 
 <div align="left">
   <img src="https://widgets.1ceit.com/dev-banane/spotify?v=1" width="49%" alt="Now Playing on Spotify"/>
@@ -45,6 +45,6 @@ A Discord bot and management platform for virtual airlines and aviation communit
 
 ### Connect with me
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-devbanane-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/devbanane)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-devjakob-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/devjakob)
 [![Instagram](https://img.shields.io/badge/Instagram-_jakob09-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/_jakob09)
 [![Discord](https://img.shields.io/badge/Discord-jakob-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/users/798485492621770792)
