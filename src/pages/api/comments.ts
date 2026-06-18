@@ -45,7 +45,7 @@ function mapComment(row: CommentRow, viewerKey: string | null) {
     id: row.id,
     name: row.name,
     body: row.body,
-    createdAt: row.created_at,
+    createdAt: row.created_at.replace(' ', 'T') + 'Z',
     avatarUrl: resolveAvatarUrl(row.avatar_url, MEDIA_BASE),
     github: row.github ?? '',
     twitter: row.twitter ?? '',
