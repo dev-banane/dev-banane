@@ -44,13 +44,13 @@ function formatDate(iso: string) {
 						passion for making things people actually use.
 					</p>
 					<p>
-						Right now I'm building <a
+						Right now I'm building 
 							href="https://github.com/cephie-studios/pfcontrol-2"
 							target="_blank"
 							rel="noopener"
 							class="link">PFControl</a
 						>, an ATC strip management platform I've been working on since I was 15 with
-						thousands of registered users and ~500 daily actives, and <a
+						thousands of registered users and ~500 daily actives, and 
 							href="/posts/petal"
 							class="link">Petal</a
 						>, a unified AI workspace I'm developing from the ground up.
@@ -58,16 +58,15 @@ function formatDate(iso: string) {
 					<p>
 						I work across the full stack with TypeScript, Next.js, Postgres, and
 						whatever else the problem needs. Outside of code I'm interested in aviation,
-						space as well as photography. <a href="mailto:me@devbanane.com" class="link"
-							>Feel free to contact me!</a
-						>
+						space as well as photography. <a href="#" class="link" id="contact-link"
+						>Feel free to contact me!</a>
 					</p>
 				</div>
 
 				<div class="socials">
 					{
 						socials.map((s) => (
-							<a
+							
 								href={s.href}
 								target="_blank"
 								rel="noopener noreferrer"
@@ -302,6 +301,15 @@ function formatDate(iso: string) {
 		requestAnimationFrame(() => requestAnimationFrame(fn))
 	}
 
+	function initContactLink() {
+		const link = document.getElementById('contact-link') as HTMLAnchorElement | null
+		if (link) {
+			const user = 'me'
+			const domain = 'devbanane.com'
+			link.href = `mailto:${user}@${domain}`
+		}
+	}
+
 	function initWriting() {
 		cleanups.forEach((fn) => fn())
 		cleanups = []
@@ -363,5 +371,10 @@ function formatDate(iso: string) {
 		})
 	}
 
-	document.addEventListener('astro:page-load', initWriting)
+	function init() {
+		initContactLink()
+		initWriting()
+	}
+
+	document.addEventListener('astro:page-load', init)
 </script>
