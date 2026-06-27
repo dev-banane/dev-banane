@@ -5,11 +5,9 @@ interface Props {
 }
 
 const { slug, readingMinutes = 1 } = Astro.props
-const site = Astro.site?.toString().replace(/\/$/, '') ?? ''
-const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 ---
 
-<div class="post-stats" data-slug={slug} data-url={canonical}>
+<div class="post-stats" data-slug={slug}>
 	<div class="meta-row">
 		<span class="meta reading-time">{readingMinutes} min read</span>
 		<span class="dot">·</span>
@@ -207,8 +205,85 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 		return `${location.origin}${location.pathname}`
 	}
 
-	function encodeTextFragment(text: string): string {
-		return encodeURIComponent(text).replace(/-/g, '%2D')
+	function encodeQuote(text: string): string {
+		return encodeURIComponent(text.replace(/\s+/g, ' ').trim())
+	}
+
+	function blockAncestor(node: Node): Element | null {
+		let el = node.parentElement
+		while (el && getComputedStyle(el).display.startsWith('inline')) el = el.parentElement
+		return el
+	}
+
+	function findQuoteRange(root: Element, needle: string): Range | null {
+		const want = needle.replace(/\s+/g, ' ').trim()
+		if (!want) return null
+
+		const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+		let hay = ''
+		const map: Array<{ node: Text; offset: number }> = []
+		let prevBlock: Element | null = null
+		let node: Node | null
+
+		while ((node = walker.nextNode())) {
+			const text = node as Text
+			const block = blockAncestor(text)
+			if (prevBlock && block !== prevBlock && hay && !hay.endsWith(' ')) {
+				hay += ' '
+				map.push(map[map.length - 1])
+			}
+			prevBlock = block
+
+			const value = text.nodeValue ?? ''
+			for (let i = 0; i < value.length; i++) {
+				if (/\s/.test(value[i])) {
+					if (hay.endsWith(' ')) continue
+					hay += ' '
+				} else {
+					hay += value[i]
+				}
+				map.push({ node: text, offset: i })
+			}
+		}
+
+		const idx = hay.indexOf(want)
+		if (idx === -1) return null
+		const start = map[idx]
+		const end = map[idx + want.length - 1]
+		if (!start || !end) return null
+
+		const range = document.createRange()
+		range.setStart(start.node, start.offset)
+		range.setEnd(end.node, end.offset + 1)
+		return range
+	}
+
+	function applyQuoteHighlight(prose: Element | null) {
+		const highlights = (CSS as unknown as { highlights?: Map<string, unknown> }).highlights
+		const HL = (window as unknown as { Highlight?: new (r: Range) => unknown }).Highlight
+		const m = location.hash.match(/(?:^#|&)h=([^&]+)/)
+		if (!prose || !m) {
+			highlights?.delete('quote')
+			return
+		}
+
+		let text = ''
+		try {
+			text = decodeURIComponent(m[1])
+		} catch {
+			return
+		}
+
+		const range = findQuoteRange(prose, text)
+		if (!range) {
+			highlights?.delete('quote')
+			return
+		}
+
+		if (highlights && HL) highlights.set('quote', new HL(range))
+		range.startContainer.parentElement?.scrollIntoView({ block: 'center', behavior: 'auto' })
+
+		history.replaceState(history.state, '', location.pathname + location.search)
 	}
 
 	function selectionInProse(sel: Selection, prose: Element): boolean {
@@ -276,6 +351,9 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 		const slug = root.dataset.slug ?? ''
 		const url = pageUrl(root)
 		const prose = document.querySelector('.prose')
+
+		applyQuoteHighlight(prose)
+		on(window, 'hashchange', () => applyQuoteHighlight(prose))
 
 		const viewEl = root.querySelector('.view-count')
 		const upBtn = root.querySelector('.vote-up')
@@ -494,12 +572,17 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 		const hlBtn = document.querySelector('.highlight-link') as HTMLButtonElement | null
 		const hlLabel = hlBtn?.querySelector('.highlight-label')
 		let highlightText = ''
+		let hlShowTimer: ReturnType<typeof setTimeout> | null = null
 
 		if (hlBtn && hlBtn.parentElement !== document.body) {
 			document.body.appendChild(hlBtn)
 		}
 
 		function clearHl() {
+			if (hlShowTimer) {
+				clearTimeout(hlShowTimer)
+				hlShowTimer = null
+			}
 			highlightText = ''
 			hlBtn?.setAttribute('hidden', '')
 		}
@@ -522,7 +605,11 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 			if (!rect.width) return clearHl()
 
 			highlightText = text
-			showHl(rect)
+			if (hlShowTimer) clearTimeout(hlShowTimer)
+			hlShowTimer = setTimeout(() => {
+				hlShowTimer = null
+				showHl(rect)
+			}, 400)
 		})
 
 		if (hlBtn) {
@@ -530,7 +617,7 @@ const canonical = site ? `${site}${Astro.url.pathname}` : Astro.url.pathname
 			on(hlBtn, 'click', async () => {
 				const text = highlightText.trim()
 				if (!text || !hlLabel) return
-				const frag = `${url.split('#')[0]}#:~:text=${encodeTextFragment(text)}`
+				const frag = `${url.split('#')[0]}#h=${encodeQuote(text)}`
 				const copied = await copyText(frag)
 				if (!copied) return
 				hlLabel.textContent = 'Copied!'

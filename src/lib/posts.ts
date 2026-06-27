@@ -66,6 +66,22 @@ function preserveExtraBlankLines(body: string): string {
   });
 }
 
+const FILE_EXTS: Record<string, string> = {
+  pdf: 'PDF',
+  zip: 'ZIP',
+  gz: 'GZ',
+  tar: 'TAR',
+  docx: 'Word',
+  xlsx: 'Excel',
+  pptx: 'PowerPoint',
+  csv: 'CSV',
+  mp4: 'MP4',
+  mp3: 'MP3',
+  dmg: 'DMG',
+  exe: 'EXE',
+  apk: 'APK',
+};
+
 function enhanceImages(html: string): string {
   return html.replace(/<img([^>]*)\ssrc="([^"]+)"([^>]*)>/gi, (_match, before, src, after) => {
     const resolved = resolvePostMediaUrl(src);
@@ -75,10 +91,24 @@ function enhanceImages(html: string): string {
   });
 }
 
+function enhanceFileLinks(html: string): string {
+  return html.replace(/<a\s([^>]*)href="([^"]+)"([^>]*)>([\s\S]*?)<\/a>/gi, (_match, before, href, after, label) => {
+    const ext = href.split('?')[0].split('#')[0].split('.').pop()?.toLowerCase() ?? '';
+    if (!FILE_EXTS[ext]) return _match;
+
+    const isExternal = /^https?:\/\//i.test(href);
+    const extraAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+
+    return `<a ${before}href="${href}"${after} class="file-card"${extraAttrs}>` +
+      `${label}<img src="/assets/icons/download.svg" class="file-card__dl" alt="" width="14" height="14">` +
+      `</a>`;
+  });
+}
+
 async function renderMarkdown(body: string): Promise<string> {
   const prepared = preserveExtraBlankLines(body.replace(/^\n+/, ''));
   const html = await marked.parse(prepared);
-  return enhanceImages(html);
+  return enhanceFileLinks(enhanceImages(html));
 }
 
 export function slugifyTitle(title: string): string {

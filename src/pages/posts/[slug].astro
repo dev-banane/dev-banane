@@ -17,6 +17,8 @@ if (!remote) {
 
 const title = remote.title ?? slug;
 const date = remote.date ?? '';
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600')
 ---
 
 <Article title={title} date={date} slug={slug} html={remote.html} />

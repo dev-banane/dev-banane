@@ -5,6 +5,11 @@ export const socials = [
     icon: '/assets/socials/github.svg',
   },
   {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/in/jakobpuetz',
+    icon: '/assets/socials/linkedin.svg',
+  },
+  {
     label: 'Twitter',
     href: 'https://x.com/devbanane',
     icon: '/assets/socials/twitter.svg',

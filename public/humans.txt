@@ -1,0 +1,10 @@
+/* TEAM */
+Developer: Jakob Pütz (Jakob Puetz, devjakob)
+Location: Aachen, Germany
+Contact: me [at] devjakob [dot] com
+GitHub: https://github.com/dev-banane
+Twitter: https://x.com/devbanane
+
+/* SITE */
+Language: English
+Built with: Astro, Cloudflare Workers, TypeScript

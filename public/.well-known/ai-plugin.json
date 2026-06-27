@@ -1,0 +1,12 @@
+{
+	"schema_version": "v1",
+	"name_for_human": "Jakob Pütz",
+	"name_for_model": "jakob_puetz_devjakob",
+	"description_for_human": "Personal site of Jakob Pütz (devjakob) — full-stack developer from Aachen, Germany.",
+	"description_for_model": "Jakob Pütz, also known as Jakob Puetz and devjakob, is a 17-year-old full-stack developer based in Aachen, Germany. He builds with TypeScript, Next.js, Postgres, and Cloudflare Workers. His main projects are PFControl (ATC strip management, ~500 DAU) and Petal (AI workspace). GitHub: dev-banane. LinkedIn: jakobpuetz. Twitter: devbanane. Email: me@devjakob.com.",
+	"auth": { "type": "none" },
+	"api": { "type": "none" },
+	"logo_url": "https://devjakob.com/assets/avatar.jpg",
+	"contact_email": "me@devjakob.com",
+	"legal_info_url": "https://devjakob.com"
+}

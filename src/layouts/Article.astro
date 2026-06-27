@@ -31,10 +31,14 @@ function estimateReadingMinutes(content?: string): number {
 const readingMinutes = estimateReadingMinutes(html)
 ---
 
-<Layout title={`${title} · Jakob`}>
+<Layout
+	title={`${title} · Jakob Pütz`}
+	description={`${title} — by Jakob Pütz, full-stack developer from Aachen.`}
+	canonical={`https://devjakob.com/posts/${slug}`}
+>
 	<header class="article-top">
 		<div class="article-top__inner">
-			<a href="/" class="back">
+			<a href="/" class="back" data-astro-prefetch="load">
 				<img
 					src="/assets/icons/arrow.svg"
 					alt=""
@@ -238,8 +242,25 @@ const readingMinutes = estimateReadingMinutes(html)
 	}
 
 	.prose :global(img) {
-		max-width: 100%;
+		width: 100%;
 		height: auto;
-		border-radius: 0.5rem;
+		border-radius: 1rem;
+		display: block;
+	}
+
+	.prose :global(.file-card) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3em;
+		vertical-align: middle;
+	}
+
+	.prose :global(.file-card__dl) {
+		width: 0.85em;
+		height: 0.85em;
+		flex-shrink: 0;
+		filter: var(--icon-filter);
+		opacity: 0.6;
+		border-radius: 0;
 	}
 </style>

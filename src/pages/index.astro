@@ -10,6 +10,8 @@ import { env } from 'cloudflare:workers'
 
 const posts = await fetchPostList(env.MEDIA)
 
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+
 function formatDate(iso: string) {
 	return new Date(iso).toLocaleDateString('en-US', {
 		year: 'numeric',
@@ -19,7 +21,10 @@ function formatDate(iso: string) {
 }
 ---
 
-<Layout title="Jakob Pütz">
+<Layout
+	title="Jakob Pütz"
+	description="Jakob Pütz (Jakob Puetz, devjakob) — 17-year-old full-stack developer from Aachen, Germany. Building PFControl and Petal. TypeScript, Next.js, Postgres."
+>
 	<div class="page">
 		<div class="grid">
 			<article class="about">
@@ -39,9 +44,9 @@ function formatDate(iso: string) {
 
 				<div class="prose">
 					<p>
-						Hey, I'm a 17-year-old developer. I've been building software since my
-						early teens, and what started as curiosity quickly turned into a serious
-						passion for making things people actually use.
+						Hey, I'm a 17-year-old developer. I've been building software since my early
+						teens, and what started as curiosity quickly turned into a serious passion
+						for making things people actually use.
 					</p>
 					<p>
 						Right now I'm building <a
@@ -59,7 +64,8 @@ function formatDate(iso: string) {
 						I work across the full stack with TypeScript, Next.js, Postgres, and
 						whatever else the problem needs. Outside of code I'm interested in aviation,
 						space as well as photography. <a href="#" class="link" id="contact-link"
-						>Feel free to contact me!</a>
+							>Feel free to contact me!</a
+						>
 					</p>
 				</div>
 
@@ -69,15 +75,26 @@ function formatDate(iso: string) {
 							<a
 								href={s.href}
 								target="_blank"
-								rel="noopener noreferrer"
+								rel="noopener noreferrer me"
 								class="btn btn--social"
 							>
-								<img src={s.icon} alt="" width={28} height={28} class="btn-icon" />
+								<img
+									src={s.icon}
+									alt={s.label}
+									width={28}
+									height={28}
+									class="btn-icon"
+								/>
 								{s.label}
 							</a>
 						))
 					}
 				</div>
+
+				<address class="sr-only" aria-hidden="true">
+					Jakob Pütz, also known as Jakob Puetz, devjakob, and dev-banane — web developer
+					based in Aachen, Germany.
+				</address>
 			</article>
 
 			<aside class="writing">
@@ -211,38 +228,60 @@ function formatDate(iso: string) {
 	}
 
 	.post-scroll-wrap {
-		position: relative;
 		margin-bottom: 0.25rem;
 	}
 
-	.post-scroll-wrap::before,
-	.post-scroll-wrap::after {
-		content: '';
-		position: absolute;
-		left: 0;
-		right: 0;
-		height: 3.5rem;
-		pointer-events: none;
-		z-index: 1;
-		opacity: 0;
-		transition: opacity 0.2s ease;
+	.post-list {
+		--fade: 3.5rem;
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			transparent,
+			black var(--fade),
+			black calc(100% - var(--fade)),
+			transparent
+		);
+		mask-image: linear-gradient(
+			to bottom,
+			transparent,
+			black var(--fade),
+			black calc(100% - var(--fade)),
+			transparent
+		);
 	}
 
-	.post-scroll-wrap::before {
-		top: 0;
-		background: linear-gradient(to bottom, var(--bg), transparent);
+	.post-list.no-fade-top {
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			black,
+			black calc(100% - var(--fade)),
+			transparent
+		);
+		mask-image: linear-gradient(
+			to bottom,
+			black,
+			black calc(100% - var(--fade)),
+			transparent
+		);
 	}
 
-	.post-scroll-wrap::after {
-		bottom: 0;
-		background: linear-gradient(to top, var(--bg), transparent);
+	.post-list.no-fade-bottom {
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			transparent,
+			black var(--fade),
+			black
+		);
+		mask-image: linear-gradient(
+			to bottom,
+			transparent,
+			black var(--fade),
+			black
+		);
 	}
 
-	.post-scroll-wrap.grad-top::before {
-		opacity: 1;
-	}
-	.post-scroll-wrap.grad-bottom::after {
-		opacity: 1;
+	.post-list.no-fade-top.no-fade-bottom {
+		-webkit-mask-image: none;
+		mask-image: none;
 	}
 
 	.post-list {
@@ -305,7 +344,7 @@ function formatDate(iso: string) {
 		const link = document.getElementById('contact-link') as HTMLAnchorElement | null
 		if (link) {
 			const user = 'me'
-			const domain = 'devbanane.com'
+			const domain = 'devjakob.com'
 			link.href = `mailto:${user}@${domain}`
 		}
 	}
@@ -319,18 +358,20 @@ function formatDate(iso: string) {
 		const list = document.getElementById('post-scroll')
 		const count = Number(list?.dataset.count ?? 0)
 
-		if (list && wrap && count >= 4) {
-			const syncGrads = () => {
+		if (list && count >= 4) {
+			const syncMask = () => {
 				const { scrollTop, scrollHeight, clientHeight } = list
-				wrap.classList.toggle('grad-top', scrollTop > 2)
-				wrap.classList.toggle('grad-bottom', scrollTop + clientHeight < scrollHeight - 2)
+				const atTop = scrollTop <= 2
+				const atBottom = scrollTop + clientHeight >= scrollHeight - 2
+				list.classList.toggle('no-fade-top', atTop)
+				list.classList.toggle('no-fade-bottom', atBottom)
 			}
 			afterTransition(() => {
 				if (gen !== layoutGen) return
-				syncGrads()
+				syncMask()
 			})
-			list.addEventListener('scroll', syncGrads, { passive: true })
-			cleanups.push(() => list.removeEventListener('scroll', syncGrads))
+			list.addEventListener('scroll', syncMask, { passive: true })
+			cleanups.push(() => list.removeEventListener('scroll', syncMask))
 		}
 
 		const syncColumnOffset = () => {
