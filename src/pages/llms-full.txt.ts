@@ -11,7 +11,7 @@ export const GET: APIRoute = async () => {
 
 	const sections: string[] = []
 
-	sections.push(`# Jakob Pütz — Full content export
+	sections.push(`# Jakob Pütz: Full content export
 
 Author: Jakob Pütz (Jakob Puetz, devjakob)
 Website: ${BASE}

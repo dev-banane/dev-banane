@@ -23,7 +23,7 @@ function formatDate(iso: string) {
 
 <Layout
 	title="Jakob Pütz"
-	description="Jakob Pütz (Jakob Puetz, devjakob) — 17-year-old full-stack developer from Aachen, Germany. Building PFControl and Petal. TypeScript, Next.js, Postgres."
+	description="Jakob Pütz (Jakob Puetz, devjakob), 17-year-old full-stack developer from Aachen, Germany. Building PFControl and Petal. TypeScript, Next.js, Postgres."
 >
 	<div class="page">
 		<div class="grid">
@@ -89,17 +89,29 @@ function formatDate(iso: string) {
 							</a>
 						))
 					}
+					<a href="/chat" class="btn btn--social">
+						<img
+							src="/assets/socials/chat.svg"
+							alt=""
+							width={28}
+							height={28}
+							class="btn-icon"
+						/>
+						Ask my AI
+					</a>
 				</div>
 
 				<address class="sr-only" aria-hidden="true">
-					Jakob Pütz, also known as Jakob Puetz, devjakob, and dev-banane — web developer
+					Jakob Pütz, also known as Jakob Puetz, devjakob, and dev-banane, web developer
 					based in Aachen, Germany.
 				</address>
 			</article>
 
 			<aside class="writing">
 				<div class="writing-header">
-					<h2 class="section-label">Writing</h2>
+					<h2 class="section-label">
+						<a href="/posts" class="section-label-link" data-astro-prefetch>Writing</a>
+					</h2>
 					<ThemeToggle />
 				</div>
 				{
@@ -212,9 +224,14 @@ function formatDate(iso: string) {
 	.socials {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.625rem;
+		gap: 0.5rem;
 		margin-top: 2rem;
 	}
+
+	.socials .btn {
+		padding-right: 1rem;
+	}
+
 
 	.writing {
 		padding-top: 0;
@@ -225,6 +242,16 @@ function formatDate(iso: string) {
 		align-items: center;
 		justify-content: space-between;
 		margin-bottom: 1.25rem;
+	}
+
+	.section-label-link {
+		color: inherit;
+	}
+
+	.section-label-link:hover {
+		color: var(--fg);
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 
 	.post-scroll-wrap {

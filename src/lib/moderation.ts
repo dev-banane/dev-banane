@@ -113,7 +113,7 @@ export async function moderateText(env: ModerationEnv, text: string): Promise<Mo
   try {
     const { response, degraded: transportDegraded } = await runLlamaGuard(input, env);
     if (transportDegraded || response == null) {
-      console.error('[moderation] unavailable — rejecting comment');
+      console.error('[moderation] unavailable, rejecting comment');
       return { allowed: false, degraded: true };
     }
 

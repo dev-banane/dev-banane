@@ -29,12 +29,59 @@ function estimateReadingMinutes(content?: string): number {
 }
 
 const readingMinutes = estimateReadingMinutes(html)
+
+function extractExcerpt(content?: string): string {
+	if (!content) return ''
+	const text = content
+		.replace(/<[^>]+>/g, ' ')
+		.replace(/&nbsp;/g, ' ')
+		.replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+		.replace(/&quot;/g, '"')
+		.replace(/&#x27;|&apos;/g, "'")
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
+		.replace(/&amp;/g, '&')
+		.replace(/\s+/g, ' ')
+		.trim()
+	if (text.length <= 155) return text
+	return `${text.slice(0, 155).replace(/\s+\S*$/, '')}…`
+}
+
+const excerpt = extractExcerpt(html)
+const description = excerpt || `${title}, by Jakob Pütz, full-stack developer from Aachen.`
+const canonical = `https://devjakob.com/posts/${slug}`
+const isoDate = date ? new Date(date).toISOString() : undefined
+
+const articleSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: title,
+	description,
+	url: canonical,
+	mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+	...(isoDate ? { datePublished: isoDate } : {}),
+	author: {
+		'@type': 'Person',
+		name: 'Jakob Pütz',
+		url: 'https://devjakob.com',
+	},
+	publisher: {
+		'@type': 'Person',
+		name: 'Jakob Pütz',
+		url: 'https://devjakob.com',
+	},
+	image: 'https://devjakob.com/assets/avatar.jpg',
+	inLanguage: 'en',
+}
 ---
 
 <Layout
 	title={`${title} · Jakob Pütz`}
-	description={`${title} — by Jakob Pütz, full-stack developer from Aachen.`}
-	canonical={`https://devjakob.com/posts/${slug}`}
+	description={description}
+	canonical={canonical}
+	ogType="article"
+	publishedTime={isoDate}
+	schema={articleSchema}
 >
 	<header class="article-top">
 		<div class="article-top__inner">

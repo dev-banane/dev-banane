@@ -1,0 +1,956 @@
+---
+import Layout from '../layouts/Layout.astro'
+import ThemeToggle from '../components/ThemeToggle.astro'
+import { POSTS } from '../data/jakob-context'
+---
+
+<Layout
+	title="Chat · Jakob Pütz"
+	description="Ask an AI anything about Jakob Pütz: his projects, his stack, and how he works."
+	canonical="https://devjakob.com/chat"
+>
+	<div class="chat-page">
+		<header class="chat-header">
+			<a href="/" class="chat-back" aria-label="Back to home">
+				<img
+					src="/assets/icons/arrow.svg"
+					alt=""
+					width="14"
+					height="14"
+					class="chat-back-arrow"
+				/>
+			</a>
+			<h1 class="chat-name">Ask my AI</h1>
+			<button type="button" class="chat-history-btn" id="chat-history-btn" aria-label="Chat history">
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg
+				>
+			</button>
+			<ThemeToggle />
+		</header>
+
+		<div class="chat-history-panel" id="chat-history-panel" hidden>
+			<div class="chat-history-panel__header">
+				<span>Recent chats</span>
+				<button type="button" class="chat-history-new" id="chat-history-new">New chat</button>
+			</div>
+			<div class="chat-history-list" id="chat-history-list"></div>
+		</div>
+
+		<div class="chat-scroll" id="chat-scroll">
+			<div class="chat-messages" id="chat-messages"></div>
+		</div>
+
+		<div class="chat-dock">
+			<form class="chat-composer" id="chat-form">
+				<textarea
+					id="chat-input"
+					rows="1"
+					maxlength="1000"
+					placeholder="Ask about Jakob…"
+					autocomplete="off"></textarea>
+				<button type="submit" class="chat-send" id="chat-send" aria-label="Send" disabled>
+					<svg
+						width="26"
+						height="26"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg
+					>
+				</button>
+			</form>
+			<p class="chat-note">
+				AI answers can be inaccurate. For the real me: <a
+					href="mailto:me@devjakob.com"
+					class="link">me@devjakob.com</a
+				>
+			</p>
+		</div>
+	</div>
+
+	<script type="application/json" id="chat-posts-data" set:html={JSON.stringify(POSTS)} />
+</Layout>
+
+<style is:global>
+	.chat-page {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		height: 100dvh;
+		max-width: 48rem;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+	}
+
+	.chat-header {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1.375rem 0 1rem;
+	}
+
+	.chat-back {
+		display: inline-flex;
+	}
+
+	.chat-back-arrow {
+		transform: rotate(180deg);
+		filter: var(--icon-filter);
+		opacity: 0.7;
+		transition: opacity 0.15s ease;
+	}
+
+	.chat-back:hover .chat-back-arrow {
+		opacity: 1;
+	}
+
+	.chat-name {
+		flex: 1;
+		font-size: 0.9375rem;
+		font-weight: 500;
+		letter-spacing: -0.01em;
+		color: var(--fg);
+	}
+
+	.chat-history-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.3rem;
+		background: none;
+		border: none;
+		color: var(--fg-muted);
+		cursor: pointer;
+		transition: color 0.15s ease;
+	}
+
+	.chat-history-btn:hover {
+		color: var(--fg);
+	}
+
+	.chat-history-panel {
+		position: absolute;
+		top: 3.75rem;
+		right: 1.5rem;
+		z-index: 30;
+		width: 18rem;
+		max-width: calc(100vw - 3rem);
+		max-height: 60vh;
+		display: flex;
+		flex-direction: column;
+		background: var(--bg);
+		border: 1px solid var(--btn-social-border);
+		border-radius: 1rem;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+		overflow: hidden;
+	}
+
+	.chat-history-panel__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		padding: 0.75rem 0.875rem;
+		border-bottom: 1px solid var(--btn-social-border);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var(--fg-muted);
+	}
+
+	.chat-history-new {
+		background: none;
+		border: none;
+		color: var(--fg);
+		font-size: 0.8125rem;
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.chat-history-list {
+		overflow-y: auto;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.chat-history-item {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.15rem;
+		width: 100%;
+		padding: 0.625rem 0.875rem;
+		background: none;
+		border: none;
+		border-bottom: 1px solid var(--btn-social-border);
+		text-align: left;
+		cursor: pointer;
+		transition: background 0.15s ease;
+	}
+
+	.chat-history-item:last-child {
+		border-bottom: none;
+	}
+
+	.chat-history-item:hover {
+		background: var(--btn-social-bg);
+	}
+
+	.chat-history-item__title {
+		font-size: 0.875rem;
+		color: var(--fg);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
+	}
+
+	.chat-history-item__date {
+		font-size: 0.75rem;
+		color: var(--fg-dim);
+	}
+
+	.chat-history-empty {
+		padding: 1.25rem 0.875rem;
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+		text-align: center;
+	}
+
+	.chat-scroll {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		scrollbar-width: none;
+	}
+
+	.chat-scroll::-webkit-scrollbar {
+		display: none;
+	}
+
+	.chat-messages {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		padding: 1.5rem 0;
+	}
+
+	.msg {
+		animation: msg-rise 0.25s ease both;
+		overflow-wrap: anywhere;
+	}
+
+	@keyframes msg-rise {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.msg--user {
+		align-self: flex-end;
+		max-width: 75%;
+		padding: 0.55rem 1rem;
+		background: var(--btn-social-bg);
+		border-radius: 1.25rem 1.25rem 0.375rem 1.25rem;
+		font-size: 1rem;
+		line-height: 1.55;
+		white-space: pre-wrap;
+		transition: background 0.2s ease;
+	}
+
+	.msg--assistant {
+		font-size: 1.0625rem;
+		line-height: 1.7;
+		color: var(--fg);
+	}
+
+	.msg--assistant a {
+		color: var(--fg);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		text-decoration-color: var(--fg-dim);
+	}
+
+	.msg--assistant a:hover {
+		text-decoration-color: var(--fg);
+	}
+
+	.msg--assistant code {
+		font-family: ui-monospace, monospace;
+		font-size: 0.9em;
+		background: var(--btn-social-bg);
+		border: 1px solid var(--border);
+		border-radius: 0.375rem;
+		padding: 0.1em 0.35em;
+	}
+
+	.msg--error {
+		font-size: 0.9375rem;
+		color: var(--fg-muted);
+	}
+
+	.msg--thinking {
+		display: flex;
+		align-items: center;
+		height: 1.5rem;
+	}
+
+	.msg--thinking::before {
+		content: '';
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: var(--fg-muted);
+		animation: chat-pulse 1.2s ease-in-out infinite;
+	}
+
+	@keyframes chat-pulse {
+		0%,
+		100% {
+			opacity: 0.25;
+			transform: scale(0.9);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	.msg-cards-block {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-top: -0.5rem;
+		animation: msg-rise 0.25s ease both;
+	}
+
+	.msg-cards-row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.post-card {
+		display: inline-flex;
+		align-self: flex-start;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.625rem 1.125rem 0.625rem 0.75rem;
+		border-radius: 9999px;
+		font-size: 0.875rem;
+		font-weight: 400;
+		color: var(--btn-social-color);
+		background: var(--btn-social-bg);
+		border: 1px solid var(--btn-social-border);
+		transition:
+			background 0.2s ease,
+			border-color 0.15s ease;
+	}
+
+	.post-card:hover {
+		background: var(--btn-social-hover);
+	}
+
+	.post-card__icon {
+		width: 1.25rem;
+		height: 1.25rem;
+		flex-shrink: 0;
+		margin-left: -0.1rem;
+	}
+
+	.chat-dock {
+		padding: 0.5rem 0 1rem;
+	}
+
+	.chat-composer {
+		display: flex;
+		align-items: flex-end;
+		gap: 0.5rem;
+		padding: 0.4rem 0.5rem 0.4rem 1.25rem;
+		background: var(--btn-social-bg);
+		border: 1px solid var(--btn-social-border);
+		border-radius: 1.625rem;
+		transition:
+			background 0.2s ease,
+			border-color 0.15s ease;
+	}
+
+	.chat-composer:focus-within {
+		border-color: var(--fg-dim);
+	}
+
+	.chat-composer textarea {
+		flex: 1;
+		min-width: 0;
+		max-height: 9rem;
+		padding: 0.4rem 0;
+		background: none;
+		border: none;
+		resize: none;
+		font: inherit;
+		font-size: 1rem;
+		line-height: 1.5;
+		color: var(--fg);
+		outline: none;
+		scrollbar-width: none;
+	}
+
+	.chat-composer textarea::placeholder {
+		color: var(--fg-dim);
+	}
+
+	.chat-send {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.3rem;
+		margin-bottom: 0.05rem;
+		background: none;
+		border: none;
+		color: var(--fg-muted);
+		cursor: pointer;
+		transition:
+			color 0.15s ease,
+			opacity 0.15s ease;
+	}
+
+	.chat-send:hover:not(:disabled) {
+		color: var(--fg);
+	}
+
+	.chat-send:disabled {
+		opacity: 0.35;
+		cursor: default;
+	}
+
+	.chat-note {
+		margin-top: 0.625rem;
+		text-align: center;
+		font-size: 0.75rem;
+		color: var(--fg-dim);
+	}
+
+	.link {
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+</style>
+
+<script>
+	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup'
+
+	type Turn = { role: 'user' | 'assistant'; content: string }
+	type PostLink = { slug: string; title: string; date: string; blurb: string }
+	type Conversation = { id: number; title: string; messages: Turn[]; updatedAt: string }
+
+	function loadPosts(): PostLink[] {
+		const el = document.getElementById('chat-posts-data')
+		if (!el?.textContent) return []
+		try {
+			return JSON.parse(el.textContent) as PostLink[]
+		} catch {
+			return []
+		}
+	}
+
+	function relativeTime(iso: string): string {
+		const diffMs = Date.now() - new Date(iso).getTime()
+		const minutes = Math.round(diffMs / 60000)
+		if (minutes < 1) return 'just now'
+		if (minutes < 60) return `${minutes}m ago`
+		const hours = Math.round(minutes / 60)
+		if (hours < 24) return `${hours}h ago`
+		const days = Math.round(hours / 24)
+		return `${days}d ago`
+	}
+
+	function escapeHtml(text: string): string {
+		return text
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+	}
+
+	function extractPostLinks(text: string, posts: PostLink[]): { text: string; slugs: string[] } {
+		const known = new Set(posts.map((p) => p.slug))
+		const slugs: string[] = []
+		const addSlug = (slug: string) => {
+			if (known.has(slug) && !slugs.includes(slug)) slugs.push(slug)
+		}
+
+		let out = text.replace(
+			/\[([^\]]+)\]\(https?:\/\/devjakob\.com\/posts\/([a-z0-9-]+)\/?\)/gi,
+			(match, label: string, slug: string) => {
+				if (!known.has(slug)) return match
+				addSlug(slug)
+				return label
+			}
+		)
+
+		out = out.replace(
+			/\s*[:\-–]?\s*\(?https?:\/\/devjakob\.com\/posts\/([a-z0-9-]+)\/?\)?[.,]?/gi,
+			(match, slug: string) => {
+				if (!known.has(slug)) return match
+				addSlug(slug)
+				return ''
+			}
+		)
+
+		out = out.replace(/[ \t]{2,}/g, ' ').replace(/\s+([.,!?])/g, '$1')
+		return { text: out.trim(), slugs }
+	}
+
+	function renderPostCards(slugs: string[], posts: PostLink[]): HTMLDivElement | null {
+		const row = document.createElement('div')
+		row.className = 'msg-cards-row'
+		for (const slug of slugs) {
+			const post = posts.find((p) => p.slug === slug)
+			if (!post) continue
+			const a = document.createElement('a')
+			a.className = 'post-card'
+			a.href = `/posts/${post.slug}`
+			a.target = '_blank'
+			a.rel = 'noopener'
+			a.innerHTML = `
+				<svg class="post-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+				${escapeHtml(post.title)}
+			`
+			row.appendChild(a)
+		}
+		return row.children.length ? row : null
+	}
+
+	function buildCardsBlock(slugs: string[], posts: PostLink[]): HTMLDivElement | null {
+		if (!posts.length || !slugs.length) return null
+		const block = document.createElement('div')
+		block.className = 'msg-cards-block'
+
+		const primary = renderPostCards(slugs, posts)
+		if (primary) block.appendChild(primary)
+
+		return block.children.length ? block : null
+	}
+
+	function renderLite(text: string): string {
+		let html = escapeHtml(text)
+		html = html.replace(/`([^`]+)`/g, '<code>$1</code>')
+		html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+		html = html.replace(
+			/\[([^\]]+)\]\(((?:https?:\/\/|mailto:)[^\s)]+)\)/g,
+			(_match, label: string, url: string) => {
+				const cleanUrl = url.replace(/[.,!?;:]+$/, '')
+				const isMailto = cleanUrl.startsWith('mailto:')
+				const attrs = isMailto ? '' : ' target="_blank" rel="noopener"'
+				return `<a href="${cleanUrl}"${attrs}>${label}</a>`
+			}
+		)
+		html = html.replace(
+			/(^|[\s(])((?:https?:\/\/)[^\s<)]+)/g,
+			(match, prefix: string, url: string) => {
+				const trailing = url.match(/[.,!?;:]+$/)?.[0] ?? ''
+				const cleanUrl = trailing ? url.slice(0, -trailing.length) : url
+				if (!cleanUrl) return match
+				return `${prefix}<a href="${cleanUrl}" target="_blank" rel="noopener">${cleanUrl}</a>${trailing}`
+			}
+		)
+		html = html.replace(
+			/(^|[\s(>])([\w.+-]+@[\w-]+\.[\w.-]+[\w-])(?![^<]*<\/a>)/g,
+			(match, prefix: string, email: string) => {
+				const trailing = email.match(/[.,!?;:]+$/)?.[0] ?? ''
+				const cleanEmail = trailing ? email.slice(0, -trailing.length) : email
+				if (!cleanEmail) return match
+				return `${prefix}<a href="mailto:${cleanEmail}">${cleanEmail}</a>${trailing}`
+			}
+		)
+		return html.replace(/\n/g, '<br>')
+	}
+
+	const DRAFT_KEY = 'chat-draft'
+
+	function debounce<T extends (...args: never[]) => void>(fn: T, delay: number) {
+		let timer = 0
+		return (...args: Parameters<T>) => {
+			window.clearTimeout(timer)
+			timer = window.setTimeout(() => fn(...args), delay)
+		}
+	}
+
+	function init() {
+		const form = document.getElementById('chat-form') as HTMLFormElement | null
+		const input = document.getElementById('chat-input') as HTMLTextAreaElement | null
+		const send = document.getElementById('chat-send') as HTMLButtonElement | null
+		const list = document.getElementById('chat-messages')
+		const scroller = document.getElementById('chat-scroll')
+		const historyBtn = document.getElementById('chat-history-btn') as HTMLButtonElement | null
+		const historyPanel = document.getElementById('chat-history-panel')
+		const historyList = document.getElementById('chat-history-list')
+		const historyNewBtn = document.getElementById('chat-history-new')
+		if (!form || !input || !send || !list || !scroller) return
+		if (form.dataset.ready) return
+		form.dataset.ready = '1'
+
+		const history: Turn[] = []
+		const posts = loadPosts()
+		let busy = false
+		let authEnabled = false
+		let currentUser: AuthUser | null = null
+		let pendingSubmitAfterLogin = false
+		let conversationId: number | null = null
+		let conversations: Conversation[] = []
+
+		function saveDraft(value: string) {
+			if (value) localStorage.setItem(DRAFT_KEY, value)
+			else localStorage.removeItem(DRAFT_KEY)
+		}
+
+		const saveDraftDebounced = debounce(saveDraft, 300)
+
+		function syncSend() {
+			send!.disabled = busy || !input!.value.trim()
+		}
+
+		function syncHeight() {
+			input!.style.height = 'auto'
+			input!.style.height = `${input!.scrollHeight}px`
+		}
+
+		function scrollDown() {
+			scroller!.scrollTop = scroller!.scrollHeight
+		}
+
+		function append(className: string): HTMLDivElement {
+			const el = document.createElement('div')
+			el.className = className
+			list!.appendChild(el)
+			scrollDown()
+			return el
+		}
+
+		function smoothText(el: HTMLElement) {
+			let target = ''
+			let shown = 0
+			let raf = 0
+			const step = () => {
+				if (shown < target.length) {
+					shown = Math.min(
+						target.length,
+						shown + Math.max(1, Math.ceil((target.length - shown) / 24))
+					)
+					el.innerHTML = renderLite(target.slice(0, shown))
+					scrollDown()
+					raf = requestAnimationFrame(step)
+				} else {
+					raf = 0
+				}
+			}
+			return {
+				set(text: string) {
+					target = text
+					if (!raf) raf = requestAnimationFrame(step)
+				},
+			}
+		}
+
+		const draft = localStorage.getItem(DRAFT_KEY)
+		if (draft) {
+			input.value = draft
+			syncHeight()
+			syncSend()
+		}
+
+		function clearMessages() {
+			list!.innerHTML = ''
+		}
+
+		function showGreeting() {
+			const greetingHost = append('msg msg--thinking')
+			window.setTimeout(() => {
+				greetingHost.className = 'msg msg--assistant'
+				smoothText(greetingHost).set(
+					"Hey! I'm the AI on Jakob's site. Ask me about his projects, his stack, or how he works."
+				)
+			}, 600)
+		}
+
+		function renderConversation(turns: Turn[]) {
+			clearMessages()
+			for (const turn of turns) {
+				if (turn.role === 'user') {
+					append('msg msg--user').textContent = turn.content
+					continue
+				}
+				const el = append('msg msg--assistant')
+				const { text, slugs } = extractPostLinks(turn.content, posts)
+				el.innerHTML = renderLite(text)
+				const cards = buildCardsBlock(slugs, posts)
+				if (cards) list!.appendChild(cards)
+			}
+			scrollDown()
+		}
+
+		function closeHistoryPanel() {
+			if (historyPanel) historyPanel.hidden = true
+		}
+
+		function renderHistoryList() {
+			if (!historyList) return
+			historyList.innerHTML = ''
+			if (!conversations.length) {
+				historyList.innerHTML = '<div class="chat-history-empty">No conversations yet.</div>'
+				return
+			}
+			for (const conv of conversations) {
+				const btn = document.createElement('button')
+				btn.type = 'button'
+				btn.className = 'chat-history-item'
+				btn.innerHTML = `
+					<span class="chat-history-item__title">${escapeHtml(conv.title || 'Conversation')}</span>
+					<span class="chat-history-item__date">${relativeTime(conv.updatedAt)}</span>
+				`
+				btn.addEventListener('click', () => {
+					history.length = 0
+					history.push(...conv.messages)
+					conversationId = conv.id
+					renderConversation(conv.messages)
+					closeHistoryPanel()
+				})
+				historyList.appendChild(btn)
+			}
+		}
+
+		async function loadConversations() {
+			if (!authEnabled || !currentUser) return
+			if (historyList) historyList.innerHTML = '<div class="chat-history-empty">Loading…</div>'
+			try {
+				const res = await fetch('/api/chat/conversations')
+				const data = (await res.json().catch(() => null)) as
+					| { conversations?: Conversation[] }
+					| null
+				conversations = Array.isArray(data?.conversations) ? data.conversations : []
+			} catch {
+				conversations = []
+			}
+			renderHistoryList()
+		}
+
+		async function saveConversation() {
+			if (!authEnabled || !currentUser || !history.length) return
+			try {
+				const res = await fetch('/api/chat/conversations', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id: conversationId, messages: history.slice(-24) }),
+				})
+				const data = (await res.json().catch(() => null)) as
+					| { conversation?: Conversation }
+					| null
+				if (data?.conversation?.id) conversationId = data.conversation.id
+			} catch {
+				// best-effort persistence, ignore failures
+			}
+		}
+
+		async function loadAuthStatus() {
+			try {
+				const res = await fetch('/api/auth/me')
+				const data = (await res.json().catch(() => null)) as
+					| { enabled?: boolean; user?: { login?: string; name?: string; avatar?: string } | null }
+					| null
+				authEnabled = Boolean(data?.enabled)
+				currentUser = data?.user
+					? {
+							login: String(data.user.login ?? ''),
+							name: String(data.user.name ?? ''),
+							avatar: String(data.user.avatar ?? ''),
+						}
+					: null
+			} catch {
+				authEnabled = false
+				currentUser = null
+			}
+			if (currentUser) void loadConversations()
+		}
+
+		void loadAuthStatus()
+
+		onAuthMessage((user) => {
+			currentUser = user
+			void loadConversations()
+			if (pendingSubmitAfterLogin) {
+				pendingSubmitAfterLogin = false
+				form!.requestSubmit()
+			}
+		})
+
+		historyBtn?.addEventListener('click', () => {
+			if (authEnabled && !currentUser) {
+				openLoginPopup()
+				return
+			}
+			if (!historyPanel) return
+			if (historyPanel.hidden) {
+				historyPanel.hidden = false
+				void loadConversations()
+			} else {
+				historyPanel.hidden = true
+			}
+		})
+
+		historyNewBtn?.addEventListener('click', () => {
+			history.length = 0
+			conversationId = null
+			clearMessages()
+			showGreeting()
+			closeHistoryPanel()
+		})
+
+		document.addEventListener('click', (event) => {
+			if (!historyPanel || historyPanel.hidden) return
+			const target = event.target as Node
+			if (historyPanel.contains(target) || historyBtn?.contains(target)) return
+			closeHistoryPanel()
+		})
+
+		showGreeting()
+
+		async function submit() {
+			const content = input!.value.trim()
+			if (!content || busy) return
+
+			if (authEnabled && !currentUser) {
+				pendingSubmitAfterLogin = true
+				openLoginPopup()
+				return
+			}
+
+			saveDraft(content)
+
+			busy = true
+			input!.value = ''
+			syncHeight()
+			syncSend()
+
+			append('msg msg--user').textContent = content
+			history.push({ role: 'user', content })
+			const thinking = append('msg msg--thinking')
+
+			try {
+				const res = await fetch('/api/chat', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ messages: history.slice(-24) }),
+				})
+
+				if (!res.ok || !res.body) {
+					const data = (await res.json().catch(() => null)) as { error?: string } | null
+					thinking.className = 'msg msg--error'
+					thinking.textContent = data?.error ?? 'Something went wrong, try again.'
+					if (res.status === 401) currentUser = null
+					return
+				}
+
+				const reader = res.body.getReader()
+				const decoder = new TextDecoder()
+				let buffer = ''
+				let answer = ''
+				let writer: ReturnType<typeof smoothText> | null = null
+
+				for (;;) {
+					const { done, value } = await reader.read()
+					if (done) break
+					buffer += decoder.decode(value, { stream: true })
+
+					const events = buffer.split('\n\n')
+					buffer = events.pop() ?? ''
+
+					for (const event of events) {
+						for (const line of event.split('\n')) {
+							if (!line.startsWith('data: ')) continue
+							const payload = line.slice(6).trim()
+							if (payload === '[DONE]') continue
+							try {
+								const chunk = JSON.parse(payload) as { response?: string }
+								if (chunk.response) {
+									answer += chunk.response
+									if (!writer) {
+										thinking.className = 'msg msg--assistant'
+										writer = smoothText(thinking)
+									}
+									writer.set(extractPostLinks(answer, posts).text)
+								}
+							} catch {
+								// partial frame, ignored
+							}
+						}
+					}
+				}
+
+				if (!answer) {
+					thinking.className = 'msg msg--error'
+					thinking.textContent = 'No reply came through, try again.'
+					return
+				}
+				history.push({ role: 'assistant', content: answer })
+				saveDraft('')
+				void saveConversation()
+
+				const { slugs } = extractPostLinks(answer, posts)
+				const cards = buildCardsBlock(slugs, posts)
+				if (cards) {
+					list!.appendChild(cards)
+					scrollDown()
+				}
+			} catch {
+				thinking.className = 'msg msg--error'
+				thinking.textContent = 'Connection lost, try again.'
+			} finally {
+				busy = false
+				syncSend()
+				input!.focus()
+			}
+		}
+
+		form.addEventListener('submit', (event) => {
+			event.preventDefault()
+			void submit()
+		})
+		input.addEventListener('input', () => {
+			syncHeight()
+			syncSend()
+			saveDraftDebounced(input!.value.trim())
+		})
+		input.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' && !event.shiftKey) {
+				event.preventDefault()
+				void submit()
+			}
+		})
+		input.focus()
+	}
+
+	document.addEventListener('astro:page-load', init)
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', init, { once: true })
+	} else {
+		init()
+	}
+</script>

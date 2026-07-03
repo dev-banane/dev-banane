@@ -1,0 +1,198 @@
+---
+export const prerender = false
+
+import Layout from '../../layouts/Layout.astro'
+import ThemeToggle from '../../components/ThemeToggle.astro'
+import { fetchPostList } from '../../lib/posts'
+import { env } from 'cloudflare:workers'
+
+const posts = await fetchPostList(env.MEDIA)
+
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600')
+
+function formatDate(iso: string) {
+	return new Date(iso).toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric',
+	})
+}
+
+const blogSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'Blog',
+	name: 'Writing · Jakob Pütz',
+	url: 'https://devjakob.com/posts',
+	author: {
+		'@type': 'Person',
+		name: 'Jakob Pütz',
+		url: 'https://devjakob.com',
+	},
+	inLanguage: 'en',
+	blogPost: posts.map((p) => ({
+		'@type': 'BlogPosting',
+		headline: p.title,
+		url: `https://devjakob.com/posts/${p.slug}`,
+		...(p.date ? { datePublished: new Date(p.date).toISOString() } : {}),
+		author: { '@type': 'Person', name: 'Jakob Pütz' },
+	})),
+}
+---
+
+<Layout
+	title="Writing · Jakob Pütz"
+	description="Articles and project write-ups by Jakob Pütz, full-stack developer from Aachen, Germany. Building PFControl and Petal."
+	canonical="https://devjakob.com/posts"
+	schema={blogSchema}
+>
+	<header class="posts-top">
+		<div class="posts-top__inner">
+			<a href="/" class="back" data-astro-prefetch="load">
+				<img
+					src="/assets/icons/arrow.svg"
+					alt=""
+					width="14"
+					height="14"
+					class="back-arrow"
+				/>
+				Back
+			</a>
+			<ThemeToggle />
+		</div>
+	</header>
+
+	<div class="page">
+		<div class="inner">
+			<h1 class="title">Writing</h1>
+			<p class="subtitle">
+				Articles and project write-ups, everything I've published so far.
+			</p>
+
+			{
+				posts.length === 0 ? (
+					<p class="empty">Nothing published yet.</p>
+				) : (
+					<ul class="post-list">
+						{posts.map((p) => (
+							<li>
+								<a href={`/posts/${p.slug}`} class="post-link" data-astro-prefetch>
+									<span class="post-title">{p.title}</span>
+									<span class="post-date">{p.date ? formatDate(p.date) : ''}</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				)
+			}
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.posts-top {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 20;
+		padding: 1.5rem;
+		background: var(--bg);
+	}
+
+	.posts-top__inner {
+		width: 100%;
+		max-width: 40rem;
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.back {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.875rem;
+		color: var(--fg-muted);
+	}
+
+	.back:hover {
+		color: var(--fg);
+	}
+
+	.back-arrow {
+		transform: rotate(180deg);
+		filter: var(--icon-filter);
+		opacity: 0.7;
+	}
+
+	.page {
+		min-height: 100vh;
+		padding: 6.5rem 1.5rem 4rem;
+	}
+
+	.inner {
+		width: 100%;
+		max-width: 40rem;
+		margin: 0 auto;
+	}
+
+	.title {
+		font-size: 1.875rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		line-height: 1.2;
+		color: var(--fg);
+	}
+
+	.subtitle {
+		margin-top: 0.5rem;
+		font-size: 0.9375rem;
+		color: var(--fg-muted);
+	}
+
+	.empty {
+		margin-top: 2.5rem;
+		font-size: 0.9375rem;
+		color: var(--fg-dim);
+	}
+
+	.post-list {
+		margin-top: 2.5rem;
+		list-style: none;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.post-list li + li {
+		border-top: 1px solid var(--border);
+	}
+
+	.post-link {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 0.9rem 0;
+	}
+
+	.post-title {
+		font-size: 1rem;
+		font-weight: 500;
+		color: var(--fg);
+	}
+
+	.post-link:hover .post-title {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.post-date {
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+</style>

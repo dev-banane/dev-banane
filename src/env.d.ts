@@ -47,7 +47,7 @@ interface Ai {
     model: string,
     inputs: Record<string, unknown>,
     options?: Record<string, unknown>
-  ): Promise<Record<string, unknown>>;
+  ): Promise<Record<string, unknown> | ReadableStream>;
 }
 
 type Env = {

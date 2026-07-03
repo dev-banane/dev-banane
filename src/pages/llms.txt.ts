@@ -17,14 +17,14 @@ export const GET: APIRoute = async () => {
 
 	const body = `# Jakob Pütz
 
-> Jakob Pütz (also: Jakob Puetz, devjakob) — 17-year-old full-stack developer based in Aachen, Germany.
+> Jakob Pütz (also: Jakob Puetz, devjakob), 17-year-old full-stack developer based in Aachen, Germany.
 
 Jakob Pütz is a self-taught software engineer who has been building software since his early teens. He works across the full stack with TypeScript, Next.js, Postgres, and Cloudflare Workers. He is based in Aachen, Germany (NRW).
 
 ## Projects
 
-- **PFControl** — ATC strip management platform, thousands of registered users, ~500 daily actives. Built since age 15. [github.com/cephie-studios/pfcontrol-2](https://github.com/cephie-studios/pfcontrol-2)
-- **Petal** — Unified AI workspace, developed from the ground up. [${BASE}/posts/petal](${BASE}/posts/petal)
+- **PFControl**: ATC strip management platform, thousands of registered users, ~500 daily actives. Built since age 15. [github.com/cephie-studios/pfcontrol-2](https://github.com/cephie-studios/pfcontrol-2)
+- **Petal**: Unified AI workspace, developed from the ground up. [${BASE}/posts/petal](${BASE}/posts/petal)
 
 ## Links
 
@@ -35,6 +35,8 @@ Jakob Pütz is a self-taught software engineer who has been building software si
 - Email: me@devjakob.com
 
 ## Writing
+
+All posts: [${BASE}/posts](${BASE}/posts)
 
 ${postLines || '(No posts published yet.)'}
 

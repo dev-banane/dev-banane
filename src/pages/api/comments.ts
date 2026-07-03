@@ -145,7 +145,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         .first();
       if (seen) {
         return Response.json(
-          { error: 'You\'ve already left a comment here — thanks!' },
+          { error: 'You\'ve already left a comment here, thanks!' },
           { status: 429 }
         );
       }
@@ -224,7 +224,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         .first();
       if (ipSeen) {
         return Response.json(
-          { error: 'You\'ve already left a comment here — thanks!' },
+          { error: 'You\'ve already left a comment here, thanks!' },
           { status: 429 }
         );
       }
@@ -239,7 +239,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         .first();
       if (fpSeen) {
         return Response.json(
-          { error: 'You\'ve already left a comment here — thanks!' },
+          { error: 'You\'ve already left a comment here, thanks!' },
           { status: 429 }
         );
       }

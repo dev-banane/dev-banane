@@ -20,12 +20,20 @@ export const GET: APIRoute = async () => {
     )
     .join('\n')
 
+  const latest = posts.find((p) => p.date)?.date?.slice(0, 10)
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>${BASE}/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${BASE}/posts</loc>
+    ${latest ? `<lastmod>${latest}</lastmod>` : ''}
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 ${postEntries}
 </urlset>`
