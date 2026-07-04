@@ -6,7 +6,7 @@ import { getSessionUser, isGithubAuthEnabled } from '../../lib/auth'
 
 export const prerender = false
 
-const MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast'
+const DEFAULT_MODEL = '@cf/mistralai/mistral-small-3.1-24b-instruct'
 const MAX_MESSAGE_CHARS = 1000
 const MAX_HISTORY = 24
 const DAILY_LIMIT = 40
@@ -42,14 +42,16 @@ function parseTurns(raw: unknown): ChatTurn[] | null {
 	return turns
 }
 
+function getChatModel(): string {
+	return env.CHAT_MODEL?.trim() || DEFAULT_MODEL
+}
+
 async function enforceDailyLimit(request: Request, identityKey: string): Promise<Response | null> {
 	const db = env.DB
 	const salt = getCommentsSalt(env)
 	if (!db || !salt) return null
 
-	const ipHash = identityKey.startsWith('gh:')
-		? identityKey
-		: await sha256hex(identityKey, salt)
+	const ipHash = identityKey.startsWith('gh:') ? identityKey : await sha256hex(identityKey, salt)
 	const day = new Date().toISOString().slice(0, 10)
 
 	try {
@@ -77,15 +79,16 @@ async function enforceDailyLimit(request: Request, identityKey: string): Promise
 async function streamCompletion(
 	messages: Array<{ role: string; content: string }>
 ): Promise<ReadableStream | null> {
+	const model = getChatModel()
 	const options = {
 		messages,
 		stream: true,
 		max_tokens: MAX_TOKENS,
-		temperature: 0.7,
+		temperature: 0.45,
 	}
 
 	if (env.AI) {
-		const result = await env.AI.run(MODEL, options)
+		const result = await env.AI.run(model, options)
 		return result instanceof ReadableStream ? result : null
 	}
 
@@ -94,7 +97,7 @@ async function streamCompletion(
 	if (!accountId || !apiToken) return null
 
 	const res = await fetch(
-		`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${MODEL}`,
+		`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`,
 		{
 			method: 'POST',
 			headers: {

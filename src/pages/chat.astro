@@ -610,6 +610,7 @@ import { POSTS } from '../data/jakob-context'
 
 		const history: Turn[] = []
 		const posts = loadPosts()
+		const initialQuestion = new URLSearchParams(location.search).get('q')?.trim() ?? ''
 		let busy = false
 		let authEnabled = false
 		let currentUser: AuthUser | null = null
@@ -671,24 +672,20 @@ import { POSTS } from '../data/jakob-context'
 		}
 
 		const draft = localStorage.getItem(DRAFT_KEY)
-		if (draft) {
+		if (initialQuestion) {
+			input.value = initialQuestion.slice(0, Number(input.maxLength) || 1000)
+			saveDraft(input.value)
+			window.history.replaceState(window.history.state, '', location.pathname)
+		} else if (draft) {
 			input.value = draft
 			syncHeight()
 			syncSend()
 		}
+		syncHeight()
+		syncSend()
 
 		function clearMessages() {
 			list!.innerHTML = ''
-		}
-
-		function showGreeting() {
-			const greetingHost = append('msg msg--thinking')
-			window.setTimeout(() => {
-				greetingHost.className = 'msg msg--assistant'
-				smoothText(greetingHost).set(
-					"Hey! I'm the AI on Jakob's site. Ask me about his projects, his stack, or how he works."
-				)
-			}, 600)
 		}
 
 		function renderConversation(turns: Turn[]) {
@@ -819,7 +816,6 @@ import { POSTS } from '../data/jakob-context'
 			history.length = 0
 			conversationId = null
 			clearMessages()
-			showGreeting()
 			closeHistoryPanel()
 		})
 
@@ -830,7 +826,7 @@ import { POSTS } from '../data/jakob-context'
 			closeHistoryPanel()
 		})
 
-		showGreeting()
+		if (initialQuestion) window.setTimeout(() => form!.requestSubmit(), 150)
 
 		async function submit() {
 			const content = input!.value.trim()

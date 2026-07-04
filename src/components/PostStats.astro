@@ -54,22 +54,28 @@ const { slug, readingMinutes = 1 } = Astro.props
 	</div>
 </div>
 
-<button type="button" class="highlight-link" hidden>
-	<svg
-		width="13"
-		height="13"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		stroke-width="2"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-	>
-		<path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-		<path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-	</svg>
-	<span class="highlight-label">Link to highlight</span>
-</button>
+<div class="selection-menu" hidden>
+	<button type="button" class="selection-action selection-action--link">
+		<svg
+			width="13"
+			height="13"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		>
+			<path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+			<path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+		</svg>
+		<span class="selection-link-label">Link to highlight</span>
+	</button>
+	<button type="button" class="selection-action selection-action--ask">
+		<img src="/assets/socials/chat.svg" alt="" width="13" height="13" />
+		Ask my AI about this
+	</button>
+</div>
 
 <style>
 	.post-stats {
@@ -171,26 +177,46 @@ const { slug, readingMinutes = 1 } = Astro.props
 		text-decoration-color: var(--fg);
 	}
 
-	.highlight-link {
+	.selection-menu {
 		position: fixed;
 		z-index: 30;
 		display: inline-flex;
 		align-items: center;
-		gap: 0.4rem;
-		padding: 0.45rem 0.75rem;
+		gap: 0.25rem;
+		padding: 0.25rem;
 		border-radius: 9999px;
 		border: 1px solid var(--border);
 		background: var(--bg);
 		color: var(--fg);
-		font-family: inherit;
-		font-size: 0.8125rem;
-		cursor: pointer;
 		box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
 		transform: translate(-50%, -120%);
 	}
 
-	.highlight-link[hidden] {
+	.selection-menu[hidden] {
 		display: none;
+	}
+
+	.selection-action {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.35rem 0.6rem;
+		border: none;
+		border-radius: 9999px;
+		background: transparent;
+		color: var(--fg);
+		font-family: inherit;
+		font-size: 0.8125rem;
+		white-space: nowrap;
+		cursor: pointer;
+	}
+
+	.selection-action:hover {
+		background: var(--btn-social-bg);
+	}
+
+	.selection-action img {
+		filter: var(--icon-filter);
 	}
 </style>
 
@@ -569,13 +595,19 @@ const { slug, readingMinutes = 1 } = Astro.props
 			}, 1500)
 		})
 
-		const hlBtn = document.querySelector('.highlight-link') as HTMLButtonElement | null
-		const hlLabel = hlBtn?.querySelector('.highlight-label')
-		let highlightText = ''
+		const selectionMenu = document.querySelector('.selection-menu') as HTMLDivElement | null
+		const linkBtn = selectionMenu?.querySelector(
+			'.selection-action--link'
+		) as HTMLButtonElement | null
+		const askBtn = selectionMenu?.querySelector(
+			'.selection-action--ask'
+		) as HTMLButtonElement | null
+		const linkLabel = selectionMenu?.querySelector('.selection-link-label')
+		let selectedText = ''
 		let hlShowTimer: ReturnType<typeof setTimeout> | null = null
 
-		if (hlBtn && hlBtn.parentElement !== document.body) {
-			document.body.appendChild(hlBtn)
+		if (selectionMenu && selectionMenu.parentElement !== document.body) {
+			document.body.appendChild(selectionMenu)
 		}
 
 		function clearHl() {
@@ -583,16 +615,29 @@ const { slug, readingMinutes = 1 } = Astro.props
 				clearTimeout(hlShowTimer)
 				hlShowTimer = null
 			}
-			highlightText = ''
-			hlBtn?.setAttribute('hidden', '')
+			selectedText = ''
+			selectionMenu?.setAttribute('hidden', '')
 		}
 
 		function showHl(rect: DOMRect) {
-			if (!hlBtn || !hlLabel) return
-			hlLabel.textContent = 'Link to highlight'
-			hlBtn.style.left = `${rect.left + rect.width / 2}px`
-			hlBtn.style.top = `${rect.top}px`
-			hlBtn.removeAttribute('hidden')
+			if (!selectionMenu || !linkLabel) return
+			linkLabel.textContent = 'Link to highlight'
+			selectionMenu.removeAttribute('hidden')
+			const halfWidth = selectionMenu.offsetWidth / 2
+			const x = Math.min(
+				window.innerWidth - halfWidth - 8,
+				Math.max(halfWidth + 8, rect.left + rect.width / 2)
+			)
+			const y = Math.max(selectionMenu.offsetHeight + 8, rect.top)
+			selectionMenu.style.left = `${x}px`
+			selectionMenu.style.top = `${y}px`
+		}
+
+		function buildChatQuestion(text: string): string {
+			const articleTitle = document.querySelector('.title')?.textContent?.trim()
+			const quote = text.replace(/\s+/g, ' ').trim().slice(0, 700)
+			const title = articleTitle ? ` in "${articleTitle}"` : ''
+			return `Can you explain this part${title} in more detail?\n\n"${quote}"`
 		}
 
 		on(document, 'selectionchange', () => {
@@ -604,7 +649,7 @@ const { slug, readingMinutes = 1 } = Astro.props
 			const rect = sel.getRangeAt(0).getBoundingClientRect()
 			if (!rect.width) return clearHl()
 
-			highlightText = text
+			selectedText = text
 			if (hlShowTimer) clearTimeout(hlShowTimer)
 			hlShowTimer = setTimeout(() => {
 				hlShowTimer = null
@@ -612,16 +657,26 @@ const { slug, readingMinutes = 1 } = Astro.props
 			}, 400)
 		})
 
-		if (hlBtn) {
-			on(hlBtn, 'mousedown', (e) => e.preventDefault())
-			on(hlBtn, 'click', async () => {
-				const text = highlightText.trim()
-				if (!text || !hlLabel) return
+		if (selectionMenu) on(selectionMenu, 'mousedown', (e) => e.preventDefault())
+
+		if (linkBtn) {
+			on(linkBtn, 'click', async () => {
+				const text = selectedText.trim()
+				if (!text || !linkLabel) return
 				const frag = `${url.split('#')[0]}#h=${encodeQuote(text)}`
 				const copied = await copyText(frag)
 				if (!copied) return
-				hlLabel.textContent = 'Copied!'
+				linkLabel.textContent = 'Copied!'
 				window.setTimeout(clearHl, 1200)
+			})
+		}
+
+		if (askBtn) {
+			on(askBtn, 'click', () => {
+				const text = selectedText.trim()
+				if (!text) return
+				const question = buildChatQuestion(text)
+				location.href = `/chat?q=${encodeURIComponent(question)}`
 			})
 		}
 

@@ -57,6 +57,7 @@ type Env = {
   COMMENTS_SALT?: string;
   CLOUDFLARE_ACCOUNT_ID?: string;
   CLOUDFLARE_AI_TOKEN?: string;
+  CHAT_MODEL?: string;
   AI?: Ai;
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
