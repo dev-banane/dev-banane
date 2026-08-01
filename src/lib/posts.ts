@@ -1,4 +1,5 @@
 import { marked } from 'marked';
+import { inlineIcon } from './icons';
 
 marked.setOptions({ gfm: true, breaks: true });
 
@@ -99,8 +100,9 @@ function enhanceFileLinks(html: string): string {
     const isExternal = /^https?:\/\//i.test(href);
     const extraAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
 
+    const icon = inlineIcon('download-01', { size: 14, className: 'file-card__dl' });
     return `<a ${before}href="${href}"${after} class="file-card"${extraAttrs}>` +
-      `${label}<img src="/assets/icons/download.svg" class="file-card__dl" alt="" width="14" height="14">` +
+      `${label}${icon}` +
       `</a>`;
   });
 }

@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro'
+import ThemeToggle from './ThemeToggle.astro'
+
+interface Props {
+	href?: string
+	label?: string
+	width?: string
+}
+
+const { href = '/', label = 'Back', width = '40rem' } = Astro.props
+---
+
+<header class="top">
+	<div class="top__inner" style={`--top-width:${width}`}>
+		<a href={href} class="back" data-astro-prefetch="load">
+			<Icon name="arrow-left-01" class="back__icon" size={16} />
+			{label}
+		</a>
+		<ThemeToggle />
+	</div>
+</header>
+
+<style>
+	.top {
+		padding: 1.25rem 1.5rem 0;
+	}
+
+	.top__inner {
+		width: 100%;
+		max-width: var(--top-width);
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.back {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.875rem;
+		color: var(--fg-muted);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.back:hover {
+		color: var(--fg);
+	}
+
+	.back__icon {
+		transition: transform var(--dur) var(--ease-out);
+	}
+
+	.back:hover .back__icon {
+		transform: translateX(-3px);
+	}
+</style>

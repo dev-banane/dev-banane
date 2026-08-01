@@ -1,24 +1,29 @@
 ---
-export const prerender = false;
+export const prerender = false
 
-import Article from '../../layouts/Article.astro';
-import { fetchPost } from '../../lib/posts';
-import { env } from 'cloudflare:workers';
+import Article from '../../layouts/Article.astro'
+import { fetchPost } from '../../lib/posts'
+import { fetchComments } from '../../lib/comments'
+import { env } from 'cloudflare:workers'
 
-const { slug } = Astro.params;
+const { slug } = Astro.params
 if (!slug) {
-  return new Response('Not found', { status: 404 });
+	return new Response('Not found', { status: 404 })
 }
 
-const remote = await fetchPost(slug, env.MEDIA);
+const [remote, comments] = await Promise.all([
+	fetchPost(slug, env.MEDIA),
+	fetchComments(env.DB, slug),
+])
+
 if (!remote) {
-  return new Response('Post not found', { status: 404 });
+	return new Response('Post not found', { status: 404 })
 }
 
-const title = remote.title ?? slug;
-const date = remote.date ?? '';
+const title = remote.title ?? slug
+const date = remote.date ?? ''
 
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600')
 ---
 
-<Article title={title} date={date} slug={slug} html={remote.html} />
+<Article title={title} date={date} slug={slug} html={remote.html} comments={comments} />

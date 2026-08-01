@@ -1,0 +1,416 @@
+---
+import Icon from '../../components/Icon.astro'
+import Layout from '../../layouts/Layout.astro'
+import TopBar from '../../components/TopBar.astro'
+import ProjectCover from '../../components/ProjectCover.astro'
+import Tooltip from '../../components/Tooltip.astro'
+import Uptime from '../../components/Uptime.astro'
+import { projects, statusIcon, type Project } from '../../data/projects'
+
+export function getStaticPaths() {
+	return projects.map((project) => ({
+		params: { slug: project.slug },
+		props: { project },
+	}))
+}
+
+const { project } = Astro.props as { project: Project }
+
+const canonical = `https://devjakob.com/work/${project.slug}`
+const description = `${project.title}. ${project.tagline} Built by Jakob Pütz.`
+const ogImage = project.cover
+	? `https://devjakob.com${project.cover}`
+	: 'https://devjakob.com/assets/avatar.jpg'
+
+const projectSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'CreativeWork',
+	name: project.title,
+	description,
+	url: canonical,
+	image: ogImage,
+	author: { '@type': 'Person', name: 'Jakob Pütz', url: 'https://devjakob.com' },
+	keywords: project.stack.join(', '),
+	inLanguage: 'en',
+	...(project.links?.length ? { sameAs: project.links.map((l) => l.href) } : {}),
+}
+
+const others = projects.filter((p) => p.slug !== project.slug).slice(0, 3)
+const hasLinks = Boolean(project.article || project.links?.length)
+---
+
+<Layout
+	title={`${project.title} · Jakob Pütz`}
+	description={description}
+	canonical={canonical}
+	ogImage={ogImage}
+	schema={projectSchema}
+>
+	<TopBar href="/#work" label="All work" width="52rem" />
+
+	<div class="page">
+		<div class="inner">
+			<header class="head">
+				<div class="title-row" data-enter style="--d:0">
+					<h1 class="title">{project.title}</h1>
+					<Tooltip text={project.status}>
+						<span class="status" data-status={project.status}>
+							<Icon
+								name={statusIcon[project.status]}
+								size={22}
+								title={project.status}
+							/>
+						</span>
+					</Tooltip>
+				</div>
+				<p class="subline" data-enter style="--d:1">
+					{project.role}
+					{project.period && ` · ${project.period}`}
+				</p>
+				<p class="tagline" data-enter style="--d:2">{project.tagline}</p>
+			</header>
+
+			<div class="cover-wrap" data-enter style="--d:3">
+				<ProjectCover project={project} eager sizes="(min-width: 52rem) 52rem, 100vw" />
+			</div>
+
+			{
+				hasLinks && (
+					<nav class="links" aria-label="Project links" data-reveal>
+						{project.article && (
+							<a
+								href={`/posts/${project.article}`}
+								class="link-item"
+								data-astro-prefetch
+							>
+								<Icon name="file-01" size={16} class="link-item__icon" />
+								Post
+							</a>
+						)}
+						{project.links?.map((link) => (
+							<a
+								href={link.href}
+								class="link-item"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<Icon name="link-02" size={16} class="link-item__icon" />
+								{link.label}
+							</a>
+						))}
+					</nav>
+				)
+			}
+
+			<div class="body" data-reveal>
+				{project.summary.map((paragraph) => <p>{paragraph}</p>)}
+
+				{
+					project.highlights && (
+						<dl class="stats">
+							{project.highlights.map((stat) => (
+								<div class="stat">
+									<dt>{stat.label}</dt>
+									<dd>{stat.value}</dd>
+								</div>
+							))}
+						</dl>
+					)
+				}
+			</div>
+
+			<div class="stack-used" data-reveal>
+				<h2 class="section-label">Stack used</h2>
+				<ul class="stack-list">
+					{project.stack.map((tech) => <li>{tech}</li>)}
+				</ul>
+			</div>
+
+			{
+				Boolean(project.monitors?.length) && (
+					<div data-reveal>
+						<Uptime project={project.slug} heading="Uptime" variant="full" />
+					</div>
+				)
+			}
+
+			{
+				others.length > 0 && (
+					<nav class="more" aria-label="Other projects" data-reveal>
+						<ul class="more__list">
+							{others.map((other, i) => (
+								<li class="more__item" style={`--d:${i % 2}`}>
+									<a
+										href={`/work/${other.slug}`}
+										class="card"
+										data-astro-prefetch
+									>
+										<ProjectCover
+											project={other}
+											sizes="(min-width: 900px) 22rem, (min-width: 640px) 45vw, 100vw"
+										/>
+
+										<div class="card__body">
+											<div class="card__headline">
+												<h3 class="card__title">{other.title}</h3>
+												<Tooltip text={other.status}>
+													<span
+														class="card__status"
+														data-status={other.status}
+													>
+														<Icon
+															name={statusIcon[other.status]}
+															size={19}
+															title={other.status}
+														/>
+													</span>
+												</Tooltip>
+											</div>
+											<p class="card__tagline">{other.tagline}</p>
+										</div>
+									</a>
+								</li>
+							))}
+						</ul>
+					</nav>
+				)
+			}
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.page {
+		min-height: 100vh;
+		padding: 2.5rem 1.5rem 6rem;
+	}
+
+	.inner {
+		width: 100%;
+		max-width: 52rem;
+		margin: 0 auto;
+	}
+
+	.title-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.65rem;
+	}
+
+	.title {
+		font-size: clamp(1.875rem, 5vw, 2.5rem);
+		font-weight: 600;
+		letter-spacing: -0.03em;
+		line-height: 1.1;
+		color: var(--fg);
+	}
+
+	.status {
+		display: flex;
+		flex-shrink: 0;
+		color: var(--fg-dim);
+	}
+
+	.status[data-status='Live'] {
+		color: var(--status-up);
+	}
+
+	.status[data-status='In development'] {
+		color: var(--status-degraded);
+	}
+
+	.subline {
+		margin-top: 0.6rem;
+		font-size: 0.875rem;
+		color: var(--fg-dim);
+	}
+
+	.tagline {
+		margin-top: 0.5rem;
+		font-size: 1.0625rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+		max-width: 36rem;
+	}
+
+	.cover-wrap {
+		margin-top: 2.25rem;
+	}
+
+	.links {
+		margin-top: 2rem;
+		display: flex;
+		overflow-x: auto;
+		border-top: 1px solid var(--border);
+		border-bottom: 1px solid var(--border);
+		scrollbar-width: none;
+	}
+
+	.links::-webkit-scrollbar {
+		display: none;
+	}
+
+	.link-item {
+		flex: 1 1 auto;
+		min-width: max-content;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.45rem;
+		padding: 0.9rem 1.1rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--fg-muted);
+		white-space: nowrap;
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.link-item + .link-item {
+		border-left: 1px solid var(--border);
+	}
+
+	.link-item:hover {
+		color: var(--fg);
+	}
+
+	.link-item__icon {
+		color: var(--fg-dim);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.link-item:hover .link-item__icon {
+		color: var(--fg);
+	}
+
+	.body {
+		margin-top: 2.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.body p {
+		font-size: 1.0625rem;
+		line-height: 1.75;
+		color: var(--fg-muted);
+	}
+
+	.stats {
+		margin: 1rem 0 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+		gap: 1px;
+		background: var(--border);
+		border: 1px solid var(--border);
+		border-radius: 0.75rem;
+		overflow: hidden;
+	}
+
+	.stat {
+		background: var(--bg);
+		padding: 1rem 1.1rem 1.15rem;
+	}
+
+	.stat dt {
+		font-size: 0.6875rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+	}
+
+	.stat dd {
+		margin: 0.35rem 0 0;
+		font-size: 1.25rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		color: var(--fg);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.stack-used {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.stack-list {
+		list-style: none;
+		margin: 1rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.stack-list li {
+		font-size: 0.8125rem;
+		color: var(--fg-muted);
+		border: 1px solid var(--border);
+		border-radius: 9999px;
+		padding: 0.3rem 0.8rem;
+	}
+
+	.more {
+		margin-top: 4rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.more__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 2.5rem 1.75rem;
+	}
+
+	@media (min-width: 640px) {
+		.more__list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	.card {
+		display: block;
+	}
+
+	.card__body {
+		margin-top: 1rem;
+	}
+
+	.card__headline {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.6rem;
+	}
+
+	.card__title {
+		font-size: 1rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		color: var(--fg);
+	}
+
+	.card__status {
+		display: flex;
+		flex-shrink: 0;
+		color: var(--fg-dim);
+	}
+
+	.card__status[data-status='Live'] {
+		color: var(--status-up);
+	}
+
+	.card__status[data-status='In development'] {
+		color: var(--status-degraded);
+	}
+
+	.card__tagline {
+		margin-top: 0.4rem;
+		font-size: 0.875rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+	}
+</style>

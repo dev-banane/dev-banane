@@ -1,4 +1,6 @@
 ---
+import Icon from './Icon.astro'
+
 interface Props {
 	slug: string
 	readingMinutes?: number
@@ -17,33 +19,11 @@ const { slug, readingMinutes = 1 } = Astro.props
 	<div class="action-bar">
 		<div class="votes">
 			<button class="vote vote-up" aria-label="Upvote" aria-pressed="false">
-				<svg
-					width="15"
-					height="15"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M12 19V5M5 12l7-7 7 7"></path>
-				</svg>
+				<Icon name="arrow-up-01" class="vote__icon" size={15} />
 				<span class="up-count">0</span>
 			</button>
 			<button class="vote vote-down" aria-label="Downvote" aria-pressed="false">
-				<svg
-					width="15"
-					height="15"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M12 5v14M19 12l-7 7-7-7"></path>
-				</svg>
+				<Icon name="arrow-down-01" class="vote__icon" size={15} />
 				<span class="down-count">0</span>
 			</button>
 		</div>
@@ -56,23 +36,11 @@ const { slug, readingMinutes = 1 } = Astro.props
 
 <div class="selection-menu" hidden>
 	<button type="button" class="selection-action selection-action--link">
-		<svg
-			width="13"
-			height="13"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-		>
-			<path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-			<path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-		</svg>
+		<Icon name="link-02" size={13} />
 		<span class="selection-link-label">Link to highlight</span>
 	</button>
 	<button type="button" class="selection-action selection-action--ask">
-		<img src="/assets/socials/chat.svg" alt="" width="13" height="13" />
+		<Icon name="ai-chat-02" size={13} />
 		Ask my AI about this
 	</button>
 </div>
@@ -119,14 +87,32 @@ const { slug, readingMinutes = 1 } = Astro.props
 		font-variant-numeric: tabular-nums;
 		cursor: pointer;
 		transition:
-			color 0.15s ease,
-			border-color 0.15s ease,
-			background 0.15s ease;
+			color var(--dur-fast) var(--ease-out),
+			border-color var(--dur-fast) var(--ease-out),
+			background var(--dur-fast) var(--ease-out),
+			transform var(--dur) var(--ease-out);
 	}
 
 	.vote:hover {
 		color: var(--fg);
-		border-color: var(--fg-dim);
+		border-color: var(--border-strong);
+		transform: translateY(-1px);
+	}
+
+	.vote:active {
+		transform: translateY(0);
+	}
+
+	.vote__icon {
+		transition: transform var(--dur) var(--ease-out);
+	}
+
+	.vote-up:hover .vote__icon {
+		transform: translateY(-2px);
+	}
+
+	.vote-down:hover .vote__icon {
+		transform: translateY(2px);
 	}
 
 	.vote[aria-pressed='true'] {
@@ -214,14 +200,11 @@ const { slug, readingMinutes = 1 } = Astro.props
 	.selection-action:hover {
 		background: var(--btn-social-bg);
 	}
-
-	.selection-action img {
-		filter: var(--icon-filter);
-	}
 </style>
 
 <script>
 	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup.ts'
+	import { getAuthState, setAuthState } from '../lib/auth-state.ts'
 
 	type Stats = { views: number; upvotes: number; downvotes: number; myVote: number }
 
@@ -441,6 +424,7 @@ const { slug, readingMinutes = 1 } = Astro.props
 		cleanups.push(
 			onAuthMessage((user) => {
 				auth = { enabled: true, user }
+				setAuthState(auth)
 				refreshStats().then(() => {
 					if (pendingDirAfterLogin !== null) {
 						const dir = pendingDirAfterLogin
@@ -553,18 +537,7 @@ const { slug, readingMinutes = 1 } = Astro.props
 		render()
 
 		async function loadAuth() {
-			const { ok, data } = await fetchJson('/api/auth/me')
-			if (!ok || !data) return
-			auth = {
-				enabled: !!data.enabled,
-				user: data.user
-					? {
-							login: String(data.user.login ?? ''),
-							name: String(data.user.name ?? ''),
-							avatar: String(data.user.avatar ?? ''),
-						}
-					: null,
-			}
+			auth = await getAuthState()
 		}
 
 		afterTransition(() => {

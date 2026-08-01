@@ -1,59 +1,47 @@
 ---
-interface Props {
-	fixed?: boolean
-}
-
-const { fixed = false } = Astro.props
+import Icon from './Icon.astro'
 ---
 
-<button
-	id="theme-toggle"
-	class:list={['theme-toggle', { 'theme-toggle--fixed': fixed }]}
-	role="switch"
-	aria-label="Toggle dark mode"
->
-	<span class="theme-toggle__track">
-		<svg
-			class="theme-toggle__icon icon-sun"
-			xmlns="http://www.w3.org/2000/svg"
-			width="13"
-			height="13"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2.2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-		>
-			<circle cx="12" cy="12" r="4"></circle>
-			<path
-				d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
-			></path>
-		</svg>
-		<svg
-			class="theme-toggle__icon icon-moon"
-			xmlns="http://www.w3.org/2000/svg"
-			width="13"
-			height="13"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2.2"
-			stroke-linecap="round"
-			stroke-linejoin="round"
-		>
-			<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-		</svg>
-		<span class="theme-toggle__knob"></span>
-	</span>
+<button id="theme-toggle" class="theme-toggle" role="switch" aria-label="Toggle dark mode">
+	<Icon name="sun-03" class="theme-toggle__icon theme-toggle__icon--sun" size={16} />
+	<Icon name="moon-02" class="theme-toggle__icon theme-toggle__icon--moon" size={16} />
 </button>
 
 <style is:global>
-	.theme-toggle--fixed {
-		position: fixed;
-		top: 1.5rem;
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 20;
+	.theme-toggle {
+		display: grid;
+		place-items: center;
+		width: 2rem;
+		height: 2rem;
+		flex-shrink: 0;
+		padding: 0;
+		border: none;
+		border-radius: 9999px;
+		background: none;
+		color: var(--fg-dim);
+		cursor: pointer;
+		transition:
+			background-color var(--dur-fast) var(--ease-out),
+			color var(--dur-fast) var(--ease-out);
+	}
+
+	.theme-toggle:hover {
+		background: var(--btn-social-bg);
+		color: var(--fg);
+	}
+
+	.theme-toggle__icon {
+		grid-area: 1 / 1;
+		opacity: 0;
+		transform: scale(0.6) rotate(-40deg);
+		transition:
+			opacity var(--dur) var(--ease-out),
+			transform var(--dur) var(--ease-out);
+	}
+
+	[data-theme='light'] .theme-toggle__icon--sun,
+	[data-theme='dark'] .theme-toggle__icon--moon {
+		opacity: 1;
+		transform: scale(1) rotate(0deg);
 	}
 </style>

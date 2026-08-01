@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro'
+import TopBar from '../components/TopBar.astro'
+import Uptime from '../components/Uptime.astro'
+import { monitors } from '../data/projects'
+
+const canonical = 'https://devjakob.com/uptime'
+const description =
+	'Live uptime and response times for the projects Jakob Pütz runs, checked every 30 seconds with 90 days of history.'
+---
+
+<Layout title="Uptime · Jakob Pütz" description={description} canonical={canonical}>
+	<TopBar />
+
+	<div class="page">
+		<div class="inner">
+			<h1 class="title" data-enter style="--d:0">Uptime</h1>
+			<p class="subtitle" data-enter style="--d:1">
+				Every project is probed every 30 seconds from Cloudflare's edge. Bars show the
+				last 90 days, one cell per day.
+			</p>
+
+			<div data-enter style="--d:2">
+				<Uptime heading="All services" variant="full" />
+			</div>
+
+			<p class="note" data-enter style="--d:3">
+				{monitors.length} services monitored. A day counts as degraded below 99.5%
+				and down below 95%.
+			</p>
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.page {
+		min-height: 100vh;
+		padding: 3rem 1.5rem 6rem;
+	}
+
+	.inner {
+		width: 100%;
+		max-width: 40rem;
+		margin: 0 auto;
+	}
+
+	.title {
+		font-size: 1.875rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		line-height: 1.2;
+		color: var(--fg);
+	}
+
+	.subtitle {
+		margin-top: 0.5rem;
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+	}
+
+	.note {
+		margin-top: 3rem;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--border);
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+	}
+</style>

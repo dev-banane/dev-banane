@@ -1,0 +1,183 @@
+---
+import ProjectCover from './ProjectCover.astro'
+import Icon from './Icon.astro'
+import Tooltip from './Tooltip.astro'
+import { featuredProjects, statusIcon } from '../data/projects'
+---
+
+<section class="work" id="work" aria-labelledby="work-heading">
+	<header class="work__head" data-enter style="--d:8">
+		<p class="work__lede" id="work-heading">Things I've built and still maintain.</p>
+	</header>
+
+	<ul class="work__list">
+		{
+			featuredProjects.map((project, i) => (
+				<li class="work__item" data-enter style={`--d:${9 + (i % 2)}`}>
+					<a href={`/work/${project.slug}`} class="card" data-astro-prefetch>
+						<ProjectCover
+							project={project}
+							sizes="(min-width: 900px) 22rem, (min-width: 640px) 45vw, 100vw"
+						/>
+
+						<div class="card__body">
+							<div class="card__headline">
+								<h3 class="card__title">{project.title}</h3>
+								<Tooltip text={project.status}>
+									<span class="card__status" data-status={project.status}>
+										<Icon
+											name={statusIcon[project.status]}
+											size={19}
+											title={project.status}
+										/>
+									</span>
+								</Tooltip>
+							</div>
+							<p class="card__tagline">{project.tagline}</p>
+						</div>
+					</a>
+				</li>
+			))
+		}
+		<li class="work__item" data-enter style={`--d:${9 + (featuredProjects.length % 2)}`}>
+			<a href="#" id="work-contact-link" class="card card--contact">
+				<div class="cover cover--contact">
+					<Icon name="mail-02" size={28} class="contact__icon" />
+					<h3 class="contact__title">Have an idea?</h3>
+					<p class="contact__tagline">
+						Let's work together! Reach out and tell me about it.
+					</p>
+				</div>
+			</a>
+		</li>
+	</ul>
+</section>
+
+<script>
+	function initWorkContactLink() {
+		const link = document.getElementById('work-contact-link') as HTMLAnchorElement | null
+		if (!link) return
+		link.href = `mailto:${'me'}@${'devjakob.com'}`
+	}
+
+	document.addEventListener('astro:page-load', initWorkContactLink)
+</script>
+
+<style>
+	.work {
+		margin-top: 4.5rem;
+		scroll-margin-top: 2rem;
+	}
+
+	.work__head {
+		padding-bottom: 1.5rem;
+	}
+
+	.work__lede {
+		margin-top: 0.6rem;
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+	}
+
+	.work__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 2.5rem 1.75rem;
+	}
+
+	@media (min-width: 640px) {
+		.work__list {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	.card {
+		display: block;
+	}
+
+	.cover--contact {
+		position: relative;
+		aspect-ratio: 16 / 10;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		text-align: center;
+		padding: 1.5rem;
+		border-radius: 0.75rem;
+		border: 1px dashed var(--border);
+		background: var(--bg-elevated);
+		transition:
+			border-color var(--dur) var(--ease-out),
+			transform var(--dur-slow) var(--ease-out),
+			box-shadow var(--dur-slow) var(--ease-out);
+	}
+
+	.card--contact:hover .cover--contact,
+	.card--contact:focus-visible .cover--contact {
+		border-color: var(--border-strong);
+		transform: translateY(-4px);
+		box-shadow: var(--shadow-lift);
+	}
+
+	.contact__icon {
+		color: var(--fg-dim);
+	}
+
+	.contact__title {
+		font-size: 1rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		color: var(--fg);
+	}
+
+	.contact__tagline {
+		font-size: 0.875rem;
+		line-height: 1.5;
+		color: var(--fg-muted);
+		max-width: 20rem;
+	}
+
+	.card__body {
+		margin-top: 1rem;
+	}
+
+	.card__headline {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.6rem;
+	}
+
+	.card__title {
+		font-size: 1rem;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		color: var(--fg);
+	}
+
+	.card__status {
+		display: flex;
+		flex-shrink: 0;
+		color: var(--fg-dim);
+	}
+
+	.card__status[data-status='Live'] {
+		color: var(--status-up);
+	}
+
+	.card__status[data-status='In development'] {
+		color: var(--status-degraded);
+	}
+
+	.card__tagline {
+		margin-top: 0.4rem;
+		font-size: 0.875rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+	}
+</style>

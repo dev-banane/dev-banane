@@ -1,15 +1,34 @@
 ---
 export const prerender = false
 
+import Icon from '../components/Icon.astro'
 import Layout from '../layouts/Layout.astro'
 import ThemeToggle from '../components/ThemeToggle.astro'
+import WorkShowcase from '../components/WorkShowcase.astro'
+import Uptime from '../components/Uptime.astro'
 import { socials } from '../data/site'
+import { featuredProjects } from '../data/projects'
 import { fetchPostList } from '../lib/posts'
 import { env } from 'cloudflare:workers'
 
 const posts = await fetchPostList(env.MEDIA)
+const HOMEPAGE_POSTS = 5
+const visiblePosts = posts.slice(0, HOMEPAGE_POSTS)
+const remainingPosts = posts.length - visiblePosts.length
 
 Astro.response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+
+const workSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	name: "Jakob Pütz's projects",
+	itemListElement: featuredProjects.map((p, i) => ({
+		'@type': 'ListItem',
+		position: i + 1,
+		url: `https://devjakob.com/work/${p.slug}`,
+		name: p.title,
+	})),
+}
 
 function formatDate(iso: string) {
 	return new Date(iso).toLocaleDateString('en-US', {
@@ -22,26 +41,30 @@ function formatDate(iso: string) {
 
 <Layout
 	title="Jakob Pütz"
-	description="Jakob Pütz (Jakob Puetz, devjakob), 17-year-old full-stack developer from Aachen, Germany. Building PFControl and Petal. TypeScript, Next.js, Postgres."
+	description="Jakob Pütz (Jakob Puetz, devjakob), 17-year-old full-stack developer from Aachen, Germany. Building Weavay, Petal and PFControl. TypeScript, Next.js, Postgres."
+	schema={workSchema}
 >
 	<div class="page">
-		<div class="grid">
+		<div class="inner">
 			<article class="about">
-				<div class="name-row">
+				<div class="name-row" data-enter style="--d:0">
 					<div>
 						<h1 class="name">Jakob Pütz</h1>
 						<p class="role">Full-stack developer · Aachen, Germany</p>
 					</div>
-					<img
-						src="/assets/avatar.jpg"
-						alt="Jakob Pütz"
-						class="profile-avatar"
-						width="52"
-						height="52"
-					/>
+					<div class="name-row__right">
+						<ThemeToggle />
+						<img
+							src="/assets/avatar.jpg"
+							alt="Jakob Pütz"
+							class="profile-avatar"
+							width="52"
+							height="52"
+						/>
+					</div>
 				</div>
 
-				<div class="prose">
+				<div class="prose" data-enter style="--d:1">
 					<p>
 						Hey, I'm a 17-year-old developer. I've been building software since my early
 						teens, and what started as curiosity quickly turned into a serious passion
@@ -49,26 +72,31 @@ function formatDate(iso: string) {
 					</p>
 					<p>
 						Right now I'm building <a
-							href="https://github.com/cephie-studios/pfcontrol-2"
-							target="_blank"
-							rel="noopener"
-							class="link">PFControl</a
+							href="/work/weavay"
+							class="link"
+							data-astro-prefetch>Weavay</a
+						>, an email client that treats your mail as a living graph of the people and
+						threads it touches instead of a folder tree, and <a
+							href="/work/pfcontrol"
+							class="link"
+							data-astro-prefetch>PFControl</a
 						>, an ATC strip management platform I've been working on since I was 15 with
-						thousands of registered users and ~500 daily actives, and <a
-							href="/posts/petal"
-							class="link">Petal</a
-						>, a unified AI workspace I'm developing from the ground up.
+						thousands of registered users and ~500 daily actives. <a
+							href="/work/petal"
+							class="link"
+							data-astro-prefetch>Petal</a
+						>, a unified AI workspace, is in the mix too.
 					</p>
 					<p>
 						I work across the full stack with TypeScript, Next.js, Postgres, and
 						whatever else the problem needs. Outside of code I'm interested in aviation,
-						space as well as photography. <a href="#" class="link" id="contact-link"
-							>Feel free to contact me!</a
-						>
+						space as well as photography.
+						<br />
+						<a href="#" class="link" id="contact-link">Feel free to contact me!</a>
 					</p>
 				</div>
 
-				<div class="socials">
+				<div class="socials" data-enter style="--d:2">
 					{
 						socials.map((s) => (
 							<a
@@ -76,14 +104,9 @@ function formatDate(iso: string) {
 								target="_blank"
 								rel="noopener noreferrer me"
 								class="btn btn--social"
+								aria-label={s.label}
 							>
-								<img
-									src={s.icon}
-									alt={s.label}
-									width={28}
-									height={28}
-									class="btn-icon"
-								/>
+								<Icon name={s.icon} class="btn-icon" size={18} />
 								{s.label}
 							</a>
 						))
@@ -96,61 +119,73 @@ function formatDate(iso: string) {
 				</address>
 			</article>
 
-			<aside class="writing">
-				<div class="writing-header">
-					<h2 class="section-label">
-						<a href="/posts" class="section-label-link" data-astro-prefetch>Writing</a>
-					</h2>
-					<ThemeToggle />
-				</div>
+			<div data-enter style="--d:3">
+				<Uptime variant="unified" />
+			</div>
+
+			<section class="writing" aria-labelledby="writing-heading">
+				<header class="writing-head" data-enter style="--d:4">
+					<p class="writing-lede" id="writing-heading">
+						Notes on what I build and how it works.
+					</p>
+				</header>
+
 				{
 					posts.length === 0 ? (
 						<p class="empty">Nothing published yet.</p>
 					) : (
-						<div class="post-scroll-wrap" id="post-scroll-wrap">
-							<ul class="post-list" id="post-scroll" data-count={posts.length}>
-								{posts.map((p) => (
-									<li>
-										<a href={`/posts/${p.slug}`} class="post-link">
+						<Fragment>
+							<ul class="post-list">
+								{visiblePosts.map((p, i) => (
+									<li data-enter style={`--d:${5 + Math.min(i, 3)}`}>
+										<a
+											href={`/posts/${p.slug}`}
+											class="post-link"
+											data-astro-prefetch
+										>
 											<span class="post-title">{p.title}</span>
 											<span class="post-date">{formatDate(p.date)}</span>
 										</a>
 									</li>
 								))}
 							</ul>
-						</div>
+
+							{remainingPosts > 0 && (
+								<a
+									href="/posts"
+									class="more-link"
+									data-enter
+									style="--d:8"
+									data-astro-prefetch
+								>
+									Show more
+									<Icon name="arrow-right-01" size={15} class="more-link__icon" />
+								</a>
+							)}
+						</Fragment>
 					)
 				}
-			</aside>
+			</section>
+
+			<WorkShowcase />
 		</div>
 	</div>
 </Layout>
 
 <style>
 	.page {
-		min-height: 100vh;
-		padding: 4rem 1.5rem;
+		padding: 3.5rem 1.5rem 7rem;
 	}
 
-	.grid {
+	.inner {
 		width: 100%;
-		max-width: 64rem;
+		max-width: 48rem;
 		margin: 0 auto;
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 3.5rem;
-	}
-
-	@media (min-width: 820px) {
-		.grid {
-			grid-template-columns: 1.3fr 1fr;
-			gap: 5rem;
-			align-items: start;
-		}
 	}
 
 	.about {
 		width: 100%;
+		margin-top: 1.5rem;
 	}
 
 	.name-row {
@@ -160,6 +195,13 @@ function formatDate(iso: string) {
 		gap: 1.5rem;
 	}
 
+	.name-row__right {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex-shrink: 0;
+	}
+
 	.profile-avatar {
 		width: 3.25rem;
 		height: 3.25rem;
@@ -167,19 +209,21 @@ function formatDate(iso: string) {
 		object-fit: cover;
 		flex-shrink: 0;
 		display: block;
+		border: 1px solid var(--border);
 	}
 
 	.name {
-		font-size: 1.75rem;
+		font-size: clamp(1.75rem, 4vw, 2.125rem);
 		font-weight: 600;
-		letter-spacing: -0.02em;
+		letter-spacing: -0.03em;
+		line-height: 1.1;
 		color: var(--fg);
 	}
 
 	.role {
 		font-size: 0.9375rem;
 		color: var(--fg-muted);
-		margin-top: 0.4rem;
+		margin-top: 0.5rem;
 	}
 
 	.prose {
@@ -193,19 +237,6 @@ function formatDate(iso: string) {
 		font-size: 1.0625rem;
 		line-height: 1.7;
 		color: var(--fg-muted);
-		text-align: justify;
-		hyphens: auto;
-	}
-
-	.link {
-		color: var(--fg);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		text-decoration-color: var(--fg-dim);
-	}
-
-	.link:hover {
-		text-decoration-color: var(--fg);
 	}
 
 	.socials {
@@ -215,109 +246,35 @@ function formatDate(iso: string) {
 		margin-top: 2rem;
 	}
 
-	.socials .btn {
-		padding-right: 1rem;
-	}
-
-
 	.writing {
-		padding-top: 0;
+		margin-top: 4.5rem;
 	}
 
-	.writing-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 1.25rem;
+	.writing-head {
+		padding-bottom: 0.5rem;
 	}
 
-	.section-label-link {
-		color: inherit;
-	}
-
-	.section-label-link:hover {
-		color: var(--fg);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-	}
-
-	.post-scroll-wrap {
-		margin-bottom: 0;
-	}
-
-	.post-list {
-		--fade: 3.5rem;
-		-webkit-mask-image: linear-gradient(
-			to bottom,
-			transparent,
-			black var(--fade),
-			black calc(100% - var(--fade)),
-			transparent
-		);
-		mask-image: linear-gradient(
-			to bottom,
-			transparent,
-			black var(--fade),
-			black calc(100% - var(--fade)),
-			transparent
-		);
-	}
-
-	.post-list.no-fade-top {
-		-webkit-mask-image: linear-gradient(
-			to bottom,
-			black,
-			black calc(100% - var(--fade)),
-			transparent
-		);
-		mask-image: linear-gradient(
-			to bottom,
-			black,
-			black calc(100% - var(--fade)),
-			transparent
-		);
-	}
-
-	.post-list.no-fade-bottom {
-		-webkit-mask-image: linear-gradient(
-			to bottom,
-			transparent,
-			black var(--fade),
-			black
-		);
-		mask-image: linear-gradient(
-			to bottom,
-			transparent,
-			black var(--fade),
-			black
-		);
-	}
-
-	.post-list.no-fade-top.no-fade-bottom {
-		-webkit-mask-image: none;
-		mask-image: none;
+	.writing-lede {
+		margin-top: 0.6rem;
+		font-size: 0.9375rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
 	}
 
 	.post-list {
 		list-style: none;
 		padding: 0;
-		margin: 0;
-		max-height: 15.5rem;
-		overflow-y: auto;
-		scrollbar-width: none;
-	}
-
-	.post-list::-webkit-scrollbar {
-		display: none;
+		margin: 1rem 0 0;
 	}
 
 	.post-link {
 		display: flex;
-		flex-direction: column;
-		gap: 0.2rem;
-		padding: 0.9rem 0;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 0.85rem 0;
 		border-top: 1px solid var(--border);
-		transition: opacity 0.15s ease;
+		transition: opacity var(--dur-fast) var(--ease-out);
 	}
 
 	.post-list li:last-child .post-link {
@@ -325,128 +282,64 @@ function formatDate(iso: string) {
 	}
 
 	.post-link:hover {
-		opacity: 0.65;
+		opacity: 0.75;
 	}
 
 	.post-title {
 		font-size: 0.9375rem;
 		line-height: 1.5;
 		color: var(--fg);
+		transition: transform var(--dur) var(--ease-out);
+	}
+
+	.post-link:hover .post-title {
+		transform: translateX(4px);
+	}
+
+	.more-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		margin-top: 1.1rem;
+		font-size: 0.8125rem;
+		font-weight: 500;
+		color: var(--fg-dim);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.more-link:hover {
+		color: var(--fg);
+	}
+
+	.more-link__icon {
+		transition: transform var(--dur-fast) var(--ease-out);
+	}
+
+	.more-link:hover .more-link__icon {
+		transform: translateX(3px);
 	}
 
 	.post-date {
 		font-size: 0.8125rem;
 		color: var(--fg-dim);
 		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
 	.empty {
+		margin-top: 1rem;
 		font-size: 0.9rem;
 		color: var(--fg-dim);
 	}
 </style>
 
 <script>
-	let cleanups: Array<() => void> = []
-	let layoutGen = 0
-
-	function afterTransition(fn: () => void) {
-		requestAnimationFrame(() => requestAnimationFrame(fn))
-	}
-
 	function initContactLink() {
 		const link = document.getElementById('contact-link') as HTMLAnchorElement | null
-		if (link) {
-			const user = 'me'
-			const domain = 'devjakob.com'
-			link.href = `mailto:${user}@${domain}`
-		}
+		if (!link) return
+		link.href = `mailto:${'me'}@${'devjakob.com'}`
 	}
 
-	function initWriting() {
-		cleanups.forEach((fn) => fn())
-		cleanups = []
-		const gen = ++layoutGen
-
-		const wrap = document.getElementById('post-scroll-wrap')
-		const list = document.getElementById('post-scroll')
-		const count = Number(list?.dataset.count ?? 0)
-
-		if (list && count >= 4) {
-			const syncMask = () => {
-				const { scrollTop, scrollHeight, clientHeight } = list
-				const atTop = scrollTop <= 2
-				const atBottom = scrollTop + clientHeight >= scrollHeight - 2
-				list.classList.toggle('no-fade-top', atTop)
-				list.classList.toggle('no-fade-bottom', atBottom)
-			}
-			afterTransition(() => {
-				if (gen !== layoutGen) return
-				syncMask()
-			})
-			list.addEventListener('scroll', syncMask, { passive: true })
-			cleanups.push(() => list.removeEventListener('scroll', syncMask))
-		}
-
-		const syncColumnOffset = () => {
-			const page = document.querySelector<HTMLElement>('.page')
-			const about = document.querySelector<HTMLElement>('.about')
-			const writing = document.querySelector<HTMLElement>('.writing')
-			const header = writing?.querySelector<HTMLElement>('.writing-header')
-			const list = writing?.querySelector<HTMLElement>('.post-list')
-			if (!page || !about || !writing) return
-
-			if (window.innerWidth < 820) {
-				about.style.paddingTop = ''
-				writing.style.paddingTop = ''
-				if (list) {
-					list.style.height = ''
-					list.style.maxHeight = ''
-				}
-				return
-			}
-
-			if (header && list) {
-				const headerStyle = getComputedStyle(header)
-				const headerHeight =
-					header.offsetHeight +
-					parseFloat(headerStyle.marginTop) +
-					parseFloat(headerStyle.marginBottom)
-				const listHeight = Math.max(0, about.offsetHeight - headerHeight)
-				list.style.height = `${listHeight}px`
-				list.style.maxHeight = `${listHeight}px`
-			}
-
-			const style = getComputedStyle(page)
-			const padY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom)
-			const rail = window.innerHeight - padY
-			const offset = Math.max(0, (rail - about.offsetHeight) / 2)
-			const top = `${offset}px`
-			about.style.paddingTop = top
-			writing.style.paddingTop = top
-		}
-
-		afterTransition(() => {
-			if (gen !== layoutGen) return
-			syncColumnOffset()
-			window.addEventListener('resize', syncColumnOffset, { passive: true })
-			cleanups.push(() => window.removeEventListener('resize', syncColumnOffset))
-
-			const aboutEl = document.querySelector('.about')
-			const writingEl = document.querySelector('.writing')
-			if (aboutEl && writingEl && 'ResizeObserver' in window) {
-				const ro = new ResizeObserver(syncColumnOffset)
-				ro.observe(aboutEl)
-				ro.observe(writingEl)
-				cleanups.push(() => ro.disconnect())
-			}
-		})
-	}
-
-	function init() {
-		initContactLink()
-		initWriting()
-	}
-
-	document.addEventListener('astro:page-load', init)
+	document.addEventListener('astro:page-load', initContactLink)
 </script>

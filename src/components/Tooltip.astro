@@ -1,0 +1,14 @@
+---
+interface Props {
+	text: string
+	placement?: 'top' | 'bottom' | 'left' | 'right'
+	class?: string
+}
+
+const { text, placement = 'top', class: className } = Astro.props
+---
+
+<span class:list={['tooltip', className]} data-placement={placement}>
+	<slot />
+	<span class="tooltip__bubble" aria-hidden="true">{text}</span>
+</span>

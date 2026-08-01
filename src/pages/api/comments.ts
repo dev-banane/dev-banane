@@ -3,34 +3,21 @@ import { env } from 'cloudflare:workers';
 import { verifyTurnstileToken } from '../../lib/turnstile';
 import { isTurnstileEnabled, isTruthyFlag } from '../../lib/turnstile-config';
 import { moderateText, isModerationEnabled } from '../../lib/moderation';
-import { avatarServeUrl, isValidAvatarKey, resolveAvatarUrl } from '../../lib/avatar';
+import { avatarServeUrl, isValidAvatarKey } from '../../lib/avatar';
 import { normalizeGithub, normalizeTwitter } from '../../lib/socials';
 import { getCommentsSalt } from '../../lib/salt';
 import { getSessionUser, isGithubAuthEnabled } from '../../lib/auth';
+import {
+  fetchComments,
+  isValidSlug,
+  mapComment,
+  type CommentRow,
+} from '../../lib/comments';
 
 export const prerender = false;
 
-const SLUG_RE = /^[a-z0-9-]{1,64}$/;
 const MAX_NAME = 40;
 const MAX_BODY = 280;
-const MEDIA_BASE = (
-  import.meta.env.PUBLIC_MEDIA_URL ?? 'https://media.devjakob.com'
-).replace(/\/$/, '');
-
-type CommentRow = {
-  id: number;
-  name: string;
-  body: string;
-  created_at: string;
-  avatar_url: string | null;
-  github: string | null;
-  twitter: string | null;
-  ip_hash: string | null;
-};
-
-function isValidSlug(slug: string): boolean {
-  return slug === '' || SLUG_RE.test(slug);
-}
 
 async function sha256hex(value: string, salt: string): Promise<string> {
   const data = new TextEncoder().encode(`${salt}:${value}`);
@@ -38,19 +25,6 @@ async function sha256hex(value: string, salt: string): Promise<string> {
   return Array.from(new Uint8Array(digest))
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
-}
-
-function mapComment(row: CommentRow, viewerKey: string | null) {
-  return {
-    id: row.id,
-    name: row.name,
-    body: row.body,
-    createdAt: row.created_at.replace(' ', 'T') + 'Z',
-    avatarUrl: resolveAvatarUrl(row.avatar_url, MEDIA_BASE),
-    github: row.github ?? '',
-    twitter: row.twitter ?? '',
-    canDelete: viewerKey !== null && row.ip_hash === viewerKey,
-  };
 }
 
 function missingSaltResponse() {
@@ -62,30 +36,23 @@ function missingSaltResponse() {
 
 export const GET: APIRoute = async ({ url, cookies }) => {
   const db = env.DB;
-  if (!db) return Response.json({ comments: [] });
-
-  const slugParam = url.searchParams.get('slug');
-  if (slugParam === null) return Response.json({ comments: [] });
-  const slug = slugParam;
-  if (!isValidSlug(slug)) return Response.json({ comments: [] });
+  const slug = url.searchParams.get('slug');
+  if (!db || slug === null || !isValidSlug(slug)) {
+    return Response.json({ comments: [] });
+  }
 
   try {
-    const user = await getSessionUser(cookies, env);
+    const authEnabled = isGithubAuthEnabled(env);
+    const [user, rows] = await Promise.all([
+      authEnabled ? getSessionUser(cookies, env).catch(() => null) : null,
+      fetchCommentRows(db, slug),
+    ]);
     const viewerKey = user ? `gh:${user.id}` : null;
 
-    const { results } = await db
-      .prepare(
-        `SELECT id, name, body, created_at, avatar_url, github, twitter, ip_hash
-         FROM comments
-         WHERE status = 'approved' AND slug = ?1
-         ORDER BY id DESC LIMIT 50`
-      )
-      .bind(slug)
-      .all<CommentRow>();
-
-    return Response.json({
-      comments: results.map((row) => mapComment(row, viewerKey)),
-    });
+    return Response.json(
+      { comments: rows.map((row) => mapComment(row, viewerKey)) },
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch {
     return Response.json({ comments: [] });
   }

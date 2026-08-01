@@ -13,7 +13,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy:chat-cleanup": "wrangler deploy --config workers/chat-cleanup/wrangler.jsonc"
+    "deploy:chat-cleanup": "wrangler deploy --config workers/chat-cleanup/wrangler.jsonc",
+    "deploy:uptime": "wrangler deploy --config workers/uptime/wrangler.jsonc",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.6.1",
@@ -21,6 +23,13 @@
     "astro": "^6.4.3",
     "marked": "^18.0.5",
     "obscenity": "^0.4.6",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "wrangler": "^4.118.0"
+  },
+  "overrides": {
+    "vite": "^7"
+  },
+  "devDependencies": {
+    "@iconify-json/hugeicons": "^1.2.31"
   }
 }

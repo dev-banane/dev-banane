@@ -3,11 +3,23 @@ export const prerender = false
 import type { APIRoute } from 'astro'
 import { env } from 'cloudflare:workers'
 import { fetchPostList } from '../lib/posts'
+import { projects } from '../data/projects'
 
 const BASE = 'https://devjakob.com'
 
 export const GET: APIRoute = async () => {
 	const posts = await fetchPostList(env.MEDIA).catch(() => [])
+
+	const projectLines = projects
+		.map((p) => {
+			const links = [
+				`[${BASE}/work/${p.slug}](${BASE}/work/${p.slug})`,
+				...(p.links ?? []).map((l) => `[${l.label}](${l.href})`),
+			].join(', ')
+			const meta = [p.status, p.period].filter(Boolean).join(', ')
+			return `- **${p.title}** (${meta}): ${p.tagline} Stack: ${p.stack.join(', ')}. ${links}`
+		})
+		.join('\n')
 
 	const postLines = posts
 		.map(
@@ -23,8 +35,7 @@ Jakob Pütz is a self-taught software engineer who has been building software si
 
 ## Projects
 
-- **PFControl**: ATC strip management platform, thousands of registered users, ~500 daily actives. Built since age 15. [github.com/cephie-studios/pfcontrol-2](https://github.com/cephie-studios/pfcontrol-2)
-- **Petal**: Unified AI workspace, developed from the ground up. [${BASE}/posts/petal](${BASE}/posts/petal)
+${projectLines}
 
 ## Links
 

@@ -1,0 +1,15 @@
+{
+	"name": "dev-banane-uptime",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-04-01",
+	"triggers": {
+		"crons": ["* * * * *"],
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "devbanane-comments",
+			"database_id": "5920a303-7bfb-458f-9027-c07423682533",
+		},
+	],
+}

@@ -1,9 +1,14 @@
 ---
+import Icon from './Icon.astro'
+import { INITIAL_COMMENT_LIMIT, initials, timeAgo, type Comment } from '../lib/comments'
+
 interface Props {
 	slug?: string
+	comments?: Comment[]
 }
 
-const { slug = '' } = Astro.props
+const { slug = '', comments = [] } = Astro.props
+const hiddenCount = Math.max(0, comments.length - INITIAL_COMMENT_LIMIT)
 const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY
 const disableTurnstile =
 	import.meta.env.PUBLIC_DISABLE_TURNSTILE === 'true' ||
@@ -22,6 +27,7 @@ const MAX_TEXTAREA_PX = 240
 	data-site-key={siteKey ?? ''}
 	data-max-len={String(maxLen)}
 	data-max-textarea={String(MAX_TEXTAREA_PX)}
+	data-initial-limit={String(INITIAL_COMMENT_LIMIT)}
 >
 	<div class="comments-header">
 		<h2 class="section-label">Comments</h2>
@@ -31,7 +37,7 @@ const MAX_TEXTAREA_PX = 240
 			aria-expanded="false"
 			aria-label="Add a comment"
 		>
-			<img src="/assets/icons/plus.svg" alt="" width="13" height="13" class="plus-icon" />
+			<Icon name="plus-sign" class="plus-icon" size={14} />
 		</button>
 	</div>
 
@@ -102,12 +108,7 @@ const MAX_TEXTAREA_PX = 240
 							<label class="social-field">
 								<span class="social-input-wrap">
 									<span class="social-prefix" aria-hidden="true">
-										<img
-											src="/assets/socials/github.svg"
-											alt=""
-											width="16"
-											height="16"
-										/>
+										<Icon name="github-01" size={16} />
 									</span>
 									<input
 										name="github"
@@ -123,12 +124,7 @@ const MAX_TEXTAREA_PX = 240
 							<label class="social-field">
 								<span class="social-input-wrap">
 									<span class="social-prefix" aria-hidden="true">
-										<img
-											src="/assets/socials/twitter.svg"
-											alt=""
-											width="16"
-											height="16"
-										/>
+										<Icon name="new-twitter" size={16} />
 									</span>
 									<input
 										name="twitter"
@@ -168,10 +164,70 @@ const MAX_TEXTAREA_PX = 240
 	</div>
 
 	<ul id="comment-list" class="comment-list">
-		<li class="comment-empty">Loading…</li>
+		{
+			comments.length === 0 ? (
+				<li class="comment-empty">No comments yet, be the first.</li>
+			) : (
+				comments.map((c) => (
+					<li class="comment-item" data-id={c.id}>
+						<div class="comment-head">
+							{c.avatarUrl ? (
+								<img
+									src={c.avatarUrl}
+									alt=""
+									class="comment-avatar"
+									width="24"
+									height="24"
+								/>
+							) : (
+								<span
+									class="comment-avatar comment-avatar--empty"
+									aria-hidden="true"
+								>
+									{initials(c.name)}
+								</span>
+							)}
+							<div class="comment-meta">
+								<span class="comment-author">{c.name}</span>
+								<span class="comment-time" data-time={c.createdAt}>
+									{timeAgo(c.createdAt)}
+								</span>
+							</div>
+							{(c.github || c.twitter) && (
+								<span class="comment-socials">
+									{c.github && (
+										<a
+											href={`https://github.com/${c.github}`}
+											class="comment-social"
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label="GitHub profile"
+										>
+											<Icon name="github-01" size={16} />
+										</a>
+									)}
+									{c.twitter && (
+										<a
+											href={`https://x.com/${c.twitter}`}
+											class="comment-social"
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label="X profile"
+										>
+											<Icon name="new-twitter" size={16} />
+										</a>
+									)}
+								</span>
+							)}
+						</div>
+						<p class="comment-body">{c.body}</p>
+					</li>
+				))
+			)
+		}
 	</ul>
-	<button type="button" id="comments-expand" class="comments-expand" hidden>
-		Show more comments
+	<button type="button" id="comments-expand" class="comments-expand" hidden={hiddenCount === 0}>
+		{hiddenCount === 1 ? 'Show 1 more comment' : `Show ${hiddenCount} more comments`}
 	</button>
 </section>
 
@@ -207,8 +263,7 @@ const MAX_TEXTAREA_PX = 240
 	}
 
 	.plus-icon {
-		filter: var(--icon-filter);
-		transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform 0.3s var(--ease-out);
 		will-change: transform;
 	}
 
@@ -392,8 +447,7 @@ const MAX_TEXTAREA_PX = 240
 		opacity: 0.42;
 	}
 
-	.social-prefix img {
-		filter: var(--icon-filter);
+	.social-prefix svg {
 		display: block;
 		width: 16px;
 		height: 16px;
@@ -530,6 +584,10 @@ const MAX_TEXTAREA_PX = 240
 		padding-top: 1.25rem;
 	}
 
+	.comment-list:not(.is-expanded) :global(.comment-item:nth-child(n + 4)) {
+		display: none;
+	}
+
 	.comment-list :global(.comment-head) {
 		display: flex;
 		align-items: center;
@@ -574,15 +632,14 @@ const MAX_TEXTAREA_PX = 240
 	.comment-list :global(.comment-social) {
 		display: inline-flex;
 		opacity: 0.55;
-		transition: opacity 0.15s ease;
+		transition: opacity var(--dur-fast) var(--ease-out);
 	}
 
 	.comment-list :global(.comment-social:hover) {
 		opacity: 1;
 	}
 
-	.comment-list :global(.comment-social img) {
-		filter: var(--icon-filter);
+	.comment-list :global(.comment-social svg) {
 		display: block;
 		width: 16px;
 		height: 16px;
@@ -669,6 +726,8 @@ const MAX_TEXTAREA_PX = 240
 
 <script>
 	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup.ts'
+	import { getAuthState, setAuthState } from '../lib/auth-state.ts'
+	import { inlineIcon } from '../lib/icons.ts'
 
 	interface TurnstileApi {
 		render(el: HTMLElement, opts: Record<string, unknown>): string
@@ -693,13 +752,6 @@ const MAX_TEXTAREA_PX = 240
 	}
 	type TokenWaiter = { resolve: (t: string) => void; reject: (e: Error) => void }
 
-	const INITIAL_COMMENT_LIMIT = 3
-	const commentsCacheBySlug = new Map<string, Comment[]>()
-
-	function afterTransition(fn: () => void) {
-		requestAnimationFrame(() => requestAnimationFrame(fn))
-	}
-
 	function initComments() {
 		const section = document.querySelector('.comments')
 		if (!(section instanceof HTMLElement)) return
@@ -712,6 +764,7 @@ const MAX_TEXTAREA_PX = 240
 		const siteKey = section.dataset.siteKey ?? ''
 		const maxLen = Number(section.dataset.maxLen) || 280
 		const MAX_TEXTAREA_PX = Number(section.dataset.maxTextarea) || 240
+		const INITIAL_COMMENT_LIMIT = Number(section.dataset.initialLimit) || 3
 
 		const wrapper = document.getElementById('form-wrapper')
 		const toggleBtn = document.getElementById('comments-toggle')
@@ -736,6 +789,7 @@ const MAX_TEXTAREA_PX = 240
 		let avatarKey = ''
 		let avatarUploading = false
 		let allComments: Comment[] = []
+		let hydrated = false
 		let commentsExpanded = false
 		let submitting = false
 		let pendingSubmitAfterLogin = false
@@ -821,26 +875,13 @@ const MAX_TEXTAREA_PX = 240
 		}
 
 		async function loadAuth() {
-			try {
-				const res = await fetch('/api/auth/me')
-				const data = await res.json().catch(() => null)
-				if (!data) return
-				auth = {
-					enabled: !!data.enabled,
-					user: data.user
-						? {
-								login: String(data.user.login ?? ''),
-								name: String(data.user.name ?? ''),
-								avatar: String(data.user.avatar ?? ''),
-							}
-						: null,
-				}
-				updateFormMode()
-			} catch {}
+			auth = await getAuthState()
+			updateFormMode()
 		}
 
 		onAuthMessage((user) => {
 			auth = { enabled: true, user }
+			setAuthState(auth)
 			updateFormMode()
 			loadComments().catch(() => {})
 			if (pendingSubmitAfterLogin && form instanceof HTMLFormElement) {
@@ -1074,10 +1115,10 @@ const MAX_TEXTAREA_PX = 240
 				: `<span class="comment-avatar comment-avatar--empty" aria-hidden="true">${esc(initials(c.name))}</span>`
 			const socials = [
 				c.github
-					? `<a href="https://github.com/${esc(c.github)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile"><img src="/assets/socials/github.svg" alt="" width="16" height="16" /></a>`
+					? `<a href="https://github.com/${esc(c.github)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">${inlineIcon('github-01')}</a>`
 					: '',
 				c.twitter
-					? `<a href="https://x.com/${esc(c.twitter)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="X profile"><img src="/assets/socials/twitter.svg" alt="" width="16" height="16" /></a>`
+					? `<a href="https://x.com/${esc(c.twitter)}" class="comment-social" target="_blank" rel="noopener noreferrer" aria-label="X profile">${inlineIcon('new-twitter')}</a>`
 					: '',
 			]
 				.filter(Boolean)
@@ -1091,7 +1132,7 @@ const MAX_TEXTAREA_PX = 240
             ${avatar}
             <div class="comment-meta">
               <span class="comment-author">${esc(c.name)}</span>
-              <span class="comment-time">${timeAgo(c.createdAt)}</span>
+              <span class="comment-time" data-time="${esc(c.createdAt)}">${timeAgo(c.createdAt)}</span>
             </div>
             ${deleteBtn}
             ${socials ? `<span class="comment-socials">${socials}</span>` : ''}
@@ -1100,40 +1141,60 @@ const MAX_TEXTAREA_PX = 240
         </li>`
 		}
 
+		function signatureOf(list: Comment[]) {
+			return list.map((c) => `${c.id}${c.canDelete ? '!' : ''}`).join(',')
+		}
+
+		function domSignature() {
+			if (!listEl) return ''
+			return Array.from(listEl.querySelectorAll<HTMLElement>('.comment-item'))
+				.map((el) => `${el.dataset.id}${el.querySelector('.comment-delete') ? '!' : ''}`)
+				.join(',')
+		}
+
+		let paintedSignature = domSignature()
+
+		function refreshTimes() {
+			listEl?.querySelectorAll<HTMLElement>('.comment-time[data-time]').forEach((el) => {
+				el.textContent = timeAgo(el.dataset.time ?? '')
+			})
+		}
+
 		function updateExpandBtn() {
 			if (!expandBtn) return
-			const extra = allComments.length - INITIAL_COMMENT_LIMIT
-			if (extra <= 0 || commentsExpanded) {
-				expandBtn.hidden = true
-				return
-			}
-			expandBtn.hidden = false
+			const total = listEl?.querySelectorAll('.comment-item').length ?? 0
+			const extra = total - INITIAL_COMMENT_LIMIT
+			expandBtn.hidden = extra <= 0 || commentsExpanded
+			if (expandBtn.hidden) return
 			expandBtn.textContent =
 				extra === 1 ? 'Show 1 more comment' : `Show ${extra} more comments`
 		}
 
 		function paintComments() {
 			if (!listEl) return
-			if (!allComments.length) {
-				listEl.innerHTML = '<li class="comment-empty">No comments yet, be the first.</li>'
-				updateExpandBtn()
-				return
-			}
-			const visible = commentsExpanded
-				? allComments
-				: allComments.slice(0, INITIAL_COMMENT_LIMIT)
-			listEl.innerHTML = visible.map(commentHtml).join('')
+			listEl.classList.toggle('is-expanded', commentsExpanded)
+			listEl.innerHTML = allComments.length
+				? allComments.map(commentHtml).join('')
+				: '<li class="comment-empty">No comments yet, be the first.</li>'
+			paintedSignature = signatureOf(allComments)
 			updateExpandBtn()
 		}
 
 		function render(comments: Comment[]) {
 			allComments = comments
+			hydrated = true
+			if (signatureOf(comments) === paintedSignature) {
+				refreshTimes()
+				updateExpandBtn()
+				return
+			}
 			paintComments()
 		}
 
 		expandBtn?.addEventListener('click', () => {
 			commentsExpanded = true
-			paintComments()
+			listEl?.classList.add('is-expanded')
+			updateExpandBtn()
 		})
 
 		listEl?.addEventListener('click', async (e) => {
@@ -1156,7 +1217,6 @@ const MAX_TEXTAREA_PX = 240
 					return
 				}
 				allComments = allComments.filter((c) => c.id !== id)
-				commentsCacheBySlug.set(slug, allComments)
 				paintComments()
 				setStatus('', false)
 			} catch {
@@ -1265,6 +1325,7 @@ const MAX_TEXTAREA_PX = 240
 			if (!listEl) return
 			const text = message ?? "Couldn't load comments."
 			listEl.innerHTML = `<li class="comment-empty">${esc(text)} <button type="button" class="comment-retry">Retry</button></li>`
+			paintedSignature = '�error'
 			listEl
 				.querySelector('.comment-retry')
 				?.addEventListener('click', () => loadComments(true), { once: true })
@@ -1273,29 +1334,27 @@ const MAX_TEXTAREA_PX = 240
 		async function loadComments(forceLoading = false) {
 			if (forceLoading && listEl) {
 				listEl.innerHTML = '<li class="comment-empty">Loading…</li>'
+				paintedSignature = '�loading'
 			}
 			for (let attempt = 0; attempt < 2; attempt++) {
 				try {
-					const comments = await fetchComments()
-					commentsCacheBySlug.set(slug, comments)
-					render(comments)
+					render(await fetchComments())
 					return
 				} catch (err) {
 					if (attempt === 0) {
 						await new Promise((r) => window.setTimeout(r, 600))
 						continue
 					}
-					showLoadError(err instanceof Error ? err.message : undefined)
+					if (!listEl?.querySelector('.comment-item')) {
+						showLoadError(err instanceof Error ? err.message : undefined)
+					}
 				}
 			}
 		}
 
-		const cached = commentsCacheBySlug.get(slug)
-		if (cached) render(cached)
-		afterTransition(async () => {
-			await loadAuth().catch(() => {})
-			await loadComments()
-		})
+		refreshTimes()
+		updateExpandBtn()
+		void Promise.all([loadAuth().catch(() => {}), loadComments()])
 
 		form?.addEventListener('submit', async (e) => {
 			e.preventDefault()
@@ -1382,14 +1441,12 @@ const MAX_TEXTAREA_PX = 240
 				}
 
 				commentsExpanded = false
-				if (json.comment) {
-					const next = [json.comment, ...allComments]
-					commentsCacheBySlug.set(slug, next)
-					render(next)
+				if (json.comment && hydrated) {
+					allComments = [json.comment, ...allComments]
+					paintComments()
 				}
 				fetchComments()
 					.then((list) => {
-						commentsCacheBySlug.set(slug, list)
 						if (list.length) render(list)
 					})
 					.catch(() => {})

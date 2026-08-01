@@ -2,7 +2,7 @@
 export const prerender = false
 
 import Layout from '../../layouts/Layout.astro'
-import ThemeToggle from '../../components/ThemeToggle.astro'
+import TopBar from '../../components/TopBar.astro'
 import { fetchPostList } from '../../lib/posts'
 import { env } from 'cloudflare:workers'
 
@@ -41,30 +41,16 @@ const blogSchema = {
 
 <Layout
 	title="Writing · Jakob Pütz"
-	description="Articles and project write-ups by Jakob Pütz, full-stack developer from Aachen, Germany. Building PFControl and Petal."
+	description="Articles and project write-ups by Jakob Pütz, full-stack developer from Aachen, Germany. Building Weavay, Petal and PFControl."
 	canonical="https://devjakob.com/posts"
 	schema={blogSchema}
 >
-	<header class="posts-top">
-		<div class="posts-top__inner">
-			<a href="/" class="back" data-astro-prefetch="load">
-				<img
-					src="/assets/icons/arrow.svg"
-					alt=""
-					width="14"
-					height="14"
-					class="back-arrow"
-				/>
-				Back
-			</a>
-			<ThemeToggle />
-		</div>
-	</header>
+	<TopBar />
 
 	<div class="page">
 		<div class="inner">
-			<h1 class="title">Writing</h1>
-			<p class="subtitle">
+			<h1 class="title" data-enter style="--d:0">Writing</h1>
+			<p class="subtitle" data-enter style="--d:1">
 				Articles and project write-ups, everything I've published so far.
 			</p>
 
@@ -73,8 +59,8 @@ const blogSchema = {
 					<p class="empty">Nothing published yet.</p>
 				) : (
 					<ul class="post-list">
-						{posts.map((p) => (
-							<li>
+						{posts.map((p, i) => (
+							<li data-enter style={`--d:${i + 2}`}>
 								<a href={`/posts/${p.slug}`} class="post-link" data-astro-prefetch>
 									<span class="post-title">{p.title}</span>
 									<span class="post-date">{p.date ? formatDate(p.date) : ''}</span>
@@ -89,47 +75,9 @@ const blogSchema = {
 </Layout>
 
 <style>
-	.posts-top {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		z-index: 20;
-		padding: 1.5rem;
-		background: var(--bg);
-	}
-
-	.posts-top__inner {
-		width: 100%;
-		max-width: 40rem;
-		margin: 0 auto;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.back {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		font-size: 0.875rem;
-		color: var(--fg-muted);
-	}
-
-	.back:hover {
-		color: var(--fg);
-	}
-
-	.back-arrow {
-		transform: rotate(180deg);
-		filter: var(--icon-filter);
-		opacity: 0.7;
-	}
-
 	.page {
 		min-height: 100vh;
-		padding: 6.5rem 1.5rem 4rem;
+		padding: 3rem 1.5rem 6rem;
 	}
 
 	.inner {
@@ -182,11 +130,11 @@ const blogSchema = {
 		font-size: 1rem;
 		font-weight: 500;
 		color: var(--fg);
+		transition: transform var(--dur) var(--ease-out);
 	}
 
 	.post-link:hover .post-title {
-		text-decoration: underline;
-		text-underline-offset: 3px;
+		transform: translateX(5px);
 	}
 
 	.post-date {
@@ -194,5 +142,10 @@ const blogSchema = {
 		color: var(--fg-dim);
 		white-space: nowrap;
 		flex-shrink: 0;
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.post-link:hover .post-date {
+		color: var(--fg-muted);
 	}
 </style>

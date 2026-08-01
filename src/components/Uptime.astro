@@ -1,0 +1,649 @@
+---
+import { monitors } from '../data/projects'
+import { HISTORY_DAYS } from '../lib/uptime'
+
+interface Props {
+	project?: string
+	variant?: 'compact' | 'full' | 'unified'
+	heading?: string
+}
+
+const { project, variant = 'compact', heading } = Astro.props
+
+const rows = project ? monitors.filter((m) => m.project === project) : monitors
+const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
+---
+
+{
+	variant === 'unified' && monitors.length > 0 && (
+		<section class="uptime" data-variant="unified" data-endpoint="">
+			<a class="uptime__all" href="/uptime">
+				<div class="um__head">
+					<span class="um__dot" data-state="unknown" />
+					<span class="um__name" data-overall>
+						Checking…
+					</span>
+					<span class="um__pct" data-pct>
+						—
+					</span>
+				</div>
+
+				<div
+					class="um__bar"
+					role="img"
+					aria-label="90-day uptime across every monitored service"
+				>
+					{cells.map((i) => (
+						<span
+							class="um__cell"
+							data-state="empty"
+							style={`--i:${i}`}
+							aria-hidden="true"
+						/>
+					))}
+				</div>
+
+				<div class="um__foot">
+					<span>90 days ago</span>
+					<span class="um__latency" data-latency />
+					<span>Today</span>
+				</div>
+			</a>
+		</section>
+	)
+}
+
+{
+	variant !== 'unified' && rows.length > 0 && (
+		<section class="uptime" data-variant={variant} data-endpoint={project ?? ''}>
+			{heading && (
+				<header class="uptime__head">
+					<h2 class="section-label">
+						{variant === 'compact' ? (
+							<a class="uptime__more" href="/uptime">
+								{heading}
+							</a>
+						) : (
+							heading
+						)}
+					</h2>
+					<p class="uptime__overall" data-overall>
+						Checking…
+					</p>
+				</header>
+			)}
+
+			<ul class="uptime__list">
+				{rows.map((row) => (
+					<li class="um" data-monitor={row.slug}>
+						<div class="um__head">
+							<span class="um__dot" data-state="unknown" />
+							{project ? (
+								<span class="um__name">{row.label}</span>
+							) : (
+								<a class="um__name um__name--link" href={`/work/${row.project}`}>
+									{row.label}
+								</a>
+							)}
+							<span class="um__pct" data-pct>
+								—
+							</span>
+						</div>
+
+						<div
+							class="um__bar"
+							role="img"
+							aria-label={`90-day uptime for ${row.label}`}
+						>
+							{cells.map((i) => (
+								<span
+									class="um__cell"
+									data-state="empty"
+									style={`--i:${i}`}
+									aria-hidden="true"
+								/>
+							))}
+						</div>
+
+						<div class="um__foot">
+							<span>90 days ago</span>
+							<span class="um__latency" data-latency />
+							<span>Today</span>
+						</div>
+					</li>
+				))}
+			</ul>
+		</section>
+	)
+}
+
+<style>
+	.uptime {
+		margin-top: 4.5rem;
+		scroll-margin-top: 2rem;
+	}
+
+	.uptime[data-variant='full'] {
+		margin-top: 2.5rem;
+	}
+
+	.uptime[data-variant='unified'] {
+		margin-top: 2.75rem;
+	}
+
+	.uptime__all {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+		transition: opacity var(--dur-fast) var(--ease-out);
+	}
+
+	.uptime__all:hover {
+		opacity: 0.82;
+	}
+
+	.uptime[data-variant='unified'] .um__name {
+		font-size: 0.8125rem;
+		font-weight: 400;
+		color: var(--fg-muted);
+		transition: color var(--dur) var(--ease-out);
+	}
+
+	.uptime[data-variant='unified'] .um__name[data-state='up'] {
+		color: var(--status-up);
+	}
+
+	.uptime[data-variant='unified'] .um__name[data-state='degraded'] {
+		color: var(--status-degraded);
+	}
+
+	.uptime[data-variant='unified'] .um__name[data-state='down'] {
+		color: var(--status-down);
+	}
+
+	.uptime[data-variant='unified'] .um__bar {
+		height: 1.375rem;
+	}
+
+	.uptime__head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		padding-bottom: 1.25rem;
+	}
+
+	.uptime__more {
+		color: inherit;
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.uptime__more:hover {
+		color: var(--fg);
+	}
+
+	.uptime__overall {
+		font-size: 0.8125rem;
+		color: var(--fg-muted);
+		transition: color var(--dur) var(--ease-out);
+	}
+
+	.uptime__overall[data-state='up'] {
+		color: var(--status-up);
+	}
+
+	.uptime__overall[data-state='degraded'] {
+		color: var(--status-degraded);
+	}
+
+	.uptime__overall[data-state='down'] {
+		color: var(--status-down);
+	}
+
+	.uptime__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 1.75rem;
+	}
+
+	.uptime[data-variant='full'] .uptime__list {
+		gap: 2.5rem;
+	}
+
+	.um__head {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+	}
+
+	.um__dot {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		flex-shrink: 0;
+		background: var(--status-idle);
+		transition: background var(--dur) var(--ease-out);
+	}
+
+	.um__dot[data-state='up'] {
+		background: var(--status-up);
+		box-shadow: 0 0 0 0 color-mix(in srgb, var(--status-up) 60%, transparent);
+		animation: uptime-pulse 2.8s var(--ease-out) infinite;
+	}
+
+	.um__dot[data-state='degraded'] {
+		background: var(--status-degraded);
+	}
+
+	.um__dot[data-state='down'] {
+		background: var(--status-down);
+	}
+
+	@keyframes uptime-pulse {
+		0% {
+			box-shadow: 0 0 0 0 color-mix(in srgb, var(--status-up) 55%, transparent);
+		}
+		70% {
+			box-shadow: 0 0 0 0.35rem transparent;
+		}
+		100% {
+			box-shadow: 0 0 0 0 transparent;
+		}
+	}
+
+	.um__name {
+		font-size: 0.9375rem;
+		font-weight: 500;
+		color: var(--fg);
+	}
+
+	.um__name--link {
+		text-decoration: none;
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.um__name--link:hover {
+		color: var(--fg-muted);
+	}
+
+	.um__pct {
+		margin-left: auto;
+		font-size: 0.8125rem;
+		font-variant-numeric: tabular-nums;
+		color: var(--fg-muted);
+	}
+
+	.um__bar {
+		display: flex;
+		gap: 2px;
+		margin-top: 0.6rem;
+		height: 1.75rem;
+	}
+
+	.uptime[data-variant='full'] .um__bar {
+		height: 2.5rem;
+	}
+
+	.um__cell {
+		flex: 1 1 0;
+		min-width: 0;
+		border-radius: 2px;
+		background: var(--border);
+		transform: scaleY(0.35);
+		transform-origin: center;
+		opacity: 0;
+		transition:
+			transform var(--dur-slow) var(--ease-out) calc(var(--i) * 6ms),
+			opacity var(--dur) var(--ease-out) calc(var(--i) * 6ms),
+			background var(--dur) var(--ease-out) calc(var(--i) * 6ms),
+			filter var(--dur-fast) var(--ease-out);
+	}
+
+	.um__cell[data-state='empty'] {
+		background: var(--border);
+	}
+
+	.um__cell[data-state='up'] {
+		background: var(--status-up);
+	}
+
+	.um__cell[data-state='degraded'] {
+		background: var(--status-degraded);
+	}
+
+	.um__cell[data-state='down'] {
+		background: var(--status-down);
+	}
+
+	.um__bar.is-loaded .um__cell {
+		transform: scaleY(1);
+		opacity: 1;
+	}
+
+	.um__cell:hover {
+		filter: brightness(1.35);
+	}
+
+	.um__foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: 0.5rem;
+		font-size: 0.6875rem;
+		color: var(--fg-dim);
+	}
+
+	.um__latency {
+		font-variant-numeric: tabular-nums;
+	}
+
+	@media (max-width: 640px) {
+		.um__cell:nth-child(-n + 45) {
+			display: none;
+		}
+
+		.um__foot > :first-child::before {
+			content: '45 ';
+		}
+
+		.um__foot > :first-child {
+			font-size: 0;
+		}
+
+		.um__foot > :first-child::before,
+		.um__foot > :first-child::after {
+			font-size: 0.6875rem;
+		}
+
+		.um__foot > :first-child::after {
+			content: 'days ago';
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.um__cell {
+			transition-delay: 0ms;
+			transition-duration: 1ms;
+		}
+
+		.um__dot[data-state='up'] {
+			animation: none;
+		}
+	}
+</style>
+
+<script>
+	type Day = {
+		date: string
+		uptime: number | null
+		avgLatencyMs: number | null
+		checks: number
+	}
+
+	type Monitor = {
+		slug: string
+		project: string
+		title: string
+		status: 'up' | 'degraded' | 'down' | 'unknown'
+		uptime24h: number | null
+		uptime90d: number | null
+		avgLatencyMs: number | null
+		lastCheckedAt: string | null
+		days: Day[]
+	}
+
+	function cellState(day: Day): string {
+		if (day.uptime === null || day.checks === 0) return 'empty'
+		if (day.uptime >= 99.5) return 'up'
+		if (day.uptime >= 95) return 'degraded'
+		return 'down'
+	}
+
+	function formatPct(value: number | null): string {
+		if (value === null) return '—'
+		const floored = Math.floor(value * 100) / 100
+		return `${floored % 1 === 0 ? floored.toFixed(0) : floored.toFixed(2)}%`
+	}
+
+	function describeDay(day: Day): string {
+		const date = new Date(`${day.date}T00:00:00Z`).toLocaleDateString('en-US', {
+			month: 'short',
+			day: 'numeric',
+			timeZone: 'UTC',
+		})
+		if (day.uptime === null || day.checks === 0) return `${date} · no data`
+		const latency = day.avgLatencyMs === null ? '' : ` · ${day.avgLatencyMs}ms avg`
+		return `${date} · ${formatPct(day.uptime)} uptime${latency}`
+	}
+
+	let bubble: HTMLElement | null = null
+
+	function floatingBubble(): HTMLElement {
+		if (bubble?.isConnected) return bubble
+		bubble = document.createElement('span')
+		bubble.className = 'tooltip__bubble tooltip__bubble--floating'
+		bubble.setAttribute('aria-hidden', 'true')
+		document.body.appendChild(bubble)
+		return bubble
+	}
+
+	function showBubble(cell: HTMLElement, text: string) {
+		const el = floatingBubble()
+		el.textContent = text
+		const rect = cell.getBoundingClientRect()
+		el.style.left = `${rect.left + rect.width / 2}px`
+		el.style.top = `${rect.top}px`
+		el.setAttribute('data-open', '')
+	}
+
+	function hideBubble() {
+		bubble?.removeAttribute('data-open')
+	}
+
+	function combine(monitors: Monitor[]): Monitor | null {
+		if (!monitors.length) return null
+
+		const dayCount = Math.max(...monitors.map((m) => m.days.length))
+		const days: Day[] = Array.from({ length: dayCount }, (_, i) => {
+			let checks = 0
+			let ok = 0
+			let latencySum = 0
+			let latencyCount = 0
+			let date = ''
+
+			for (const monitor of monitors) {
+				const day = monitor.days[i]
+				if (!day) continue
+				date ||= day.date
+				if (day.uptime === null || day.checks === 0) continue
+				checks += day.checks
+				ok += (day.uptime / 100) * day.checks
+				if (day.avgLatencyMs !== null) {
+					latencySum += day.avgLatencyMs * day.checks
+					latencyCount += day.checks
+				}
+			}
+
+			return {
+				date,
+				uptime: checks ? (ok / checks) * 100 : null,
+				avgLatencyMs: latencyCount ? Math.round(latencySum / latencyCount) : null,
+				checks,
+			}
+		})
+
+		const totals = days.reduce(
+			(acc, d) => {
+				if (d.uptime !== null) {
+					acc.ok += (d.uptime / 100) * d.checks
+					acc.total += d.checks
+				}
+				return acc
+			},
+			{ ok: 0, total: 0 }
+		)
+
+		const known = monitors.filter((m) => m.status !== 'unknown')
+		const status: Monitor['status'] = !known.length
+			? 'unknown'
+			: known.some((m) => m.status === 'down')
+				? 'down'
+				: known.some((m) => m.status === 'degraded')
+					? 'degraded'
+					: 'up'
+
+		const latencies = monitors.map((m) => m.avgLatencyMs).filter((v): v is number => v !== null)
+
+		return {
+			slug: 'all',
+			project: 'all',
+			title: 'All systems',
+			status,
+			uptime24h: null,
+			uptime90d: totals.total ? (totals.ok / totals.total) * 100 : null,
+			avgLatencyMs: latencies.length
+				? Math.round(latencies.reduce((a, b) => a + b, 0) / latencies.length)
+				: null,
+			lastCheckedAt: null,
+			days,
+		}
+	}
+
+	function renderUnified(section: HTMLElement, monitors: Monitor[]) {
+		const all = combine(monitors)
+		const label = section.querySelector('[data-overall]')
+
+		if (!all || all.status === 'unknown') {
+			if (label) {
+				label.textContent = 'No data yet'
+				label.removeAttribute('data-state')
+			}
+			return
+		}
+
+		section.querySelector('.um__dot')?.setAttribute('data-state', all.status)
+
+		if (label) {
+			label.textContent =
+				all.status === 'up'
+					? 'All systems operational'
+					: all.status === 'degraded'
+						? 'Degraded performance'
+						: 'Partial outage'
+			label.setAttribute('data-state', all.status)
+		}
+
+		const pct = section.querySelector('[data-pct]')
+		if (pct) pct.textContent = `${formatPct(all.uptime90d)} uptime`
+
+		const latency = section.querySelector('[data-latency]')
+		if (latency) {
+			latency.textContent = all.avgLatencyMs === null ? '' : `${all.avgLatencyMs}ms avg · 24h`
+		}
+
+		const bar = section.querySelector<HTMLElement>('.um__bar')
+		const cells = section.querySelectorAll<HTMLElement>('.um__cell')
+		all.days.forEach((day, i) => {
+			const cell = cells[i]
+			if (!cell) return
+			cell.dataset.state = cellState(day)
+			cell.dataset.label = describeDay(day)
+		})
+		bar?.classList.add('is-loaded')
+	}
+
+	function render(section: HTMLElement, monitors: Monitor[]) {
+		let worst: Monitor['status'] = 'up'
+		let known = 0
+
+		for (const monitor of monitors) {
+			const row = section.querySelector<HTMLElement>(`.um[data-monitor="${monitor.slug}"]`)
+			if (!row) continue
+
+			if (monitor.status !== 'unknown') {
+				known++
+				if (monitor.status === 'down') worst = 'down'
+				else if (monitor.status === 'degraded' && worst !== 'down') worst = 'degraded'
+			}
+
+			row.querySelector('.um__dot')?.setAttribute('data-state', monitor.status)
+
+			const pct = row.querySelector('[data-pct]')
+			if (pct) pct.textContent = `${formatPct(monitor.uptime90d)} uptime`
+
+			const latency = row.querySelector('[data-latency]')
+			if (latency) {
+				latency.textContent =
+					monitor.avgLatencyMs === null ? '' : `${monitor.avgLatencyMs}ms avg · 24h`
+			}
+
+			const bar = row.querySelector<HTMLElement>('.um__bar')
+			const cells = row.querySelectorAll<HTMLElement>('.um__cell')
+			monitor.days.forEach((day, i) => {
+				const cell = cells[i]
+				if (!cell) return
+				cell.dataset.state = cellState(day)
+				cell.dataset.label = describeDay(day)
+			})
+			bar?.classList.add('is-loaded')
+		}
+
+		const overall = section.querySelector('[data-overall]')
+		if (overall) {
+			if (!known) {
+				overall.textContent = 'No data yet'
+				overall.removeAttribute('data-state')
+			} else {
+				overall.textContent =
+					worst === 'up'
+						? 'All systems operational'
+						: worst === 'degraded'
+							? 'Degraded performance'
+							: 'Partial outage'
+				overall.setAttribute('data-state', worst)
+			}
+		}
+	}
+
+	function initUptime() {
+		const sections = document.querySelectorAll<HTMLElement>('.uptime')
+		if (!sections.length) return
+
+		for (const section of sections) {
+			const project = section.dataset.endpoint
+			const url = project
+				? `/api/uptime?project=${encodeURIComponent(project)}`
+				: '/api/uptime'
+
+			const unified = section.dataset.variant === 'unified'
+
+			fetch(url)
+				.then((res) => res.json())
+				.then((data: { monitors?: Monitor[] }) => {
+					if (!Array.isArray(data?.monitors)) return
+					if (unified) renderUnified(section, data.monitors)
+					else render(section, data.monitors)
+				})
+				.catch(() => {
+					const overall = section.querySelector('[data-overall]')
+					if (overall) overall.textContent = 'Status unavailable'
+				})
+
+			section.addEventListener('pointerover', (event) => {
+				const target = event.target as HTMLElement
+				const cell = target.closest<HTMLElement>('.um__cell')
+				if (cell?.dataset.label) showBubble(cell, cell.dataset.label)
+				else if (!target.closest('.um__bar')) hideBubble()
+			})
+			section.addEventListener('pointerleave', hideBubble)
+		}
+
+		document.addEventListener('scroll', hideBubble, { passive: true })
+	}
+
+	document.addEventListener('astro:page-load', initUptime)
+</script>

@@ -1,0 +1,33 @@
+---
+import { HUGEICONS, type IconName } from '../lib/hugeicons'
+
+interface Props {
+	name: IconName
+	size?: number
+	class?: string
+	title?: string
+}
+
+const { name, size = 24, class: className, title } = Astro.props
+
+const icon = HUGEICONS[name]
+if (!icon) {
+	throw new Error(
+		`Unknown icon "${name}". Add it to ICONS in scripts/generate-icons.mjs and run \`npm run icons\`.`
+	)
+}
+---
+
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	width={size}
+	height={size}
+	viewBox={`0 0 ${icon.width} ${icon.height}`}
+	class={className}
+	data-icon={name}
+	role={title ? 'img' : undefined}
+	aria-label={title}
+	aria-hidden={title ? undefined : 'true'}
+	focusable="false"
+	set:html={icon.body}
+/>

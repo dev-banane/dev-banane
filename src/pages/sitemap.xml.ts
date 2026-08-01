@@ -3,11 +3,22 @@ export const prerender = false
 import type { APIRoute } from 'astro'
 import { env } from 'cloudflare:workers'
 import { fetchPostList } from '../lib/posts'
+import { projects } from '../data/projects'
 
 const BASE = 'https://devjakob.com'
 
 export const GET: APIRoute = async () => {
   const posts = await fetchPostList(env.MEDIA).catch(() => [])
+
+  const projectEntries = projects
+    .map(
+      (p) => `  <url>
+    <loc>${BASE}/work/${p.slug}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>`
+    )
+    .join('\n')
 
   const postEntries = posts
     .map(
@@ -35,6 +46,12 @@ export const GET: APIRoute = async () => {
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>${BASE}/uptime</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>
+${projectEntries}
 ${postEntries}
 </urlset>`
 

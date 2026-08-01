@@ -2,16 +2,18 @@
 import Layout from './Layout.astro'
 import PostStats from '../components/PostStats.astro'
 import Comments from '../components/Comments.astro'
-import ThemeToggle from '../components/ThemeToggle.astro'
+import TopBar from '../components/TopBar.astro'
+import type { Comment } from '../lib/comments'
 
 interface Props {
 	title: string
 	date: string
 	slug: string
 	html?: string
+	comments?: Comment[]
 }
 
-const { title, date, slug, html } = Astro.props
+const { title, date, slug, html, comments = [] } = Astro.props
 const formatted = new Date(date).toLocaleDateString('en-US', {
 	year: 'numeric',
 	month: 'long',
@@ -83,27 +85,13 @@ const articleSchema = {
 	publishedTime={isoDate}
 	schema={articleSchema}
 >
-	<header class="article-top">
-		<div class="article-top__inner">
-			<a href="/" class="back" data-astro-prefetch="load">
-				<img
-					src="/assets/icons/arrow.svg"
-					alt=""
-					width="14"
-					height="14"
-					class="back-arrow"
-				/>
-				Back
-			</a>
-			<ThemeToggle />
-		</div>
-	</header>
+	<TopBar width="72rem" />
 
 	<div class="page">
 		<div class="grid">
 			<article class="article">
-				<h1 class="title">{title}</h1>
-				<p class="date">{formatted}</p>
+				<h1 class="title" data-enter style="--d:0">{title}</h1>
+				<p class="date" data-enter style="--d:1">{formatted}</p>
 				<PostStats slug={slug} readingMinutes={readingMinutes} />
 				<div class="prose">
 					{html ? <div set:html={html} /> : <slot />}
@@ -111,55 +99,16 @@ const articleSchema = {
 			</article>
 
 			<aside class="comments-aside">
-				<Comments slug={slug} />
+				<Comments slug={slug} comments={comments} />
 			</aside>
 		</div>
 	</div>
 </Layout>
 
 <style>
-	.article-top {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		z-index: 20;
-		padding: 1.5rem;
-		background: var(--bg);
-		border-bottom: 1px solid transparent;
-	}
-
-	.article-top__inner {
-		width: 100%;
-		max-width: 72rem;
-		margin: 0 auto;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-	}
-
-	.back {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		font-size: 0.875rem;
-		color: var(--fg-muted);
-	}
-
-	.back:hover {
-		color: var(--fg);
-	}
-
-	.back-arrow {
-		transform: rotate(180deg);
-		filter: var(--icon-filter);
-		opacity: 0.7;
-	}
-
 	.page {
 		min-height: 100vh;
-		padding: 5rem 1.5rem 4rem;
+		padding: 2.5rem 1.5rem 6rem;
 	}
 
 	.grid {
@@ -223,8 +172,6 @@ const articleSchema = {
 		line-height: 1.75;
 		color: var(--fg-muted);
 		margin: 0;
-		text-align: justify;
-		hyphens: auto;
 	}
 
 	.prose :global(p.md-gap) {
@@ -241,11 +188,28 @@ const articleSchema = {
 		margin: 0;
 	}
 
-	.prose :global(a) {
+	.prose :global(a:not(.file-card)) {
+		position: relative;
+		isolation: isolate;
 		color: var(--fg);
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		text-decoration-color: var(--fg-dim);
+		text-decoration: none;
+	}
+
+	.prose :global(a:not(.file-card))::after {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		inset: 66% -0.12em 0;
+		background-color: var(--marker);
+		transition:
+			top var(--dur) var(--ease-marker),
+			background-color var(--dur) var(--ease-out);
+	}
+
+	.prose :global(a:not(.file-card):hover)::after,
+	.prose :global(a:not(.file-card):focus-visible)::after {
+		top: 0;
+		background-color: var(--marker-hover);
 	}
 
 	.prose :global(ul),
@@ -298,16 +262,32 @@ const articleSchema = {
 	.prose :global(.file-card) {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3em;
+		gap: 0.35em;
 		vertical-align: middle;
+		color: var(--fg);
+		border: 1px solid var(--border);
+		border-radius: 0.5rem;
+		padding: 0.25em 0.6em;
+		transition:
+			border-color var(--dur) var(--ease-out),
+			background-color var(--dur) var(--ease-out);
+	}
+
+	.prose :global(.file-card:hover) {
+		border-color: var(--border-strong);
+		background: var(--bg-elevated);
 	}
 
 	.prose :global(.file-card__dl) {
-		width: 0.85em;
-		height: 0.85em;
+		width: 0.95em;
+		height: 0.95em;
 		flex-shrink: 0;
-		filter: var(--icon-filter);
-		opacity: 0.6;
+		opacity: 0.7;
 		border-radius: 0;
+		transition: transform var(--dur) var(--ease-out);
+	}
+
+	.prose :global(.file-card:hover .file-card__dl) {
+		transform: translateY(1px);
 	}
 </style>

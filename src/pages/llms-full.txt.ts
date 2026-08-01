@@ -3,11 +3,34 @@ export const prerender = false
 import type { APIRoute } from 'astro'
 import { env } from 'cloudflare:workers'
 import { fetchPostList, fetchPost } from '../lib/posts'
+import { projects } from '../data/projects'
 
 const BASE = 'https://devjakob.com'
 
 export const GET: APIRoute = async () => {
 	const posts = await fetchPostList(env.MEDIA).catch(() => [])
+
+	const projectSections = projects
+		.map((p) => {
+			const links = (p.links ?? []).map((l) => `${l.label}: ${l.href}`).join('\n')
+			const stats = (p.highlights ?? []).map((h) => `${h.label}: ${h.value}`).join('\n')
+			return [
+				`### ${p.title}`,
+				`${p.tagline}`,
+				`URL: ${BASE}/work/${p.slug}`,
+				[`Status: ${p.status}`, p.period && `Period: ${p.period}`, `Role: ${p.role}`]
+					.filter(Boolean)
+					.join(' | '),
+				`Stack: ${p.stack.join(', ')}`,
+				stats,
+				links,
+				'',
+				p.summary.join('\n\n'),
+			]
+				.filter(Boolean)
+				.join('\n')
+		})
+		.join('\n\n')
 
 	const sections: string[] = []
 
@@ -25,11 +48,7 @@ Jakob Pütz is a 17-year-old self-taught software engineer from Aachen, Germany.
 
 ## Projects
 
-### PFControl
-ATC (air traffic control) strip management platform. Started at age 15. Thousands of registered users, approximately 500 daily active users. Repository: https://github.com/cephie-studios/pfcontrol-2
-
-### Petal
-Unified AI workspace developed from the ground up. See: ${BASE}/posts/petal
+${projectSections}
 `)
 
 	for (const meta of posts) {

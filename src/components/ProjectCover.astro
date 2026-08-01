@@ -1,0 +1,105 @@
+---
+import type { Project } from '../data/projects'
+
+interface Props {
+	project: Project
+	sizes?: string
+	eager?: boolean
+	class?: string
+}
+
+const { project, sizes, eager = false, class: className } = Astro.props
+
+const hasCover = Boolean(project.cover)
+---
+
+<div class:list={['cover', className]}>
+	<div class="cover__fallback" aria-hidden="true">
+		<span class="cover__fallback-title">{project.title}</span>
+		{
+			import.meta.env.DEV && (
+				<span class="cover__fallback-hint">public/assets/work/{project.slug}.webp</span>
+			)
+		}
+	</div>
+
+	{
+		hasCover && (
+			<img
+				src={project.cover}
+				alt={project.coverAlt ?? `${project.title} screenshot`}
+				class="cover__img"
+				width="1600"
+				height="1000"
+				sizes={sizes}
+				loading={eager ? 'eager' : 'lazy'}
+				decoding="async"
+				onerror="this.remove()"
+			/>
+		)
+	}
+</div>
+
+<style>
+	.cover {
+		position: relative;
+		aspect-ratio: 16 / 10;
+		overflow: hidden;
+		border-radius: 0.75rem;
+		border: 1px solid var(--border);
+		background: var(--bg-elevated);
+		transition:
+			border-color var(--dur) var(--ease-out),
+			transform var(--dur-slow) var(--ease-out),
+			box-shadow var(--dur-slow) var(--ease-out);
+	}
+
+	:global(a:hover) > .cover,
+	:global(a:focus-visible) > .cover {
+		border-color: var(--border-strong);
+		transform: translateY(-4px);
+		box-shadow: var(--shadow-lift);
+	}
+
+	.cover__img {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		transition: transform var(--dur-slow) var(--ease-out);
+	}
+
+	:global(a:hover) > .cover .cover__img {
+		transform: scale(1.025);
+	}
+
+	.cover__fallback {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		text-align: center;
+		padding: 1.5rem;
+		background: repeating-linear-gradient(135deg, transparent 0 10px, var(--border) 10px 11px);
+	}
+
+	.cover__fallback-title {
+		font-size: clamp(1.25rem, 4vw, 2rem);
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		color: var(--fg-dim);
+	}
+
+	.cover__fallback-hint {
+		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		font-size: 0.6875rem;
+		color: var(--fg-dim);
+		opacity: 0.7;
+	}
+</style>

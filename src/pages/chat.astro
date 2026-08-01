@@ -1,4 +1,5 @@
 ---
+import Icon from '../components/Icon.astro'
 import Layout from '../layouts/Layout.astro'
 import ThemeToggle from '../components/ThemeToggle.astro'
 import { POSTS } from '../data/jakob-context'
@@ -8,31 +9,16 @@ import { POSTS } from '../data/jakob-context'
 	title="Chat · Jakob Pütz"
 	description="Ask an AI anything about Jakob Pütz: his projects, his stack, and how he works."
 	canonical="https://devjakob.com/chat"
+	noindex
 >
 	<div class="chat-page">
 		<header class="chat-header">
 			<a href="/" class="chat-back" aria-label="Back to home">
-				<img
-					src="/assets/icons/arrow.svg"
-					alt=""
-					width="14"
-					height="14"
-					class="chat-back-arrow"
-				/>
+				<Icon name="arrow-left-01" class="chat-back-arrow" size={18} />
 			</a>
 			<h1 class="chat-name">Ask my AI</h1>
 			<button type="button" class="chat-history-btn" id="chat-history-btn" aria-label="Chat history">
-				<svg
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg
-				>
+				<Icon name="clock-01" size={20} />
 			</button>
 			<ThemeToggle />
 		</header>
@@ -58,16 +44,7 @@ import { POSTS } from '../data/jakob-context'
 					placeholder="Ask about Jakob…"
 					autocomplete="off"></textarea>
 				<button type="submit" class="chat-send" id="chat-send" aria-label="Send" disabled>
-					<svg
-						width="26"
-						height="26"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"></path></svg
-					>
+					<Icon name="arrow-up-01" size={24} />
 				</button>
 			</form>
 			<p class="chat-note">
@@ -105,14 +82,15 @@ import { POSTS } from '../data/jakob-context'
 	}
 
 	.chat-back-arrow {
-		transform: rotate(180deg);
-		filter: var(--icon-filter);
 		opacity: 0.7;
-		transition: opacity 0.15s ease;
+		transition:
+			opacity var(--dur-fast) var(--ease-out),
+			transform var(--dur) var(--ease-out);
 	}
 
 	.chat-back:hover .chat-back-arrow {
 		opacity: 1;
+		transform: translateX(-3px);
 	}
 
 	.chat-name {
@@ -456,6 +434,7 @@ import { POSTS } from '../data/jakob-context'
 
 <script>
 	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup'
+	import { inlineIcon } from '../lib/icons'
 
 	type Turn = { role: 'user' | 'assistant'; content: string }
 	type PostLink = { slug: string; title: string; date: string; blurb: string }
@@ -531,7 +510,7 @@ import { POSTS } from '../data/jakob-context'
 			a.target = '_blank'
 			a.rel = 'noopener'
 			a.innerHTML = `
-				<svg class="post-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+				${inlineIcon('file-01', { size: 20, className: 'post-card__icon' })}
 				${escapeHtml(post.title)}
 			`
 			row.appendChild(a)
