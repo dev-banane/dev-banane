@@ -11,6 +11,7 @@
     "predev": "npm run db:migrate",
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/inject-csp-hashes.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "deploy:chat-cleanup": "wrangler deploy --config workers/chat-cleanup/wrangler.jsonc",

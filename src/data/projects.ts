@@ -61,6 +61,26 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    slug: 'toonscope',
+    title: 'ToonScope',
+    tagline: 'Compiles a codebase into a token-cheap map so AI agents stop re-reading whole files.',
+    summary: [
+      'ToonScope compiles a codebase into a `.toon/` folder of YAML: each file\'s exports, function signatures, types, and the import graph. Point an agent at that instead of the source tree, and "what does this export, and who calls it?" costs a few hundred tokens instead of a full file read.',
+      "It's static analysis via tree-sitter WASM grammars, not an LLM call per file, so it works with no API key and nothing leaves the machine. Against its own 42-file source it cuts the tokens an agent needs by roughly two-thirds.",
+    ],
+    period: '2026',
+    role: 'Solo developer',
+    status: 'Live',
+    stack: ['TypeScript', 'tree-sitter', 'WASM', 'Node.js'],
+    cover: '/assets/work/toonscope.webp',
+    links: [
+      { label: 'npm', href: 'https://www.npmjs.com/package/toonscope' },
+      { label: 'GitHub', href: 'https://github.com/dev-banane/toonscope' },
+    ],
+    article: 'toonscope',
+    featured: true,
+  },
+  {
     slug: 'devjakob',
     title: 'devjakob.com',
     tagline: 'This site. Astro on Cloudflare Workers, with comments and voting.',

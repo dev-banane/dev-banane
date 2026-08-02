@@ -39,17 +39,21 @@ import { featuredProjects, statusIcon } from '../data/projects'
 				</li>
 			))
 		}
-		<li class="work__item" data-enter style={`--d:${9 + (featuredProjects.length % 2)}`}>
-			<a href="#" id="work-contact-link" class="card card--contact">
-				<div class="cover cover--contact">
-					<Icon name="mail-02" size={28} class="contact__icon" />
-					<h3 class="contact__title">Have an idea?</h3>
-					<p class="contact__tagline">
-						Let's work together! Reach out and tell me about it.
-					</p>
-				</div>
-			</a>
-		</li>
+		{
+			featuredProjects.length % 2 === 1 && (
+				<li class="work__item" data-enter style={`--d:${9 + (featuredProjects.length % 2)}`}>
+					<a href="#" id="work-contact-link" class="card card--contact">
+						<div class="cover cover--contact">
+							<Icon name="mail-02" size={28} class="contact__icon" />
+							<h3 class="contact__title">Have an idea?</h3>
+							<p class="contact__tagline">
+								Let's work together! Reach out and tell me about it.
+							</p>
+						</div>
+					</a>
+				</li>
+			)
+		}
 	</ul>
 </section>
 
