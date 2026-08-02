@@ -40,10 +40,11 @@ for (const file of htmlFiles) {
 }
 
 let headers = await readFile(headersPath, 'utf-8');
-if (!headers.includes('__CSP_SCRIPT_HASHES__')) {
+if (!headers.includes(' __CSP_SCRIPT_HASHES__')) {
 	throw new Error('_headers is missing the __CSP_SCRIPT_HASHES__ placeholder');
 }
-headers = headers.replace('__CSP_SCRIPT_HASHES__', [...hashes].join(' '));
+const hashList = [...hashes].join(' ');
+headers = headers.replace(' __CSP_SCRIPT_HASHES__', hashList ? ` ${hashList}` : '');
 await writeFile(headersPath, headers);
 
 console.log(`Injected ${hashes.size} CSP script hash(es) into dist/client/_headers`);
