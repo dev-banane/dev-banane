@@ -1,5 +1,9 @@
 import { defineMiddleware } from 'astro:middleware'
 
+const STYLE_SRC = import.meta.env.DEV
+	? "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
+	: "style-src 'self' https://fonts.googleapis.com"
+
 const SECURITY_HEADERS: Record<string, string> = {
 	'X-Content-Type-Options': 'nosniff',
 	'X-Frame-Options': 'DENY',
@@ -10,7 +14,7 @@ const SECURITY_HEADERS: Record<string, string> = {
 	'Cross-Origin-Opener-Policy': 'same-origin',
 	'Cross-Origin-Resource-Policy': 'same-origin',
 	'Content-Security-Policy':
-		"default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests",
+		`default-src 'self'; script-src 'self' https://challenges.cloudflare.com; ${STYLE_SRC}; style-src-attr 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests`,
 }
 
 export const onRequest = defineMiddleware(async (_context, next) => {

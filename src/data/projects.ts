@@ -122,7 +122,10 @@ export const projects: Project[] = [
       { label: 'pfcontrol.com', href: 'https://pfcontrol.com' },
       { label: 'GitHub', href: 'https://github.com/cephie-studios/pfcontrol-2' },
     ],
-    monitors: [{ slug: 'pfcontrol', label: 'pfcontrol.com', url: 'https://pfcontrol.com' }],
+    monitors: [
+      { slug: 'pfcontrol', label: 'pfcontrol.com', url: 'https://pfcontrol.com' },
+      { slug: 'pfcontrol-canary', label: 'canary.pfcontrol.com', url: 'https://canary.pfcontrol.com' },
+    ],
     article: 'pfcontrol',
     featured: true,
   },

@@ -211,19 +211,6 @@
     transform: translate3d(0, -50%, 0) scale(1);
   }
 
-  .tooltip__bubble--floating {
-    position: fixed;
-    left: 0;
-    top: 0;
-    transform: translate3d(-50%, calc(-100% - 0.15rem), 0) scale(0.96);
-  }
-
-  .tooltip__bubble--floating[data-open] {
-    opacity: 1;
-    visibility: visible;
-    transform: translate3d(-50%, calc(-100% - 0.4rem), 0) scale(1);
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .tooltip__bubble {
       transition-duration: 1ms;

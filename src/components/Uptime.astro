@@ -93,7 +93,8 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 						<div
 							class="um__bar"
 							role="img"
-							aria-label={`90-day uptime for ${row.label}`}
+							tabindex="0"
+							aria-label={`90-day uptime for ${row.label}. Use the arrow keys to read a single day.`}
 						>
 							{cells.map((i) => (
 								<span
@@ -104,6 +105,8 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 								/>
 							))}
 						</div>
+
+						<p class="um__live" aria-live="polite" data-live />
 
 						<div class="um__foot">
 							<span>90 days ago</span>
@@ -119,15 +122,20 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 
 <style>
 	.uptime {
+		--cell-h: 1.75rem;
+		--pad: 0.325rem;
+		--ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
 		margin-top: 4.5rem;
 		scroll-margin-top: 2rem;
 	}
 
 	.uptime[data-variant='full'] {
+		--cell-h: 2.5rem;
 		margin-top: 2.5rem;
 	}
 
 	.uptime[data-variant='unified'] {
+		--cell-h: 1.375rem;
 		margin-top: 2.75rem;
 	}
 
@@ -140,6 +148,10 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 
 	.uptime__all:hover {
 		opacity: 0.82;
+	}
+
+	.uptime__all:has(.um__bar[data-scrub]) {
+		opacity: 1;
 	}
 
 	.uptime[data-variant='unified'] .um__name {
@@ -159,10 +171,6 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 
 	.uptime[data-variant='unified'] .um__name[data-state='down'] {
 		color: var(--status-down);
-	}
-
-	.uptime[data-variant='unified'] .um__bar {
-		height: 1.375rem;
 	}
 
 	.uptime__head {
@@ -277,45 +285,62 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 	}
 
 	.um__bar {
+		position: relative;
 		display: flex;
+		align-items: center;
 		gap: 2px;
-		margin-top: 0.6rem;
-		height: 1.75rem;
+		margin-top: calc(0.6rem - var(--pad));
+		height: calc(var(--cell-h) + var(--pad) * 2);
+		touch-action: pan-y;
+		-webkit-tap-highlight-color: transparent;
 	}
 
-	.uptime[data-variant='full'] .um__bar {
-		height: 2.5rem;
+	.um__bar:focus-visible {
+		outline: 2px solid var(--fg-muted);
+		outline-offset: 4px;
+		border-radius: 4px;
+	}
+
+	.um__bar::before {
+		content: '';
+		position: absolute;
+		inset: -0.5rem 0 -0.35rem;
 	}
 
 	.um__cell {
 		flex: 1 1 0;
 		min-width: 0;
+		height: var(--cell-h);
 		border-radius: 2px;
 		background: var(--border);
+		--glow: var(--fg-dim);
 		transform: scaleY(0.35);
 		transform-origin: center;
 		opacity: 0;
 		transition:
 			transform var(--dur-slow) var(--ease-out) calc(var(--i) * 6ms),
 			opacity var(--dur) var(--ease-out) calc(var(--i) * 6ms),
-			background var(--dur) var(--ease-out) calc(var(--i) * 6ms),
-			filter var(--dur-fast) var(--ease-out);
+			background var(--dur) var(--ease-out) calc(var(--i) * 6ms);
 	}
 
 	.um__cell[data-state='empty'] {
 		background: var(--border);
+		--glow: var(--fg-dim);
 	}
 
 	.um__cell[data-state='up'] {
 		background: var(--status-up);
+		--glow: var(--status-up);
 	}
 
 	.um__cell[data-state='degraded'] {
 		background: var(--status-degraded);
+		--glow: var(--status-degraded);
 	}
 
 	.um__cell[data-state='down'] {
 		background: var(--status-down);
+		--glow: var(--status-down);
 	}
 
 	.um__bar.is-loaded .um__cell {
@@ -323,8 +348,45 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 		opacity: 1;
 	}
 
-	.um__cell:hover {
-		filter: brightness(1.35);
+	.um__bar.is-live .um__cell {
+		transition:
+			transform 240ms var(--ease-spring),
+			opacity 180ms var(--ease-out),
+			box-shadow 180ms var(--ease-out),
+			background var(--dur) var(--ease-out);
+	}
+
+	.um__bar.is-live[data-scrub] .um__cell {
+		opacity: 0.5;
+	}
+
+	.um__bar.is-live .um__cell[data-near='2'] {
+		opacity: 0.75;
+		transform: scaleY(1.08);
+	}
+
+	.um__bar.is-live .um__cell[data-near='1'] {
+		opacity: 0.92;
+		transform: scaleY(1.19);
+	}
+
+	.um__bar.is-live .um__cell[data-near='0'] {
+		opacity: 1;
+		transform: scaleY(1.34);
+		box-shadow:
+			0 0 0 1px color-mix(in srgb, var(--glow) 70%, transparent),
+			0 0 12px -2px color-mix(in srgb, var(--glow) 60%, transparent);
+	}
+
+	.um__live {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 
 	.um__foot {
@@ -332,7 +394,7 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		margin-top: 0.5rem;
+		margin-top: calc(0.5rem - var(--pad));
 		font-size: 0.6875rem;
 		color: var(--fg-dim);
 	}
@@ -370,8 +432,159 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 			transition-duration: 1ms;
 		}
 
+		.um__bar.is-live .um__cell {
+			transition-duration: 1ms;
+		}
+
+		.um__bar.is-live .um__cell[data-near='0'],
+		.um__bar.is-live .um__cell[data-near='1'],
+		.um__bar.is-live .um__cell[data-near='2'] {
+			transform: scaleY(1);
+		}
+
 		.um__dot[data-state='up'] {
 			animation: none;
+		}
+	}
+</style>
+
+<style is:global>
+	.uptip {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: 60;
+		display: grid;
+		gap: 0.15rem;
+		width: max-content;
+		max-width: 15rem;
+		padding: 0.45rem 0.6rem;
+		border: 1px solid var(--border-strong);
+		border-radius: 0.6rem;
+		background: var(--bg-elevated);
+		box-shadow: var(--shadow-lift);
+		pointer-events: none;
+		opacity: 0;
+		visibility: hidden;
+		transform: translate(-50%, -100%) scale(0.94);
+		transform-origin: 50% 100%;
+		transition:
+			translate 140ms var(--ease-out),
+			opacity 140ms var(--ease-out),
+			transform 200ms cubic-bezier(0.34, 1.4, 0.64, 1),
+			visibility 140ms;
+	}
+
+	.uptip[data-below] {
+		transform: translate(-50%, 0) scale(0.94);
+		transform-origin: 50% 0;
+	}
+
+	.uptip[data-open] {
+		opacity: 1;
+		visibility: visible;
+		transform: translate(-50%, -100%) scale(1);
+	}
+
+	.uptip[data-open][data-below] {
+		transform: translate(-50%, 0) scale(1);
+	}
+
+	.uptip[data-jump] {
+		transition-property: opacity, transform, visibility;
+	}
+
+	.uptip::after {
+		content: '';
+		position: absolute;
+		left: calc(50% + var(--arrow-x, 0px));
+		bottom: -0.3rem;
+		width: 0.5rem;
+		height: 0.5rem;
+		margin-left: -0.25rem;
+		background: var(--bg-elevated);
+		border-right: 1px solid var(--border-strong);
+		border-bottom: 1px solid var(--border-strong);
+		border-bottom-right-radius: 2px;
+		transform: rotate(45deg);
+	}
+
+	.uptip[data-below]::after {
+		bottom: auto;
+		top: -0.3rem;
+		border-right: none;
+		border-bottom: none;
+		border-left: 1px solid var(--border-strong);
+		border-top: 1px solid var(--border-strong);
+		border-radius: 0;
+		border-top-left-radius: 2px;
+	}
+
+	.uptip__date {
+		font-size: 0.625rem;
+		font-weight: 500;
+		letter-spacing: 0.07em;
+		text-transform: uppercase;
+		color: var(--fg-dim);
+	}
+
+	.uptip__main {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.8125rem;
+		font-weight: 550;
+		line-height: 1.3;
+		color: var(--fg);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.uptip__dot {
+		width: 0.4rem;
+		height: 0.4rem;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background: var(--status-idle);
+	}
+
+	.uptip__dot[data-state='up'] {
+		background: var(--status-up);
+	}
+
+	.uptip__dot[data-state='degraded'] {
+		background: var(--status-degraded);
+	}
+
+	.uptip__dot[data-state='down'] {
+		background: var(--status-down);
+	}
+
+	.uptip__meta {
+		font-size: 0.6875rem;
+		line-height: 1.3;
+		color: var(--fg-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.uptip__meta:empty {
+		display: none;
+	}
+
+	.uptime-haptic {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		opacity: 0;
+		pointer-events: none;
+		z-index: -1;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.uptip {
+			transition-duration: 1ms;
 		}
 	}
 </style>
@@ -396,6 +609,14 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 		days: Day[]
 	}
 
+	const NEAR = 2
+	const INTRO_MS = 620 + 90 * 6
+	const LINGER_MS = 1600
+
+	function clamp(value: number, min: number, max: number): number {
+		return value < min ? min : value > max ? max : value
+	}
+
 	function cellState(day: Day): string {
 		if (day.uptime === null || day.checks === 0) return 'empty'
 		if (day.uptime >= 99.5) return 'up'
@@ -409,39 +630,303 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 		return `${floored % 1 === 0 ? floored.toFixed(0) : floored.toFixed(2)}%`
 	}
 
-	function describeDay(day: Day): string {
+	function describeDay(cell: HTMLElement, day: Day) {
 		const date = new Date(`${day.date}T00:00:00Z`).toLocaleDateString('en-US', {
 			month: 'short',
 			day: 'numeric',
 			timeZone: 'UTC',
 		})
-		if (day.uptime === null || day.checks === 0) return `${date} · no data`
-		const latency = day.avgLatencyMs === null ? '' : ` · ${day.avgLatencyMs}ms avg`
-		return `${date} · ${formatPct(day.uptime)} uptime${latency}`
+		const blank = day.uptime === null || day.checks === 0
+
+		cell.dataset.state = cellState(day)
+		cell.dataset.day = date
+		cell.dataset.headline = blank ? 'No data' : `${formatPct(day.uptime)} uptime`
+		cell.dataset.meta = blank
+			? ''
+			: [
+					day.avgLatencyMs === null ? null : `${day.avgLatencyMs}ms avg`,
+					`${day.checks.toLocaleString('en-US')} checks`,
+				]
+					.filter(Boolean)
+					.join(' · ')
 	}
 
-	let bubble: HTMLElement | null = null
+	let hapticLabel: HTMLLabelElement | null = null
 
-	function floatingBubble(): HTMLElement {
-		if (bubble?.isConnected) return bubble
-		bubble = document.createElement('span')
-		bubble.className = 'tooltip__bubble tooltip__bubble--floating'
-		bubble.setAttribute('aria-hidden', 'true')
-		document.body.appendChild(bubble)
-		return bubble
+	function iosHapticLabel(): HTMLLabelElement | null {
+		if (hapticLabel?.isConnected) return hapticLabel
+		if (!('switch' in HTMLInputElement.prototype)) return null
+
+		const input = document.createElement('input')
+		input.type = 'checkbox'
+		input.setAttribute('switch', '')
+		input.id = 'uptime-haptic-switch'
+		input.tabIndex = -1
+		input.setAttribute('aria-hidden', 'true')
+
+		const label = document.createElement('label')
+		label.htmlFor = input.id
+		label.setAttribute('aria-hidden', 'true')
+
+		const wrap = document.createElement('div')
+		wrap.className = 'uptime-haptic'
+		wrap.setAttribute('aria-hidden', 'true')
+		wrap.append(input, label)
+		document.body.appendChild(wrap)
+
+		hapticLabel = label
+		return label
 	}
 
-	function showBubble(cell: HTMLElement, text: string) {
-		const el = floatingBubble()
-		el.textContent = text
-		const rect = cell.getBoundingClientRect()
-		el.style.left = `${rect.left + rect.width / 2}px`
-		el.style.top = `${rect.top}px`
-		el.setAttribute('data-open', '')
+	function haptic(strong: boolean) {
+		if (typeof navigator.vibrate === 'function') {
+			navigator.vibrate(strong ? 18 : 6)
+			return
+		}
+		iosHapticLabel()?.click()
 	}
 
-	function hideBubble() {
-		bubble?.removeAttribute('data-open')
+	type Tip = {
+		root: HTMLElement
+		date: HTMLElement
+		dot: HTMLElement
+		headline: HTMLElement
+		meta: HTMLElement
+	}
+
+	let tip: Tip | null = null
+	let tipOpen = false
+
+	function tooltip(): Tip {
+		if (tip?.root.isConnected) return tip
+
+		const root = document.createElement('div')
+		root.className = 'uptip'
+		root.setAttribute('aria-hidden', 'true')
+
+		const date = document.createElement('span')
+		date.className = 'uptip__date'
+
+		const main = document.createElement('span')
+		main.className = 'uptip__main'
+		const dot = document.createElement('i')
+		dot.className = 'uptip__dot'
+		const headline = document.createElement('span')
+		main.append(dot, headline)
+
+		const meta = document.createElement('span')
+		meta.className = 'uptip__meta'
+
+		root.append(date, main, meta)
+		document.body.appendChild(root)
+
+		tip = { root, date, dot, headline, meta }
+		return tip
+	}
+
+	function showTip(cell: HTMLElement, cx: number, top: number, bottom: number, touch: boolean) {
+		const t = tooltip()
+		t.date.textContent = cell.dataset.day ?? ''
+		t.dot.dataset.state = cell.dataset.state ?? 'empty'
+		t.headline.textContent = cell.dataset.headline ?? ''
+		t.meta.textContent = cell.dataset.meta ?? ''
+
+		if (!tipOpen) {
+			t.root.setAttribute('data-jump', '')
+			tipOpen = true
+		}
+
+		const width = t.root.offsetWidth
+		const height = t.root.offsetHeight
+		const gap = touch ? 16 : 11
+		const edge = 10
+
+		const half = width / 2
+		const x =
+			window.innerWidth - edge - half < edge + half
+				? window.innerWidth / 2
+				: clamp(cx, edge + half, window.innerWidth - edge - half)
+
+		const below = top - gap - height < edge
+		t.root.toggleAttribute('data-below', below)
+		t.root.style.setProperty('--arrow-x', `${clamp(cx - x, -half + 8, half - 8)}px`)
+		t.root.style.setProperty('translate', `${x}px ${below ? bottom + gap : top - gap}px`)
+		t.root.setAttribute('data-open', '')
+
+		requestAnimationFrame(() => t.root.removeAttribute('data-jump'))
+	}
+
+	function hideTip() {
+		tip?.root.removeAttribute('data-open')
+		tipOpen = false
+	}
+
+	type Scrubber = { end: (delay?: number) => void }
+
+	const scrubbers = new Set<Scrubber>()
+
+	function wireBar(bar: HTMLElement, live: HTMLElement | null) {
+		let cells: HTMLElement[] = []
+		let left = 0
+		let span = 1
+		let top = 0
+		let bottom = 0
+		let active = -1
+		let scrubbing = false
+		let swallowClick = false
+		let hideTimer = 0
+		let clickTimer = 0
+
+		function measure(): boolean {
+			cells = Array.from(bar.querySelectorAll<HTMLElement>('.um__cell')).filter(
+				(cell) => cell.offsetParent !== null
+			)
+			if (!cells.length) return false
+			const a = cells[0].getBoundingClientRect()
+			const b = cells[cells.length - 1].getBoundingClientRect()
+			left = a.left
+			span = Math.max(1, b.right - a.left)
+			top = a.top
+			bottom = a.bottom
+			return true
+		}
+
+		function indexAt(x: number): number {
+			return clamp(Math.floor(((x - left) / span) * cells.length), 0, cells.length - 1)
+		}
+
+		function unpaint() {
+			for (const cell of bar.querySelectorAll('[data-near]'))
+				cell.removeAttribute('data-near')
+		}
+
+		function setActive(index: number, touch: boolean) {
+			if (index === active) return
+			unpaint()
+			active = index
+			for (let d = -NEAR; d <= NEAR; d++) {
+				const cell = cells[index + d]
+				if (cell) cell.dataset.near = String(Math.abs(d))
+			}
+
+			const cell = cells[index]
+			const cx = left + (span * (index + 0.5)) / cells.length
+			showTip(cell, cx, top, bottom, touch)
+			if (touch) haptic(cell.dataset.state !== 'up')
+		}
+
+		function announce() {
+			if (!live || active === -1) return
+			const cell = cells[active]
+			const meta = cell.dataset.meta
+			live.textContent = `${cell.dataset.day} — ${cell.dataset.headline}${meta ? `, ${meta}` : ''}`
+		}
+
+		function end(delay = 0) {
+			window.clearTimeout(hideTimer)
+			const run = () => {
+				unpaint()
+				active = -1
+				bar.removeAttribute('data-scrub')
+				hideTip()
+			}
+			if (delay) hideTimer = window.setTimeout(run, delay)
+			else run()
+		}
+
+		function begin(x: number, touch: boolean): boolean {
+			window.clearTimeout(hideTimer)
+			if (!measure()) return false
+			active = -1
+			bar.setAttribute('data-scrub', '')
+			setActive(indexAt(x), touch)
+			return true
+		}
+
+		bar.addEventListener('pointerenter', (event) => {
+			if (event.pointerType !== 'mouse') return
+			begin(event.clientX, false)
+		})
+
+		bar.addEventListener('pointermove', (event) => {
+			if (event.pointerType === 'mouse') {
+				if (active === -1) begin(event.clientX, false)
+				else setActive(indexAt(event.clientX), false)
+			} else if (scrubbing) {
+				setActive(indexAt(event.clientX), true)
+			}
+		})
+
+		bar.addEventListener('pointerleave', (event) => {
+			if (event.pointerType === 'mouse') end()
+		})
+
+		bar.addEventListener('pointerdown', (event) => {
+			if (event.pointerType === 'mouse') return
+			if (!begin(event.clientX, true)) return
+			scrubbing = true
+			swallowClick = true
+			window.clearTimeout(clickTimer)
+			bar.setPointerCapture(event.pointerId)
+		})
+
+		const release = () => {
+			if (!scrubbing) return
+			scrubbing = false
+			end(LINGER_MS)
+			clickTimer = window.setTimeout(() => {
+				swallowClick = false
+			}, 500)
+		}
+
+		bar.addEventListener('pointerup', release)
+		bar.addEventListener('pointercancel', release)
+
+		bar.addEventListener(
+			'click',
+			(event) => {
+				if (!swallowClick) return
+				swallowClick = false
+				event.preventDefault()
+				event.stopPropagation()
+			},
+			true
+		)
+
+		bar.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') {
+				end()
+				return
+			}
+			const step =
+				event.key === 'ArrowRight'
+					? 1
+					: event.key === 'ArrowLeft'
+						? -1
+						: event.key === 'Home'
+							? -Infinity
+							: event.key === 'End'
+								? Infinity
+								: 0
+			if (!step) return
+			event.preventDefault()
+			if (active === -1) {
+				if (!begin(bar.getBoundingClientRect().right, false)) return
+			} else {
+				setActive(clamp(active + step, 0, cells.length - 1), false)
+			}
+			announce()
+		})
+
+		bar.addEventListener('blur', () => end())
+
+		const scrubber: Scrubber = { end }
+		scrubbers.add(scrubber)
+		return scrubber
+	}
+
+	function endAll() {
+		for (const scrubber of scrubbers) scrubber.end()
 	}
 
 	function combine(monitors: Monitor[]): Monitor | null {
@@ -513,6 +998,18 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 		}
 	}
 
+	function fillBar(bar: HTMLElement | null, days: Day[]) {
+		if (!bar) return
+		const cells = bar.querySelectorAll<HTMLElement>('.um__cell')
+		days.forEach((day, i) => {
+			const cell = cells[i]
+			if (cell) describeDay(cell, day)
+		})
+		bar.classList.add('is-loaded')
+		const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+		window.setTimeout(() => bar.classList.add('is-live'), still ? 0 : INTRO_MS)
+	}
+
 	function renderUnified(section: HTMLElement, monitors: Monitor[]) {
 		const all = combine(monitors)
 		const label = section.querySelector('[data-overall]')
@@ -545,15 +1042,7 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 			latency.textContent = all.avgLatencyMs === null ? '' : `${all.avgLatencyMs}ms avg · 24h`
 		}
 
-		const bar = section.querySelector<HTMLElement>('.um__bar')
-		const cells = section.querySelectorAll<HTMLElement>('.um__cell')
-		all.days.forEach((day, i) => {
-			const cell = cells[i]
-			if (!cell) return
-			cell.dataset.state = cellState(day)
-			cell.dataset.label = describeDay(day)
-		})
-		bar?.classList.add('is-loaded')
+		fillBar(section.querySelector<HTMLElement>('.um__bar'), all.days)
 	}
 
 	function render(section: HTMLElement, monitors: Monitor[]) {
@@ -581,15 +1070,7 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 					monitor.avgLatencyMs === null ? '' : `${monitor.avgLatencyMs}ms avg · 24h`
 			}
 
-			const bar = row.querySelector<HTMLElement>('.um__bar')
-			const cells = row.querySelectorAll<HTMLElement>('.um__cell')
-			monitor.days.forEach((day, i) => {
-				const cell = cells[i]
-				if (!cell) return
-				cell.dataset.state = cellState(day)
-				cell.dataset.label = describeDay(day)
-			})
-			bar?.classList.add('is-loaded')
+			fillBar(row.querySelector<HTMLElement>('.um__bar'), monitor.days)
 		}
 
 		const overall = section.querySelector('[data-overall]')
@@ -609,7 +1090,12 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 		}
 	}
 
+	let globalsBound = false
+
 	function initUptime() {
+		scrubbers.clear()
+		hideTip()
+
 		const sections = document.querySelectorAll<HTMLElement>('.uptime')
 		if (!sections.length) return
 
@@ -618,7 +1104,6 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 			const url = project
 				? `/api/uptime?project=${encodeURIComponent(project)}`
 				: '/api/uptime'
-
 			const unified = section.dataset.variant === 'unified'
 
 			fetch(url)
@@ -633,16 +1118,16 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 					if (overall) overall.textContent = 'Status unavailable'
 				})
 
-			section.addEventListener('pointerover', (event) => {
-				const target = event.target as HTMLElement
-				const cell = target.closest<HTMLElement>('.um__cell')
-				if (cell?.dataset.label) showBubble(cell, cell.dataset.label)
-				else if (!target.closest('.um__bar')) hideBubble()
-			})
-			section.addEventListener('pointerleave', hideBubble)
+			for (const bar of section.querySelectorAll<HTMLElement>('.um__bar')) {
+				const row = bar.closest('.um') ?? section
+				wireBar(bar, row.querySelector<HTMLElement>('[data-live]'))
+			}
 		}
 
-		document.addEventListener('scroll', hideBubble, { passive: true })
+		if (globalsBound) return
+		globalsBound = true
+		document.addEventListener('scroll', endAll, { passive: true, capture: true })
+		window.addEventListener('resize', endAll, { passive: true })
 	}
 
 	document.addEventListener('astro:page-load', initUptime)
