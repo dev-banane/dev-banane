@@ -42,6 +42,25 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    slug: 'tools',
+    title: 'Tools',
+    tagline: 'The dev tabs I kept reopening, rebuilt without the ads and sign-up walls.',
+    summary: [
+      'A small toolbox of the tabs I kept reopening: subdomain enumeration across CT logs and passive DNS (plus an HTTP/sitemap crawl for hosts hiding behind a reverse proxy), DNS lookups across global resolvers, security header grading, IP geolocation, and a handful of generators.',
+      "It's a Cloudflare Worker fronting a React app - no accounts, no ads, and no rate-limited free tier asking for a credit card.",
+    ],
+    period: '2026',
+    role: 'Solo developer',
+    status: 'Live',
+    stack: ['TypeScript', 'React', 'Vite', 'Cloudflare Workers'],
+    links: [
+      { label: 'tools.devjakob.com', href: 'https://tools.devjakob.com' },
+      { label: 'GitHub', href: 'https://github.com/dev-banane/tools' },
+    ],
+    monitors: [{ slug: 'tools', label: 'tools.devjakob.com', url: 'https://tools.devjakob.com' }],
+    featured: true,
+  },
+  {
     slug: 'petal',
     title: 'Petal',
     tagline: 'A unified AI workspace, developed from the ground up.',
