@@ -53,6 +53,8 @@ export const projects: Project[] = [
     role: 'Solo developer',
     status: 'Live',
     stack: ['TypeScript', 'React', 'Vite', 'Cloudflare Workers'],
+    cover: '/assets/work/tools.webp',
+    coverAlt: 'The Tools dashboard',
     links: [
       { label: 'tools.devjakob.com', href: 'https://tools.devjakob.com' },
       { label: 'GitHub', href: 'https://github.com/dev-banane/tools' },
