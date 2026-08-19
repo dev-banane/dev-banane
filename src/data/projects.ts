@@ -116,7 +116,6 @@ export const projects: Project[] = [
     cover: '/assets/work/devjakob.webp',
     coverAlt: 'The devjakob.com homepage',
     links: [{ label: 'GitHub', href: 'https://github.com/dev-banane' }],
-    monitors: [{ slug: 'devjakob', label: 'devjakob.com', url: 'https://devjakob.com' }],
     article: 'this-blog-is-a-worker',
     featured: true,
   },

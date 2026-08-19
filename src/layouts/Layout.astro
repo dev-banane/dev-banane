@@ -113,6 +113,26 @@ const personSchema = {
 
 		<script>
 			let revealObserver: IntersectionObserver | null = null
+			let pendingHash = ''
+
+			document.addEventListener('astro:before-swap', (event) => {
+				const e = event as Event & {
+					newDocument: Document
+					navigationType: string
+					to: URL
+				}
+				e.newDocument.documentElement.classList.add('js', 'no-enter')
+				pendingHash = e.navigationType === 'traverse' ? '' : e.to.hash
+			})
+
+			document.addEventListener('astro:after-swap', () => {
+				const hash = pendingHash
+				pendingHash = ''
+				if (!hash) return
+				const id = decodeURIComponent(hash.slice(1))
+				if (!id) return
+				document.getElementById(id)?.scrollIntoView({ block: 'start', behavior: 'auto' })
+			})
 
 			function initReveal() {
 				revealObserver?.disconnect()
@@ -122,7 +142,8 @@ const personSchema = {
 
 				if (
 					!('IntersectionObserver' in window) ||
-					window.matchMedia('(prefers-reduced-motion: reduce)').matches
+					window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+					document.documentElement.classList.contains('no-enter')
 				) {
 					targets.forEach((el) => el.classList.add('is-revealed'))
 					return
@@ -177,29 +198,41 @@ const personSchema = {
 						return
 					}
 
-					const transition = (
-						document as Document & {
-							startViewTransition: (cb: () => void) => { ready: Promise<void> }
-						}
-					).startViewTransition(applyNext)
-
-					transition.ready.then(() => {
-						const endRadius = Math.hypot(window.innerWidth, window.innerHeight)
-						const origin = next === 'light' ? '100% 0%' : '0% 100%'
-						document.documentElement.animate(
-							{
-								clipPath: [
-									`circle(0% at ${origin})`,
-									`circle(${endRadius}px at ${origin})`,
-								],
-							},
-							{
-								duration: 650,
-								easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
-								pseudoElement: '::view-transition-new(root)',
+					const root = document.documentElement
+					root.classList.add('theme-vt')
+					try {
+						const transition = (
+							document as Document & {
+								startViewTransition: (cb: () => void) => {
+									ready: Promise<void>
+									finished: Promise<void>
+								}
 							}
-						)
-					})
+						).startViewTransition(applyNext)
+
+						transition.finished.finally(() => root.classList.remove('theme-vt'))
+
+						transition.ready.then(() => {
+							const endRadius = Math.hypot(window.innerWidth, window.innerHeight)
+							const origin = next === 'light' ? '100% 0%' : '0% 100%'
+							root.animate(
+								{
+									clipPath: [
+										`circle(0% at ${origin})`,
+										`circle(${endRadius}px at ${origin})`,
+									],
+								},
+								{
+									duration: 650,
+									easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+									pseudoElement: '::view-transition-new(root)',
+								}
+							)
+						})
+					} catch {
+						root.classList.remove('theme-vt')
+						applyNext()
+					}
 				})
 			})
 		</script>

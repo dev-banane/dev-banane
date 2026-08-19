@@ -313,6 +313,14 @@
     animation-delay: calc(var(--d) * 70ms);
   }
 
+  html.no-enter [data-enter],
+  html.no-enter [data-reveal] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   .js [data-reveal] {
     opacity: 0;
     transform: translateY(14px);
@@ -359,9 +367,18 @@
   scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
+@keyframes vt-instant {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: none;
+  animation: vt-instant 1ms both;
   mix-blend-mode: normal;
 }
 
@@ -371,6 +388,11 @@
 
 ::view-transition-new(root) {
   z-index: 2;
+}
+
+html.theme-vt::view-transition-old(root),
+html.theme-vt::view-transition-new(root) {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
