@@ -133,7 +133,7 @@ export const projects: Project[] = [
     status: 'Live',
     stack: ['TypeScript', 'Next.js', 'Postgres', 'WebSockets'],
     highlights: [
-      { label: 'Registered users', value: '1000+' },
+      { label: 'Registered users', value: '10,000+' },
       { label: 'Daily actives', value: '~500' },
       { label: 'Building since', value: 'age 15' },
     ],
