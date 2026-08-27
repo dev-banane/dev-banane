@@ -26,10 +26,10 @@ export const projects: Project[] = [
   {
     slug: 'weavay',
     title: 'Weavay',
-    tagline: 'Email that remembers, built as a living graph instead of a folder tree.',
+    tagline: 'Email that remembers, actual conversations instead of isolated messages.',
     summary: [
-      'Weavay is an email client that stops treating messages as isolated items. Every message becomes a node in a graph of the people, threads and documents it touches, so the context around a conversation is there without digging for it.',
-      'You pull that context in with @-mentions, and rules sort mail on the way in without any model involved. The AI features sit on a separate tier and stay source-linked, so nothing is asserted without something to point at.',
+      'Weavay is an email client that stops treating messages as isolated items. Mail feels like an actual conversation instead of seperate messages.',
+      'I built Weavay because I wanted my own alternative to Google Workspace, since I manage multiple domains and projects that each need their own mailbox.',
     ],
     period: 'Since 2026',
     role: 'Solo developer',
