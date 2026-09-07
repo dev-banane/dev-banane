@@ -8,7 +8,7 @@ export default defineConfig({
   adapter: cloudflare(),
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'hover',
+    defaultStrategy: 'viewport',
   },
   vite: {
     plugins: [tailwindcss()],

@@ -42,6 +42,17 @@ interface R2ObjectBody {
   writeHttpMetadata(headers: Headers): void;
 }
 
+interface KVNamespace {
+  get(key: string, options?: { cacheTtl?: number }): Promise<string | null>;
+  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+  delete(key: string): Promise<void>;
+  list(options?: { prefix?: string; cursor?: string }): Promise<{
+    keys: { name: string }[];
+    list_complete: boolean;
+    cursor?: string;
+  }>;
+}
+
 interface Ai {
   run(
     model: string,
@@ -62,8 +73,10 @@ type Env = {
   GITHUB_CLIENT_ID?: string;
   GITHUB_CLIENT_SECRET?: string;
   AUTH_SECRET?: string;
+  REVALIDATE_TOKEN?: string;
   DB: D1Database;
   MEDIA?: R2Bucket;
+  CONTENT_CACHE?: KVNamespace;
 };
 
 declare module 'cloudflare:workers' {

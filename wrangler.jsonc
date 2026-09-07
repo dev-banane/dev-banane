@@ -12,6 +12,12 @@
 			"migrations_dir": "migrations",
 		},
 	],
+	"kv_namespaces": [
+		{
+			"binding": "CONTENT_CACHE",
+			"id": "664f32597a7d45b3b0ca5ca295725f16",
+		},
+	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",

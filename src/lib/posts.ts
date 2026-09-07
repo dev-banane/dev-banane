@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { inlineIcon } from './icons';
+import { readThrough } from './content-cache';
 
 marked.setOptions({ gfm: true, breaks: true });
 
@@ -28,7 +29,10 @@ type R2Bucket = {
     truncated: boolean;
     cursor?: string;
   }>;
-  get(key: string): Promise<{ text(): Promise<string> } | null>;
+  get(
+    key: string,
+    options?: { range?: { offset: number; length: number } }
+  ): Promise<{ text(): Promise<string> } | null>;
 };
 
 export function resolvePostMediaUrl(src: string): string {
@@ -160,35 +164,67 @@ async function postFromRaw(raw: string): Promise<PostContent> {
   return { title: meta.title, date: meta.date, html };
 }
 
+const FRONTMATTER_PROBE_BYTES = 2048;
+
+function hasCompleteFrontmatter(raw: string): boolean {
+  return /^---\r?\n[\s\S]*?\r?\n---\r?\n/.test(raw);
+}
+
+async function listPostKeys(bucket: R2Bucket, prefix: string): Promise<string[]> {
+  const keys: string[] = [];
+  let cursor: string | undefined;
+
+  do {
+    const listed = await bucket.list({ prefix, cursor });
+    for (const obj of listed.objects) {
+      if (!obj.key.endsWith('.md')) continue;
+      const slug = obj.key.slice(prefix.length).replace(/\.md$/i, '');
+      if (!slug || slug.includes('/')) continue;
+      keys.push(obj.key);
+    }
+    cursor = listed.truncated ? listed.cursor : undefined;
+  } while (cursor);
+
+  return keys;
+}
+
+async function readPostMeta(
+  bucket: R2Bucket,
+  key: string,
+  prefix: string
+): Promise<PostMeta | null> {
+  const slug = key.slice(prefix.length).replace(/\.md$/i, '');
+
+  let object = await bucket.get(key, {
+    range: { offset: 0, length: FRONTMATTER_PROBE_BYTES },
+  });
+  if (!object) return null;
+  let raw = await object.text();
+
+  if (!hasCompleteFrontmatter(raw)) {
+    object = await bucket.get(key);
+    if (!object) return null;
+    raw = await object.text();
+  }
+
+  return metaFromFrontmatter(slug, parseFrontmatter(raw).meta);
+}
+
 export async function fetchPostList(bucket?: R2Bucket): Promise<PostMeta[]> {
   if (!bucket) return [];
 
   const prefix = `${POSTS_PATH}/`;
-  const posts: PostMeta[] = [];
-  let cursor: string | undefined;
 
-  try {
-    do {
-      const listed = await bucket.list({ prefix, cursor });
-      for (const obj of listed.objects) {
-        if (!obj.key.endsWith('.md')) continue;
-        const slug = obj.key.slice(prefix.length).replace(/\.md$/i, '');
-        if (!slug || slug.includes('/')) continue;
-
-        const object = await bucket.get(obj.key);
-        if (!object) continue;
-        const raw = await object.text();
-        const { meta } = parseFrontmatter(raw);
-        posts.push(metaFromFrontmatter(slug, meta));
-      }
-      cursor = listed.truncated ? listed.cursor : undefined;
-    } while (cursor);
-  } catch (err) {
+  const posts = await readThrough<PostMeta[]>('posts:list', async () => {
+    const keys = await listPostKeys(bucket, prefix);
+    const metas = await Promise.all(keys.map((key) => readPostMeta(bucket, key, prefix)));
+    return sortPosts(metas.filter((meta): meta is PostMeta => meta !== null));
+  }).catch((err) => {
     console.error('[posts] R2 list failed:', err);
-    return [];
-  }
+    return null;
+  });
 
-  return sortPosts(posts);
+  return posts ?? [];
 }
 
 export async function fetchPost(
@@ -198,11 +234,15 @@ export async function fetchPost(
 ): Promise<PostContent | null> {
   if (!bucket) return null;
 
-  for (const name of postFilenameCandidates(slug, opts)) {
-    const object = await bucket.get(postKey(name));
-    if (!object) continue;
-    return postFromRaw(await object.text());
-  }
+  const candidates = postFilenameCandidates(slug, opts);
+  if (!candidates.length) return null;
 
-  return null;
+  return readThrough<PostContent>(`posts:item:${candidates.join('|')}`, async () => {
+    for (const name of candidates) {
+      const object = await bucket.get(postKey(name));
+      if (!object) continue;
+      return postFromRaw(await object.text());
+    }
+    return null;
+  });
 }
