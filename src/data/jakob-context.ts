@@ -102,21 +102,33 @@ simulation community. Everything lives under the Cephie Studios GitHub org
   registered users and roughly 500 daily actives. Built from the ground up by
   Jakob; it shaped how he thinks about uptime, migrations, and not breaking
   things for real users because it's been in production for years.
-- **Cephie API** (api.cephie.app): the unified backend powering the rest of
-  the Cephie stack: flight tracking, shifts, guilds, images, and flight
-  assets, with full OpenAPI documentation and optional Discord auth (used for
-  things like transcripts). It's the backbone for all of Jakob's aviation and
-  community tools.
-- **Cephie Snap** (snap.cephie.app), a deliberately minimal image host: pick
-  an image, get a permanent, stable URL back instantly, no account required,
-  built specifically so apps and docs can embed images without links rotting.
-  Public API available for developer integrations.
-- **Cephie Dashboard** (dash.cephie.app): a Discord bot and management
-  platform for virtual airlines and aviation communities. It manages the
-  "PFConnect Bot", and handles role sync, verification, and moderation.
-  Dozens of major aviation communities run their Discord servers on it.
-- **Cephie UI**: an internal, highly opinionated React component library
-  (TypeScript) shared across the Cephie apps.
+- **Cephie Cloud** (cephie.app): the unified frontend for everything Cephie.
+  It replaced four separate apps (the Next.js marketing site, the PFConnect
+  bot dashboard at dash.cephie.app, the Snap uploader at snap.cephie.app, and
+  the dev/admin dashboards that used to be bundled inside the API) with one
+  Vite + React 19 + Tailwind + shadcn/ui app served by a small Go server that
+  owns sessions and proxies the Cephie API. One Discord sign-in (Google can be
+  linked too) gives you:
+  - **Server Setup** (/servers): full PFConnect Bot configuration per Discord
+    server: welcome, guide and rank-up embeds with live previews, flights,
+    banners (pickable straight from your Snap library), staff roles, tickets
+    and the ticket interface, transcripts, shifts and shift activity, and
+    audit logs, all behind one save bar.
+  - **Media** (/media): Snap image hosting with permanent URLs, a library,
+    albums and custom URLs on paid plans (Lite, Premium, Ultimate via Stripe).
+  - **Developers** (/developers): apply for scoped API keys, see per-key usage
+    and read the API docs.
+  - An admin area for keys, applications, logs, stats, assets, legal
+    documents and subscriptions.
+- **Cephie API** (api.cephie.app): the separate Go backend powering the rest
+  of the Cephie stack: guild configs, shifts, transcripts, images, and flight
+  assets. MongoDB, Redis, Cloudflare R2 and Stripe, scoped API keys with
+  per-key rate limits, and OpenAPI documentation. Cephie Cloud is a client of
+  it, like any other integration.
+- **PFConnect Bot**: the Discord bot for virtual airlines and aviation
+  communities (tickets, welcome and rank-up messages, staff shifts, logging),
+  configured through Cloud's Server Setup. Dozens of major aviation
+  communities run their Discord servers on it.
 
 Related, older ecosystem in the same GitHub org: PFConnect (pfconnect,
 pfconnect-bot, pfconnect-dash, pfconnect-api): an earlier bot/dashboard/API

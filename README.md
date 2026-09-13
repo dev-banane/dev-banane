@@ -2,7 +2,7 @@
 
 Full-stack developer. I build and ship web applications, APIs, and platforms that people actually use. From ATC tools with 9,000+ users to developer APIs and Discord bots for management and moderation.
 
--   👀 I'm currently working at [giftGRÜN](https://www.giftgruen.com/) and run [Cephie](https://snap.cephie.app) on the side.
+-   👀 I'm currently working at [giftGRÜN](https://www.giftgruen.com/) and run [Cephie](https://cephie.app) on the side.
 -   🌱 I'm currently learning Go and C
 -   💞️ I love collaborating on open source projects!
 -   🤝 Let me know if you want to start a project together!
@@ -21,14 +21,14 @@ Full-stack developer. I build and ship web applications, APIs, and platforms tha
 **[PFControl v2](https://pfcontrol.com)**  
 The main product I run. It's the leading ATC strip and flight management platform for Project Flight and Roblox aviation. Controllers and pilots get real-time coordination and a modern, fast interface. I built it from the ground up and it has grown to over 9,000 registered users.
 
+**[Cephie Cloud](https://cephie.app)**  
+One sign-in for every Cephie product. It merges what used to be four separate apps (the marketing site, the PFConnect bot dashboard, Snap image hosting, and the developer and admin dashboards) into a single Vite + React + shadcn/ui app with a Go server. Configure the PFConnect Bot under Server Setup, manage your images under Media, and get API keys under Developers.
+
 **[Cephie API](https://api.cephie.app)**  
-A unified API that powers the rest of the Cephie stack: flight tracking, shifts, guilds, images, and flight assets. It comes with full [OpenAPI documentation](https://api.cephie.app/docs) and optional Discord auth for things like transcripts. This is the backbone for aviation and community tools.
+The Go backend behind Cloud and every other integration: guild configs, shifts, transcripts, images, and flight assets. MongoDB, Redis and R2 underneath, with scoped API keys, per-key rate limits, and [OpenAPI documentation](https://api.cephie.app/docs).
 
-**[Cephie Snap](https://snap.cephie.app)**  
-Image hosting with permanent URLs and a public API for developer integrations. I built it so apps and docs can embed images reliably without links disappearing. It's aimed at developers who need stable, controllable embeds.
-
-**[Cephie Dashboard](https://dash.cephie.app)**  
-A Discord bot and management platform for virtual airlines and aviation communities. It manages the PFConnect Bot and handles role sync, verification, and moderation. Dozens of major groups use it to run their servers.
+**[PFConnect Bot](https://cephie.app/servers)**  
+A Discord bot for virtual airlines and aviation communities: tickets and transcripts, welcome and rank-up messages, staff shifts, and logging, all configurable from Cloud with live previews. Dozens of major groups use it to run their servers.
 
 ---
 

@@ -152,21 +152,21 @@ export const projects: Project[] = [
   {
     slug: 'cephie',
     title: 'Cephie Studios',
-    tagline: 'The studio the rest of it runs on: APIs, dashboards, bots and hosted services.',
+    tagline: 'The studio the rest of it runs on. Cephie Cloud puts every product behind one sign-in.',
     summary: [
       'Cephie Studios is where the infrastructure behind my other projects lives. It designs and runs production software for communities that need serious tooling rather than a weekend script that nobody maintains.',
-      'The pieces are separate services that share one platform: Snap for instant permanent image URLs, the API that other products integrate against, the dashboard for configuring the Discord bot and reading transcripts, and PFConnect itself.',
+      'Cephie Cloud merges what used to be four separate apps (the marketing site, the PFConnect bot dashboard, Snap image hosting, and the developer and admin dashboards) into one Vite + React app served by a small Go server. One Discord sign-in gets you Server Setup for the bot, your Media library, and API keys under Developers.',
+      'The Cephie API stays its own Go service behind it, backed by MongoDB, Redis and R2, and Cloud is just another client of it: scoped keys, per-key rate limits, and Stripe billing for Snap\'s paid tiers.',
     ],
     role: 'Founder and developer',
     status: 'Live',
-    stack: ['TypeScript', 'Cloudflare Workers', 'R2', 'Postgres', 'React'],
+    stack: ['Go', 'TypeScript', 'React', 'Vite', 'shadcn/ui', 'MongoDB', 'Redis', 'R2'],
     cover: '/assets/work/cephie.webp',
-    coverAlt: 'The Cephie Studios site',
+    coverAlt: 'The Cephie Cloud site',
     links: [
       { label: 'cephie.app', href: 'https://cephie.app' },
-      { label: 'snap.cephie.app', href: 'https://snap.cephie.app' },
+      { label: 'Dashboard', href: 'https://cephie.app/dashboard' },
       { label: 'api.cephie.app', href: 'https://api.cephie.app' },
-      { label: 'dash.cephie.app', href: 'https://dash.cephie.app' },
     ],
     monitors: [
       { slug: 'cephie', label: 'cephie.app', url: 'https://cephie.app' },
