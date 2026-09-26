@@ -1,6 +1,7 @@
 /* Deployed separately from the main site (see ../../../wrangler.jsonc). Probes
  * every endpoint declared in src/data/projects.ts and records the result in D1,
- * which /api/uptime then reads. Runs once per cron trigger (every minute).
+ * which /api/uptime then reads. Runs once per cron trigger (every 5 minutes, to
+ * stay well inside D1's daily row-write quota).
  */
 import { monitors } from '../../../src/data/projects'
 
@@ -106,7 +107,7 @@ async function prune(env: UptimeEnv): Promise<void> {
 async function tick(env: UptimeEnv): Promise<void> {
 	await runPass(env)
 
-	if (new Date().getUTCMinutes() < 1) await prune(env)
+	if (new Date().getUTCMinutes() < 5) await prune(env)
 }
 
 export default {

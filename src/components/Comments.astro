@@ -728,6 +728,9 @@ const MAX_TEXTAREA_PX = 240
 	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup.ts'
 	import { getAuthState, setAuthState } from '../lib/auth-state.ts'
 	import { inlineIcon } from '../lib/icons.ts'
+	import { confetti, pick } from '../lib/fun.ts'
+
+	const THANKS = ['Thanks!', 'You’re a legend.', 'Posted. Fame awaits.', 'Words: delivered.']
 
 	interface TurnstileApi {
 		render(el: HTMLElement, opts: Record<string, unknown>): string
@@ -1459,7 +1462,8 @@ const MAX_TEXTAREA_PX = 240
 					textarea.classList.remove('scrollable')
 				}
 				if (counterEl) counterEl.classList.remove('visible', 'warning', 'critical')
-				setStatus('Thanks!', false)
+				confetti(submitBtn, 22)
+				setStatus(pick(THANKS), false)
 				close()
 				if (toggleBtn) toggleBtn.setAttribute('hidden', '')
 			} catch {

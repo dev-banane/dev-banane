@@ -170,9 +170,7 @@ export const projects: Project[] = [
     ],
     monitors: [
       { slug: 'cephie', label: 'cephie.app', url: 'https://cephie.app' },
-      { slug: 'cephie-snap', label: 'snap.cephie.app', url: 'https://snap.cephie.app' },
       { slug: 'cephie-api', label: 'api.cephie.app', url: 'https://api.cephie.app' },
-      { slug: 'cephie-dash', label: 'dash.cephie.app', url: 'https://dash.cephie.app' },
     ],
     article: 'cephie-snap',
     featured: true,

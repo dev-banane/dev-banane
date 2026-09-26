@@ -378,6 +378,19 @@
   z-index: 2;
 }
 
+@keyframes back-beckon {
+  0%,
+  100% {
+    transform: translateX(-3px);
+  }
+  45% {
+    transform: translateX(-7px);
+  }
+  60% {
+    transform: translateX(-6px);
+  }
+}
+
 html.theme-vt::view-transition-old(root),
 html.theme-vt::view-transition-new(root) {
   animation: none;

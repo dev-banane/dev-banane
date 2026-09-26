@@ -167,6 +167,11 @@ const personSchema = {
 		</script>
 
 		<script>
+			import { dizzy, pick, quip } from '../lib/fun'
+
+			const DIZZY = ['make up your mind', 'I’m getting dizzy', 'light? dark? both?', 'pls stop']
+			let spamClicks: number[] = []
+
 			document.addEventListener('astro:page-load', () => {
 				const toggle = document.getElementById('theme-toggle')
 				if (!toggle) return
@@ -182,6 +187,14 @@ const personSchema = {
 				let transitioning = false
 
 				fresh.addEventListener('click', () => {
+					const now = performance.now()
+					spamClicks = [...spamClicks.filter((t) => now - t < 4000), now]
+					if (spamClicks.length >= 5) {
+						spamClicks = []
+						dizzy(fresh)
+						quip(fresh, pick(DIZZY), { fall: true })
+					}
+
 					if (transitioning) return
 
 					const next = current() === 'dark' ? 'light' : 'dark'

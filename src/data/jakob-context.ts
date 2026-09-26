@@ -103,9 +103,9 @@ simulation community. Everything lives under the Cephie Studios GitHub org
   Jakob; it shaped how he thinks about uptime, migrations, and not breaking
   things for real users because it's been in production for years.
 - **Cephie Cloud** (cephie.app): the unified frontend for everything Cephie.
-  It replaced four separate apps (the Next.js marketing site, the PFConnect
-  bot dashboard at dash.cephie.app, the Snap uploader at snap.cephie.app, and
-  the dev/admin dashboards that used to be bundled inside the API) with one
+  It replaced four separate apps (the Next.js marketing site, the standalone
+  PFConnect bot dashboard, the standalone Snap uploader, and the dev/admin
+  dashboards that used to be bundled inside the API) with one
   Vite + React 19 + Tailwind + shadcn/ui app served by a small Go server that
   owns sessions and proxies the Cephie API. One Discord sign-in (Google can be
   linked too) gives you:

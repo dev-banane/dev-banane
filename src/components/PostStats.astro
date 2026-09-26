@@ -115,6 +115,50 @@ const { slug, readingMinutes = 1 } = Astro.props
 		transform: translateY(2px);
 	}
 
+	@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+		.vote-up:hover:not([aria-pressed='true']) .vote__icon {
+			animation: vote-eager 0.9s var(--ease-in-out) infinite;
+		}
+
+		.vote-down:hover:not([aria-pressed='true']) .vote__icon {
+			animation: vote-gulp 0.45s linear;
+		}
+	}
+
+	@keyframes vote-eager {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		40% {
+			transform: translateY(-4px);
+		}
+		60% {
+			transform: translateY(-3px);
+		}
+	}
+
+	@keyframes vote-gulp {
+		0% {
+			transform: translate(0, 0);
+		}
+		20% {
+			transform: translate(-1.5px, 1px) rotate(-8deg);
+		}
+		40% {
+			transform: translate(1.5px, 2px) rotate(8deg);
+		}
+		60% {
+			transform: translate(-1px, 2px) rotate(-5deg);
+		}
+		80% {
+			transform: translate(1px, 2px) rotate(3deg);
+		}
+		100% {
+			transform: translate(0, 2px);
+		}
+	}
+
 	.vote[aria-pressed='true'] {
 		color: var(--fg);
 		border-color: var(--fg);
@@ -161,6 +205,19 @@ const { slug, readingMinutes = 1 } = Astro.props
 	.text-link.is-copied {
 		color: var(--fg);
 		text-decoration-color: var(--fg);
+		animation: copied-pop 0.35s var(--ease-out);
+	}
+
+	@keyframes copied-pop {
+		0% {
+			transform: scale(1);
+		}
+		40% {
+			transform: scale(1.12) rotate(-2deg);
+		}
+		100% {
+			transform: scale(1);
+		}
 	}
 
 	.selection-menu {
@@ -205,6 +262,17 @@ const { slug, readingMinutes = 1 } = Astro.props
 <script>
 	import { openLoginPopup, onAuthMessage, type AuthUser } from '../lib/auth-popup.ts'
 	import { getAuthState, setAuthState } from '../lib/auth-state.ts'
+	import { confetti, deflate, launch, pick, quip } from '../lib/fun.ts'
+
+	const COPIED = [
+		'Copied!',
+		'Yoinked!',
+		'Clipboard’d',
+		'Ctrl+V awaits',
+		'Link acquired',
+		'In your pocket',
+	] as const
+	const OUCH = ['oof', 'ouch', 'fair', 'noted.', 'rude', 'ok :(']
 
 	type Stats = { views: number; upvotes: number; downvotes: number; myVote: number }
 
@@ -525,10 +593,28 @@ const { slug, readingMinutes = 1 } = Astro.props
 				openLoginPopup()
 				return
 			}
-			pendingVote = desiredVote() === dir ? 0 : dir
+			const before = desiredVote()
+			pendingVote = before === dir ? 0 : dir
 			render()
+			celebrate(before, pendingVote)
 			window.clearTimeout(syncTimer)
 			syncTimer = window.setTimeout(syncVote, 350)
+		}
+
+		function celebrate(before: number, after: number) {
+			if (after === 1 && upBtn) {
+				launch(upBtn.querySelector('.vote__icon'), 'up')
+				confetti(upBtn)
+				quip(upBtn, '+1')
+			} else if (after === -1 && downBtn) {
+				launch(downBtn.querySelector('.vote__icon'), 'down')
+				deflate(downBtn)
+				quip(downBtn, pick(OUCH), { fall: true })
+			} else if (before === 1 && upBtn) {
+				quip(upBtn, 'wait, come back', { fall: true })
+			} else if (before === -1 && downBtn) {
+				quip(downBtn, 'phew')
+			}
 		}
 
 		upBtn?.addEventListener('click', () => vote(1))
@@ -558,9 +644,10 @@ const { slug, readingMinutes = 1 } = Astro.props
 
 		const copyBtn = root.querySelector('.copy-link')
 		copyBtn?.addEventListener('click', async () => {
+			if (copyBtn.classList.contains('is-copied')) return
 			await copyText(url)
 			const prev = copyBtn.textContent
-			copyBtn.textContent = 'Copied!'
+			copyBtn.textContent = pick(COPIED)
 			copyBtn.classList.add('is-copied')
 			window.setTimeout(() => {
 				copyBtn.textContent = prev
@@ -639,7 +726,7 @@ const { slug, readingMinutes = 1 } = Astro.props
 				const frag = `${url.split('#')[0]}#h=${encodeQuote(text)}`
 				const copied = await copyText(frag)
 				if (!copied) return
-				linkLabel.textContent = 'Copied!'
+				linkLabel.textContent = pick(COPIED)
 				window.setTimeout(clearHl, 1200)
 			})
 		}
