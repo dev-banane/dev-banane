@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css'
 import { ClientRouter } from 'astro:transitions'
+import ButtonCat from '../components/ButtonCat.astro'
 
 interface Props {
 	title?: string
@@ -110,6 +111,7 @@ const personSchema = {
 	</head>
 	<body>
 		<slot />
+		<ButtonCat />
 
 		<script>
 			let revealObserver: IntersectionObserver | null = null

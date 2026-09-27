@@ -20,7 +20,7 @@ function center(el: Element) {
 	return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
 }
 
-function particle(x: number, y: number, css: string, text = ''): HTMLSpanElement {
+export function particle(x: number, y: number, css: string, text = ''): HTMLSpanElement {
 	const p = document.createElement('span')
 	p.setAttribute('aria-hidden', 'true')
 	p.textContent = text

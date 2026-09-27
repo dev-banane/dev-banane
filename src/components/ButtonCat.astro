@@ -1,0 +1,527 @@
+<style is:global>
+	@property --swing {
+		syntax: '<angle>';
+		inherits: false;
+		initial-value: 0deg;
+	}
+
+	@property --nod {
+		syntax: '<angle>';
+		inherits: false;
+		initial-value: 0deg;
+	}
+
+	@property --knead {
+		syntax: '<length>';
+		inherits: false;
+		initial-value: 0px;
+	}
+
+	@property --run {
+		syntax: '<number>';
+		inherits: true;
+		initial-value: 0;
+	}
+
+	@property --breathe {
+		syntax: '<number>';
+		inherits: false;
+		initial-value: 0;
+	}
+
+	.cat {
+		--pose-dur: 320ms;
+		--pose-ease: cubic-bezier(0.34, 1.25, 0.64, 1);
+		--cat-fur: #f59a42;
+		--cat-shade: #d67c2c;
+		--cat-stripe: #b35a18;
+		--cat-cream: #fde6c8;
+		--cat-ear: #f7b89a;
+		--cat-nose: #d9736b;
+		--cat-eye: #2b1a0f;
+
+		--gallop: 0.34s;
+
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 30;
+		transition: --run 280ms var(--ease-in-out);
+		width: 36px;
+		height: 27px;
+		cursor: pointer;
+		user-select: none;
+		-webkit-tap-highlight-color: transparent;
+		will-change: transform;
+	}
+
+	.cat[data-pose='sleep'] {
+		--pose-dur: 650ms;
+		--pose-ease: var(--ease-in-out);
+	}
+
+	.cat[data-pose='jump'] {
+		--pose-dur: 160ms;
+	}
+
+	.cat__flip {
+		width: 100%;
+		height: 100%;
+		transition: transform 220ms var(--ease-in-out);
+		animation: cat-gallop-bob var(--gallop) linear infinite;
+	}
+
+	.cat[data-facing='left'] .cat__flip {
+		transform: scaleX(-1);
+	}
+
+	.cat__svg {
+		display: block;
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+		transform-origin: 50% 100%;
+	}
+
+	.cat__tail,
+	.cat__torso,
+	.cat__head,
+	.cat__leg,
+	.cat__eye {
+		transition:
+			transform var(--pose-dur) var(--pose-ease),
+			--swing 260ms var(--ease-in-out),
+			--nod 260ms var(--ease-in-out),
+			--knead 260ms var(--ease-in-out),
+			--breathe 600ms var(--ease-in-out);
+	}
+
+	/* ---- rig ---- */
+
+	.cat__tail {
+		transform-box: view-box;
+		transform-origin: 8px 13.5px;
+		animation: cat-swish 1.8s var(--ease-in-out) infinite alternate;
+	}
+
+	.cat__torso {
+		transform-box: view-box;
+		transform-origin: 15px 14.2px;
+		animation: cat-breathe 2.6s ease-in-out infinite alternate;
+	}
+
+	.cat__head {
+		transform-box: view-box;
+		transform-origin: 21px 11px;
+		animation: cat-nod 0.2s ease-in-out infinite alternate;
+	}
+
+	.cat__leg {
+		transform-box: fill-box;
+		transform-origin: 50% 0;
+		animation:
+			cat-swing 0.34s ease-in-out infinite alternate,
+			cat-knead 0.28s ease-in-out infinite alternate;
+	}
+
+	.cat__leg--h1,
+	.cat__leg--f2 {
+		animation-direction: alternate-reverse;
+	}
+
+	.cat__stride {
+		transform-box: fill-box;
+		transform-origin: 50% 0;
+	}
+
+	.cat__leg--f1 .cat__stride,
+	.cat__leg--f2 .cat__stride {
+		animation: cat-gallop-front var(--gallop) linear infinite;
+	}
+
+	.cat__leg--h1 .cat__stride,
+	.cat__leg--h2 .cat__stride {
+		animation: cat-gallop-hind var(--gallop) linear infinite;
+	}
+
+	.cat__leg--f2 .cat__stride,
+	.cat__leg--h1 .cat__stride {
+		animation-delay: calc(var(--gallop) * -0.92);
+	}
+
+	.cat__spine {
+		transform-box: view-box;
+		transform-origin: 15px 14.2px;
+		animation: cat-gallop-spine var(--gallop) linear infinite;
+	}
+
+	.cat__eye {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: cat-blink 4.2s infinite;
+	}
+
+	/* ---- poses ---- */
+
+	.cat[data-pose='walk'] .cat__leg {
+		--swing: 24deg;
+	}
+
+	.cat[data-pose='run'] {
+		--run: 1;
+		& .cat__head {
+			transform: translate(1.2px, 1.4px) rotate(-4deg);
+		}
+		& .cat__tail {
+			transform: rotate(-38deg);
+		}
+	}
+
+	.cat[data-pose='jump'] :is(.cat__leg--h1, .cat__leg--h2) {
+		transform: rotate(35deg);
+	}
+
+	.cat[data-pose='jump'] :is(.cat__leg--f1, .cat__leg--f2) {
+		transform: rotate(-35deg);
+	}
+
+	.cat[data-pose='jump'] .cat__tail {
+		transform: rotate(-30deg);
+	}
+
+	.cat[data-pose='fall'] {
+		& :is(.cat__leg--h1, .cat__leg--h2) {
+			transform: rotate(60deg);
+		}
+		& :is(.cat__leg--f1, .cat__leg--f2) {
+			transform: rotate(-60deg);
+		}
+		& .cat__tail {
+			transform: rotate(25deg);
+		}
+		& .cat__head {
+			transform: rotate(-12deg);
+		}
+	}
+
+	.cat[data-pose='eat'] .cat__head {
+		transform: rotate(39deg);
+		--nod: 7deg;
+	}
+
+	.cat[data-pose='knead'] :is(.cat__leg--f1, .cat__leg--f2) {
+		--knead: 2px;
+	}
+
+	.cat:is([data-pose='sit'], [data-pose='groom'], [data-pose='bath']) {
+		& .cat__torso {
+			transform: translate(-1px, 2.4px) rotate(-80deg) scale(0.88, 1.24);
+		}
+		& .cat__head {
+			transform: translate(-6.4px, -1.6px);
+		}
+		& .cat__leg--f1 {
+			transform: translate(-1.4px, -1px) scaleY(1.09);
+		}
+		& .cat__leg--f2 {
+			transform: translate(-6px, 0);
+		}
+		& :is(.cat__leg--h1, .cat__leg--h2) {
+			transform: translate(1.5px, 9px) scaleY(0.22);
+		}
+		& .cat__tail {
+			transform: translate(0.5px, 8.5px) scale(1, 0.72);
+		}
+	}
+
+	.cat[data-pose='groom'] {
+		& .cat__head {
+			transform: translate(-6.4px, -1.6px) rotate(13deg);
+			--nod: 5deg;
+		}
+		& .cat__leg--f1 {
+			transform: translate(-1.4px, -1px) rotate(-128deg) scaleY(0.7);
+			--swing: 12deg;
+		}
+	}
+
+	.cat[data-pose='sleep'] {
+		& .cat__torso {
+			transform: translate(-1px, 5.4px) scale(1.12, 0.92);
+			--breathe: 0.05;
+		}
+		& .cat__head {
+			transform: translate(-1.2px, 8.2px) scale(0.92);
+		}
+		& .cat__eye {
+			transform: scaleY(0.2);
+		}
+		& .cat__leg {
+			transform: translateY(10.5px) scaleY(0.09);
+		}
+		& .cat__tail {
+			transform: translate(-2.5px, 8px) rotate(-75deg) scale(0.65);
+		}
+	}
+
+	.cat[data-pose='bath'] {
+		& .cat__leg--h2 {
+			transform: translate(2px, 8px) rotate(160deg) scaleY(1.15);
+			--swing: 5deg;
+		}
+		& .cat__head {
+			transform: translate(-6.4px, -1.6px) rotate(42deg);
+			--nod: 6deg;
+		}
+	}
+
+	.cat[data-pose='stalk'] {
+		& .cat__torso {
+			transform: translate(0, 3px) scale(1.03, 0.88);
+		}
+		& .cat__head {
+			transform: translate(1.5px, 4px);
+		}
+		& .cat__leg {
+			transform: translateY(3.4px) scaleY(0.7);
+		}
+		& .cat__tail {
+			transform: rotate(-55deg);
+			animation-duration: 0.35s;
+		}
+	}
+
+	.cat[data-pose='bat'] {
+		--pose-dur: 110ms;
+		& .cat__leg--f1 {
+			transform: rotate(-85deg);
+		}
+	}
+
+	.cat[data-pose='stretch'] {
+		& .cat__torso {
+			transform: translate(0, 1.5px) rotate(14deg);
+		}
+		& :is(.cat__leg--f1, .cat__leg--f2) {
+			transform: translate(-1px, 6.4px) rotate(-74deg);
+		}
+		& .cat__head {
+			transform: translate(2.4px, 5.2px) rotate(-14deg);
+		}
+		& .cat__tail {
+			transform: rotate(18deg);
+		}
+	}
+
+	.cat:is([data-pose='belly'], [data-pose='flail']) {
+		--pose-dur: 520ms;
+		--pose-ease: var(--ease-in-out);
+		& .cat__torso {
+			transform: translate(0, 5px) scale(1.04, 0.92) rotate(180deg);
+		}
+		& .cat__leg {
+			transform: translateY(6px) rotate(180deg) scaleY(0.8);
+			--swing: 8deg;
+		}
+		& .cat__head {
+			transform: translate(5px, 4.5px) rotate(180deg) scale(0.92);
+		}
+		& .cat__tail {
+			transform: translate(-1px, 8px) rotate(-70deg) scale(0.8);
+		}
+	}
+
+	.cat[data-pose='flail'] .cat__leg {
+		--swing: 30deg;
+		animation-duration: 0.14s, 0.28s;
+	}
+
+	.cat[data-pose='hack'] {
+		& .cat__head {
+			transform: translate(1px, 1.5px) rotate(24deg);
+		}
+		& .cat__torso {
+			transform: translateY(1px) scale(1, 1.06);
+		}
+		& .cat__tail {
+			transform: rotate(-20deg);
+		}
+	}
+
+	.cat-yarn {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 29;
+		width: 11px;
+		height: 11px;
+		pointer-events: none;
+		will-change: transform;
+	}
+
+	.cat-yarn svg {
+		display: block;
+	}
+
+	@keyframes cat-swing {
+		from {
+			rotate: calc(var(--swing) * -1);
+		}
+		to {
+			rotate: var(--swing);
+		}
+	}
+
+	@keyframes cat-nod {
+		from {
+			rotate: calc(var(--nod) * -1);
+		}
+		to {
+			rotate: var(--nod);
+		}
+	}
+
+	@keyframes cat-knead {
+		from {
+			translate: 0 0;
+		}
+		to {
+			translate: 0 calc(var(--knead) * -1);
+		}
+	}
+
+	@keyframes cat-breathe {
+		from {
+			scale: 1;
+		}
+		to {
+			scale: 1 calc(1 + var(--breathe));
+		}
+	}
+
+	@keyframes cat-gallop-front {
+		0% {
+			transform: rotate(calc(var(--run) * -48deg)) scaleY(1);
+			animation-timing-function: ease-in;
+		}
+		28% {
+			transform: rotate(calc(var(--run) * 6deg)) scaleY(1);
+		}
+		52% {
+			transform: rotate(calc(var(--run) * 42deg)) scaleY(calc(1 - var(--run) * 0.06));
+			animation-timing-function: ease-out;
+		}
+		78% {
+			/* paw folds up while it swings forward again */
+			transform: rotate(calc(var(--run) * -10deg)) scaleY(calc(1 - var(--run) * 0.32));
+		}
+		100% {
+			transform: rotate(calc(var(--run) * -48deg)) scaleY(1);
+		}
+	}
+
+	@keyframes cat-gallop-hind {
+		0% {
+			transform: rotate(calc(var(--run) * 52deg)) scaleY(1);
+			animation-timing-function: ease-out;
+		}
+		26% {
+			transform: rotate(calc(var(--run) * 8deg)) scaleY(calc(1 - var(--run) * 0.3));
+		}
+		50% {
+			transform: rotate(calc(var(--run) * -38deg)) scaleY(calc(1 - var(--run) * 0.08));
+			animation-timing-function: ease-in;
+		}
+		76% {
+			transform: rotate(calc(var(--run) * 12deg)) scaleY(1);
+		}
+		100% {
+			transform: rotate(calc(var(--run) * 52deg)) scaleY(1);
+		}
+	}
+
+	@keyframes cat-gallop-spine {
+		0%,
+		100% {
+			transform: scale(calc(1 + var(--run) * 0.09), calc(1 - var(--run) * 0.05)) rotate(calc(var(--run) * 2deg));
+		}
+		50% {
+			transform: scale(calc(1 - var(--run) * 0.1), calc(1 + var(--run) * 0.08)) rotate(calc(var(--run) * -5deg));
+		}
+	}
+
+	@keyframes cat-gallop-bob {
+		0%,
+		50%,
+		100% {
+			translate: 0 0;
+			animation-timing-function: ease-out;
+		}
+		22% {
+			translate: 0 calc(var(--run) * -2.6px);
+			animation-timing-function: ease-in;
+		}
+		74% {
+			translate: 0 calc(var(--run) * -1.4px);
+			animation-timing-function: ease-in;
+		}
+	}
+
+	@keyframes cat-swish {
+		from {
+			rotate: -10deg;
+		}
+		to {
+			rotate: 12deg;
+		}
+	}
+
+	@keyframes cat-blink {
+		0%,
+		94%,
+		100% {
+			scale: 1;
+		}
+		96% {
+			scale: 1 0.1;
+		}
+	}
+</style>
+
+<script>
+	import { startCat } from '../lib/cat'
+
+	const PERCHES = [
+		'.btn',
+		'.profile-avatar',
+		'.um__bar',
+		'.post-link',
+		'.more-link',
+		'.card',
+		'.back',
+		'.prose h2',
+		'.prose h3',
+		'.prose pre',
+		'.prose img',
+		'.votes',
+		'.comment-item',
+		'.link-item',
+		'.stat',
+		'.cover-wrap',
+		'.chat-composer',
+	].join(', ')
+	const EDIBLE = '.btn'
+
+	let stop: (() => void) | null = null
+	let pages = 0
+
+	document.addEventListener('astro:page-load', () => {
+		stop?.()
+		stop = startCat(PERCHES, EDIBLE, pages++ ? { delay: 700, arrive: 'drop' } : {})
+	})
+
+	document.addEventListener('astro:before-swap', () => {
+		stop?.()
+		stop = null
+	})
+</script>
