@@ -1,0 +1,117 @@
+---
+import Icon from './Icon.astro'
+import { socials, sourceUrl } from '../data/site'
+
+interface Props {
+	width?: string
+}
+
+const { width = '48rem' } = Astro.props
+const year = new Date().getFullYear()
+---
+
+<footer class="footer">
+	<div class="footer__inner" style={`--footer-width:${width}`}>
+		<span class="footer__copy">© {year} Jakob Pütz</span>
+
+		<nav class="footer__nav" aria-label="Footer">
+			<span class="footer__links">
+				<a href="/posts" data-astro-prefetch>Writing</a>
+				<a href="/uptime" data-astro-prefetch>Uptime</a>
+				<a href={sourceUrl} target="_blank" rel="noopener noreferrer">Source</a>
+			</span>
+			<span class="footer__icons">
+				<a href="#" data-contact-link aria-label="Email" title="Email">
+					<Icon name="mail-02" size={17} />
+				</a>
+				{
+					socials.map((s) => (
+						<a
+							href={s.href}
+							target="_blank"
+							rel="noopener noreferrer me"
+							aria-label={s.label}
+							title={s.label}
+						>
+							<Icon name={s.icon} size={17} />
+						</a>
+					))
+				}
+			</span>
+		</nav>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		padding: 0 1.5rem 2.5rem;
+	}
+
+	.footer__inner {
+		width: 100%;
+		max-width: var(--footer-width);
+		margin: 0 auto;
+		padding-top: 1.25rem;
+		border-top: 1px solid var(--border);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+		white-space: nowrap;
+	}
+
+	.footer__copy {
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+	}
+
+	.footer__nav {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+	}
+
+	.footer__links {
+		display: flex;
+		gap: 1.1rem;
+	}
+
+	.footer__links a {
+		font-size: 0.8125rem;
+		color: var(--fg-muted);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.footer__icons {
+		display: flex;
+		align-items: center;
+		gap: 0.2rem;
+	}
+
+	.footer__icons a {
+		display: grid;
+		place-items: center;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 9999px;
+		color: var(--fg-muted);
+		transition:
+			color var(--dur-fast) var(--ease-out),
+			background-color var(--dur-fast) var(--ease-out);
+	}
+
+	.footer__links a:hover,
+	.footer__icons a:hover {
+		color: var(--fg);
+	}
+
+	.footer__icons a:hover {
+		background: var(--glass-bg);
+	}
+
+	@media (max-width: 480px) {
+		.footer__links {
+			display: none;
+		}
+	}
+</style>

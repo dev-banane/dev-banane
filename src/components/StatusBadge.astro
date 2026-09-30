@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro'
+import { statusIcon, type Project } from '../data/projects'
+
+interface Props {
+	status: Project['status']
+}
+
+const { status } = Astro.props
+---
+
+<span class="project-status" data-status={status}>
+	<Icon name={statusIcon[status]} size={14} class="project-status__icon" />
+	{status}
+</span>
+
+<style>
+	.project-status {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		flex-shrink: 0;
+		font-size: 0.75rem;
+		font-weight: 500;
+		line-height: 1;
+		color: var(--fg-dim);
+		white-space: nowrap;
+	}
+
+	.project-status[data-status='Live'] :global(.project-status__icon) {
+		color: var(--status-up);
+	}
+
+	.project-status[data-status='In development'] :global(.project-status__icon) {
+		color: var(--status-degraded);
+	}
+</style>

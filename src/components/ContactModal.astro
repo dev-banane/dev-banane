@@ -1,0 +1,301 @@
+---
+import Icon from './Icon.astro'
+---
+
+<dialog id="contact-modal" class="compose" aria-labelledby="compose-title">
+	<form class="compose__window" method="dialog" id="compose-form">
+		<header class="compose__head">
+			<div>
+				<h2 class="compose__title" id="compose-title">New message</h2>
+				<p class="compose__to">
+					<span class="compose__to-label">To</span>
+					<span class="compose__chip">
+						<img src="/assets/avatar.jpg" alt="" width="20" height="20" />
+						Jakob Pütz
+						<span class="compose__address" data-compose-address></span>
+					</span>
+				</p>
+			</div>
+			<button type="button" class="compose__close" data-compose-close aria-label="Close">
+				<Icon name="cancel-01" size={18} />
+			</button>
+		</header>
+
+		<div class="compose__fields">
+			<label class="compose__field">
+				<span class="compose__label">Your name</span>
+				<input
+					class="compose__input"
+					type="text"
+					name="from"
+					autocomplete="name"
+					placeholder="Jane Doe"
+				/>
+			</label>
+			<label class="compose__field">
+				<span class="compose__label">Subject</span>
+				<input
+					class="compose__input"
+					type="text"
+					name="subject"
+					placeholder="What's it about?"
+					maxlength="140"
+				/>
+			</label>
+			<label class="compose__field compose__field--wide">
+				<span class="compose__label">Message</span>
+				<textarea
+					class="compose__input compose__body"
+					name="message"
+					placeholder="Hey Jakob, …"
+					maxlength="1800"
+					required></textarea>
+			</label>
+		</div>
+
+		<footer class="compose__foot">
+			<p class="compose__hint">Opens in your own mail app, ready to send.</p>
+			<div class="compose__actions">
+				<button type="button" class="btn" data-compose-copy>
+					<Icon name="copy-01" size={16} />
+					<span data-compose-copy-label>Copy address</span>
+				</button>
+				<button type="submit" class="btn btn--primary">
+					<Icon name="sent" size={16} />
+					Open in mail app
+				</button>
+			</div>
+		</footer>
+	</form>
+</dialog>
+
+<style>
+	.compose {
+		--field-bg: color-mix(in srgb, var(--fg) 5%, transparent);
+		--field-bg-focus: color-mix(in srgb, var(--fg) 3%, transparent);
+		width: min(44rem, calc(100vw - 2rem));
+		max-height: calc(100dvh - 2rem);
+		margin: auto;
+		padding: 0;
+		border: none;
+		border-radius: 2rem;
+		background: var(--bg);
+		color: var(--fg);
+		box-shadow:
+			0 0 0 1px var(--border),
+			0 40px 100px -24px rgba(0, 0, 0, 0.6);
+		overflow: auto;
+	}
+
+	.compose[open] {
+		animation: compose-in 300ms cubic-bezier(0.2, 0.85, 0.2, 1.1);
+	}
+
+	.compose::backdrop {
+		background: rgba(0, 0, 0, 0.45);
+		backdrop-filter: blur(6px);
+	}
+
+	@keyframes compose-in {
+		from {
+			opacity: 0;
+			transform: translateY(14px) scale(0.97);
+		}
+	}
+
+	.compose__window {
+		display: flex;
+		flex-direction: column;
+		gap: 1.1rem;
+		padding: 1.4rem;
+	}
+
+	.compose__head {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.2rem 0.2rem 0 0.35rem;
+	}
+
+	.compose__title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+	}
+
+	.compose__to {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		margin-top: 0.55rem;
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+	}
+
+	.compose__chip {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		min-width: 0;
+		padding: 0.2rem 0.75rem 0.2rem 0.2rem;
+		border-radius: 9999px;
+		background: var(--glass-bg);
+		box-shadow: var(--glass-shadow);
+		color: var(--fg);
+		font-size: 0.8125rem;
+		font-weight: 500;
+		white-space: nowrap;
+	}
+
+	.compose__chip img {
+		width: 1.35rem;
+		height: 1.35rem;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+
+	.compose__address {
+		color: var(--fg-dim);
+		font-weight: 400;
+	}
+
+	.compose__close {
+		display: grid;
+		place-items: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		flex-shrink: 0;
+		border: none;
+		border-radius: 9999px;
+		background: var(--field-bg);
+		color: var(--fg-muted);
+		cursor: pointer;
+		transition:
+			color var(--dur-fast) var(--ease-out),
+			background-color var(--dur-fast) var(--ease-out);
+	}
+
+	.compose__close:hover {
+		color: var(--fg);
+		background: var(--glass-bg);
+	}
+
+	.compose__fields {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.6rem;
+	}
+
+	.compose__field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+		padding: 0.7rem 1rem 0.75rem;
+		border-radius: 1.25rem;
+		background: var(--field-bg);
+		box-shadow: inset 0 0 0 1px transparent;
+		cursor: text;
+		transition:
+			background-color var(--dur-fast) var(--ease-out),
+			box-shadow var(--dur) var(--ease-out);
+	}
+
+	.compose__field:hover {
+		box-shadow: inset 0 0 0 1px var(--border);
+	}
+
+	.compose__field:focus-within {
+		background: var(--field-bg-focus);
+		box-shadow:
+			inset 0 0 0 1px color-mix(in srgb, var(--accent) 65%, transparent),
+			0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+	}
+
+	.compose__field--wide {
+		grid-column: 1 / -1;
+	}
+
+	.compose__label {
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--fg-dim);
+		transition: color var(--dur-fast) var(--ease-out);
+	}
+
+	.compose__field:focus-within .compose__label {
+		color: var(--accent);
+	}
+
+	.compose__input {
+		width: 100%;
+		padding: 0;
+		border: none;
+		outline: none;
+		background: transparent;
+		color: var(--fg);
+		font-family: inherit;
+		font-size: 0.9375rem;
+		line-height: 1.5;
+	}
+
+	.compose__input::placeholder {
+		color: var(--fg-dim);
+		opacity: 0.7;
+	}
+
+	.compose__body {
+		min-height: 15rem;
+		line-height: 1.65;
+		resize: none;
+	}
+
+	.compose__foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding-left: 0.35rem;
+	}
+
+	.compose__hint {
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+	}
+
+	.compose__actions {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	@media (max-width: 560px) {
+		.compose {
+			border-radius: 1.6rem;
+		}
+
+		.compose__window {
+			padding: 1.1rem;
+		}
+
+		.compose__fields {
+			grid-template-columns: 1fr;
+		}
+
+		.compose__body {
+			min-height: 10rem;
+		}
+
+		.compose__hint,
+		.compose__address {
+			display: none;
+		}
+
+		.compose__actions {
+			width: 100%;
+		}
+
+		.compose__actions .btn {
+			flex: 1;
+		}
+	}
+</style>

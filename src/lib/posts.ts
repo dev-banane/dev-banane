@@ -1,8 +1,45 @@
-import { marked } from 'marked';
+import { marked, type RendererObject } from 'marked';
 import { inlineIcon } from './icons';
 import { readThrough } from './content-cache';
 
-marked.setOptions({ gfm: true, breaks: true });
+const RENDER_VERSION = 2;
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+const renderer: RendererObject = {
+  heading({ tokens, depth }) {
+    if (depth < 2 || depth > 4) return false;
+    const inner = this.parser.parseInline(tokens);
+    const id = slugifyTitle(inner.replace(/<[^>]+>/g, ''));
+    return (
+      `<h${depth} id="${id}" class="md-heading">` +
+      `<a href="#${id}" class="md-anchor" aria-label="Link to this section">#</a>${inner}` +
+      `</h${depth}>\n`
+    );
+  },
+  code({ text, lang, escaped }) {
+    const language = (lang ?? '').match(/^\S*/)?.[0] ?? '';
+    const body = escaped ? text : escapeHtml(text);
+    const langClass = language ? ` class="language-${escapeHtml(language)}"` : '';
+    return (
+      `<figure class="code-block">` +
+      `<figcaption class="code-block__bar">` +
+      `<span class="code-block__lang">${escapeHtml(language || 'text')}</span>` +
+      `<button type="button" class="btn btn--sm code-block__copy">Copy</button>` +
+      `</figcaption>` +
+      `<pre><code${langClass}>${body}</code></pre>` +
+      `</figure>\n`
+    );
+  },
+};
+
+marked.use({ gfm: true, breaks: true, renderer });
 
 const MEDIA_BASE = (
   import.meta.env.PUBLIC_MEDIA_URL ?? 'https://media.devjakob.com'
@@ -111,10 +148,16 @@ function enhanceFileLinks(html: string): string {
   });
 }
 
+function wrapTables(html: string): string {
+  return html
+    .replace(/<table>/g, '<div class="md-table"><table>')
+    .replace(/<\/table>/g, '</table></div>');
+}
+
 async function renderMarkdown(body: string): Promise<string> {
   const prepared = preserveExtraBlankLines(body.replace(/^\n+/, ''));
   const html = await marked.parse(prepared);
-  return enhanceFileLinks(enhanceImages(html));
+  return wrapTables(enhanceFileLinks(enhanceImages(html)));
 }
 
 export function slugifyTitle(title: string): string {
@@ -237,7 +280,7 @@ export async function fetchPost(
   const candidates = postFilenameCandidates(slug, opts);
   if (!candidates.length) return null;
 
-  return readThrough<PostContent>(`posts:item:${candidates.join('|')}`, async () => {
+  return readThrough<PostContent>(`posts:item:r${RENDER_VERSION}:${candidates.join('|')}`, async () => {
     for (const name of candidates) {
       const object = await bucket.get(postKey(name));
       if (!object) continue;

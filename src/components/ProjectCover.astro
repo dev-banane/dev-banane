@@ -25,17 +25,19 @@ const hasCover = Boolean(project.cover)
 
 	{
 		hasCover && (
-			<img
-				src={project.cover}
-				alt={project.coverAlt ?? `${project.title} screenshot`}
-				class="cover__img"
-				width="1600"
-				height="1000"
-				sizes={sizes}
-				loading={eager ? 'eager' : 'lazy'}
-				decoding="async"
-				onerror="this.remove()"
-			/>
+			<div class="cover__frame">
+				<img
+					src={project.cover}
+					alt={project.coverAlt ?? `${project.title} screenshot`}
+					class="cover__img"
+					width="1600"
+					height="1000"
+					sizes={sizes}
+					loading={eager ? 'eager' : 'lazy'}
+					decoding="async"
+					onerror="this.parentElement.remove()"
+				/>
+			</div>
 		)
 	}
 </div>
@@ -47,32 +49,43 @@ const hasCover = Boolean(project.cover)
 		overflow: hidden;
 		border-radius: 0.75rem;
 		border: 1px solid var(--border);
-		background: var(--bg-elevated);
-		transition:
-			border-color var(--dur) var(--ease-out),
-			transform var(--dur-slow) var(--ease-out),
-			box-shadow var(--dur-slow) var(--ease-out);
+		background: var(--cover-bg);
+		transition: border-color var(--dur) var(--ease-out);
 	}
 
 	:global(a:hover) > .cover,
 	:global(a:focus-visible) > .cover {
 		border-color: var(--border-strong);
-		transform: translateY(-4px);
-		box-shadow: var(--shadow-lift);
 	}
 
-	.cover__img {
-		position: relative;
+	.cover__frame {
+		position: absolute;
 		z-index: 1;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
+		top: 8%;
+		left: 7%;
+		right: 7%;
+		bottom: -1px;
+		overflow: hidden;
+		border-radius: 0.5rem 0.5rem 0 0;
+		border: 1px solid var(--border-strong);
+		border-bottom: none;
+		background: var(--bg);
+		box-shadow: var(--shadow-frame);
+		transform-origin: 50% 100%;
 		transition: transform var(--dur-slow) var(--ease-out);
 	}
 
-	:global(a:hover) > .cover .cover__img {
-		transform: scale(1.025);
+	:global(a:hover) > .cover .cover__frame,
+	:global(a:focus-visible) > .cover .cover__frame {
+		transform: scale(1.04);
+	}
+
+	.cover__img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: top center;
+		display: block;
 	}
 
 	.cover__fallback {
@@ -87,6 +100,10 @@ const hasCover = Boolean(project.cover)
 		text-align: center;
 		padding: 1.5rem;
 		background: repeating-linear-gradient(135deg, transparent 0 10px, var(--border) 10px 11px);
+	}
+
+	.cover:has(.cover__frame) .cover__fallback {
+		display: none;
 	}
 
 	.cover__fallback-title {

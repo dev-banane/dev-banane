@@ -6,6 +6,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://devjakob.com',
   adapter: cloudflare(),
+  build: {
+    format: 'file',
+  },
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'viewport',

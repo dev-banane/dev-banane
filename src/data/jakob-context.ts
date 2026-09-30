@@ -6,7 +6,7 @@ is a 17-year-old self-taught full-stack developer from Aachen, Germany. He has
 been building software since his early teens. What started as curiosity turned
 into a serious passion for shipping things people actually use. He describes
 himself simply as someone who builds and ships web applications, APIs, and
-platforms that people actually use, from ATC tools with 9,000+ users to
+platforms that people actually use, from ATC tools with 12,000+ users to
 developer APIs and Discord bots for community management and moderation.
 
 - Website: https://devjakob.com
@@ -98,7 +98,7 @@ simulation community. Everything lives under the Cephie Studios GitHub org
 - **PFControl v2** (pfcontrol-2 repo): the flagship product. A fast, reliable
   ATC (air traffic control) flight-strip platform for coordination between
   controllers and pilots. Started at age 15, now the leading strip and flight
-  management platform for Project Flight and Roblox aviation, with over 9,000
+  management platform for Project Flight and Roblox aviation, with over 12,000
   registered users and roughly 500 daily actives. Built from the ground up by
   Jakob; it shaped how he thinks about uptime, migrations, and not breaking
   things for real users because it's been in production for years.

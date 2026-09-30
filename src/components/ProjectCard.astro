@@ -1,0 +1,66 @@
+---
+import ProjectCover from './ProjectCover.astro'
+import StatusBadge from './StatusBadge.astro'
+import TechStack from './TechStack.astro'
+import type { Project } from '../data/projects'
+
+interface Props {
+	project: Project
+	headingLevel?: 'h2' | 'h3'
+}
+
+const { project, headingLevel: Heading = 'h3' } = Astro.props
+---
+
+<a href={`/work/${project.slug}`} class="card" data-astro-prefetch>
+	<ProjectCover
+		project={project}
+		sizes="(min-width: 900px) 24rem, (min-width: 640px) 45vw, 100vw"
+	/>
+
+	<div class="card__body">
+		<div class="card__headline">
+			<Heading class="card__title">{project.title}</Heading>
+			<StatusBadge status={project.status} />
+		</div>
+		<p class="card__tagline">{project.tagline}</p>
+		<div class="card__stack">
+			<TechStack stack={project.stack} limit={5} />
+		</div>
+	</div>
+</a>
+
+<style>
+	.card {
+		display: block;
+	}
+
+	.card__body {
+		margin-top: 1rem;
+	}
+
+	.card__headline {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.card__title {
+		font-size: 1.0625rem;
+		font-weight: 600;
+		letter-spacing: -0.015em;
+		color: var(--fg);
+	}
+
+	.card__tagline {
+		margin-top: 0.4rem;
+		font-size: 0.875rem;
+		line-height: 1.6;
+		color: var(--fg-muted);
+	}
+
+	.card__stack {
+		margin-top: 0.85rem;
+	}
+</style>

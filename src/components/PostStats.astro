@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro'
+import { CHAT_ENABLED } from '../data/site'
 
 interface Props {
 	slug: string
@@ -17,19 +18,23 @@ const { slug, readingMinutes = 1 } = Astro.props
 	</div>
 
 	<div class="action-bar">
-		<div class="votes">
+		<div class="votes" role="group" aria-label="Rate this post">
 			<button class="vote vote-up" aria-label="Upvote" aria-pressed="false">
-				<Icon name="arrow-up-01" class="vote__icon" size={15} />
+				<Icon name="thumbs-up" class="vote__icon" size={16} />
 				<span class="up-count">0</span>
 			</button>
+			<span class="votes__divider" aria-hidden="true"></span>
 			<button class="vote vote-down" aria-label="Downvote" aria-pressed="false">
-				<Icon name="arrow-down-01" class="vote__icon" size={15} />
+				<Icon name="thumbs-down" class="vote__icon" size={16} />
 				<span class="down-count">0</span>
 			</button>
 		</div>
 
 		<div class="links">
-			<button type="button" class="text-link copy-link">Copy link</button>
+			<button type="button" class="btn btn--sm copy-link">
+				<Icon name="link-02" size={14} />
+				<span class="copy-link__label">Copy link</span>
+			</button>
 		</div>
 	</div>
 </div>
@@ -39,10 +44,14 @@ const { slug, readingMinutes = 1 } = Astro.props
 		<Icon name="link-02" size={13} />
 		<span class="selection-link-label">Link to highlight</span>
 	</button>
-	<button type="button" class="selection-action selection-action--ask">
-		<Icon name="ai-chat-02" size={13} />
-		Ask my AI about this
-	</button>
+	{
+		CHAT_ENABLED && (
+			<button type="button" class="selection-action selection-action--ask">
+				<Icon name="ai-chat-02" size={13} />
+				Ask my AI about this
+			</button>
+		)
+	}
 </div>
 
 <style>
@@ -69,38 +78,41 @@ const { slug, readingMinutes = 1 } = Astro.props
 	}
 
 	.votes {
-		display: flex;
-		gap: 0.5rem;
+		display: inline-flex;
+		align-items: stretch;
+		height: 2rem;
+		border-radius: 9999px;
+		border: 1px solid var(--border-strong);
+		overflow: hidden;
+	}
+
+	.votes__divider {
+		width: 1px;
+		margin: 0.4rem 0;
+		background: var(--border-strong);
 	}
 
 	.vote {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
-		padding: 0.35rem 0.75rem;
-		border-radius: 9999px;
-		border: 1px solid var(--border);
+		padding: 0 0.8rem;
+		border: none;
 		background: transparent;
 		color: var(--fg-muted);
 		font-family: inherit;
 		font-size: 0.8125rem;
+		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 		cursor: pointer;
 		transition:
 			color var(--dur-fast) var(--ease-out),
-			border-color var(--dur-fast) var(--ease-out),
-			background var(--dur-fast) var(--ease-out),
-			transform var(--dur) var(--ease-out);
+			background-color var(--dur-fast) var(--ease-out);
 	}
 
 	.vote:hover {
 		color: var(--fg);
-		border-color: var(--border-strong);
-		transform: translateY(-1px);
-	}
-
-	.vote:active {
-		transform: translateY(0);
+		background: var(--glass-bg);
 	}
 
 	.vote__icon {
@@ -159,10 +171,12 @@ const { slug, readingMinutes = 1 } = Astro.props
 		}
 	}
 
-	.vote[aria-pressed='true'] {
-		color: var(--fg);
-		border-color: var(--fg);
-		background: var(--btn-social-bg);
+	.vote-up[aria-pressed='true'] {
+		color: var(--accent);
+	}
+
+	.vote-down[aria-pressed='true'] {
+		color: var(--status-down);
 	}
 
 	.vote:disabled {
@@ -172,7 +186,6 @@ const { slug, readingMinutes = 1 } = Astro.props
 	}
 
 	.vote.is-error {
-		border-color: #e5484d;
 		color: #e5484d;
 	}
 
@@ -181,30 +194,7 @@ const { slug, readingMinutes = 1 } = Astro.props
 		gap: 1rem;
 	}
 
-	.text-link {
-		background: none;
-		border: none;
-		padding: 0;
-		font-family: inherit;
-		font-size: 0.8125rem;
-		color: var(--fg-muted);
-		cursor: pointer;
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		text-decoration-color: var(--border);
-		transition:
-			color 0.15s ease,
-			text-decoration-color 0.15s ease;
-	}
-
-	.text-link:hover {
-		color: var(--fg);
-		text-decoration-color: var(--fg);
-	}
-
-	.text-link.is-copied {
-		color: var(--fg);
-		text-decoration-color: var(--fg);
+	.copy-link.is-copied {
 		animation: copied-pop 0.35s var(--ease-out);
 	}
 
@@ -646,11 +636,12 @@ const { slug, readingMinutes = 1 } = Astro.props
 		copyBtn?.addEventListener('click', async () => {
 			if (copyBtn.classList.contains('is-copied')) return
 			await copyText(url)
-			const prev = copyBtn.textContent
-			copyBtn.textContent = pick(COPIED)
+			const label = copyBtn.querySelector('.copy-link__label') ?? copyBtn
+			const prev = label.textContent
+			label.textContent = pick(COPIED)
 			copyBtn.classList.add('is-copied')
 			window.setTimeout(() => {
-				copyBtn.textContent = prev
+				label.textContent = prev
 				copyBtn.classList.remove('is-copied')
 			}, 1500)
 		})

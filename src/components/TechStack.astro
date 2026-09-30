@@ -1,0 +1,107 @@
+---
+import { TECH_ICONS } from '../lib/tech-icons'
+
+interface Props {
+	stack: string[]
+	size?: 'sm' | 'lg'
+	limit?: number
+	class?: string
+}
+
+const { stack, size = 'sm', limit, class: className } = Astro.props
+const items = limit ? stack.slice(0, limit) : stack
+const px = size === 'lg' ? 30 : 16
+---
+
+<ul class:list={['tech-stack', `tech-stack--${size}`, className]} aria-label="Stack">
+	{
+		items.map((name) => {
+			const icon = TECH_ICONS[name]
+			return (
+				<li class="tech" data-tip={name}>
+					{icon ? (
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width={px}
+							height={px}
+							viewBox={`0 0 ${icon.width} ${icon.height}`}
+							fill="currentColor"
+							style={icon.color ? `color:${icon.color}` : undefined}
+							role="img"
+							aria-label={name}
+							focusable="false"
+							set:html={icon.body}
+						/>
+					) : (
+						<span class="tech__text">{name}</span>
+					)}
+				</li>
+			)
+		})
+	}
+</ul>
+
+<style>
+	.tech-stack {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	.tech-stack--sm {
+		gap: 0.7rem;
+	}
+
+	.tech-stack--lg {
+		gap: 1.1rem;
+	}
+
+	.tech {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--fg);
+	}
+
+	.tech__text {
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: var(--fg-muted);
+		white-space: nowrap;
+	}
+
+	.tech::after {
+		content: attr(data-tip);
+		position: absolute;
+		bottom: calc(100% + 0.4rem);
+		left: 50%;
+		z-index: 20;
+		padding: 0.25rem 0.5rem;
+		border-radius: 0.4rem;
+		background: var(--fg);
+		color: var(--bg);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		line-height: 1.3;
+		white-space: nowrap;
+		pointer-events: none;
+		opacity: 0;
+		transform: translate(-50%, 0.2rem);
+		transition:
+			opacity var(--dur-fast) var(--ease-out),
+			transform var(--dur-fast) var(--ease-out);
+	}
+
+	.tech:hover::after {
+		opacity: 1;
+		transform: translate(-50%, 0);
+	}
+
+	.tech:has(.tech__text)::after {
+		display: none;
+	}
+</style>

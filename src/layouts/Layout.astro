@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css'
 import { ClientRouter } from 'astro:transitions'
-import ButtonCat from '../components/ButtonCat.astro'
+import ContactModal from '../components/ContactModal.astro'
 
 interface Props {
 	title?: string
@@ -18,7 +18,7 @@ const {
 	title = 'Jakob Pütz',
 	description = 'Jakob Pütz (also known as Jakob Puetz or devjakob), 17-year-old full-stack developer from Aachen, Germany. Building Weavay, Petal and PFControl. TypeScript, Next.js, Postgres.',
 	canonical = 'https://devjakob.com',
-	ogImage = 'https://devjakob.com/assets/avatar.jpg',
+	ogImage = 'https://devjakob.com/og.png',
 	ogType = 'website',
 	publishedTime,
 	schema,
@@ -75,10 +75,11 @@ const personSchema = {
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:alt" content={title} />
 		<meta property="og:site_name" content="Jakob Pütz" />
 		<meta property="og:locale" content="en_US" />
 
-		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="@devbanane" />
 		<meta name="twitter:creator" content="@devbanane" />
 		<meta name="twitter:title" content={title} />
@@ -111,7 +112,7 @@ const personSchema = {
 	</head>
 	<body>
 		<slot />
-		<ButtonCat />
+		<ContactModal />
 
 		<script>
 			let revealObserver: IntersectionObserver | null = null
@@ -166,6 +167,80 @@ const personSchema = {
 			}
 
 			document.addEventListener('astro:page-load', initReveal)
+
+			// Assembled at runtime so the address never sits in the HTML for scrapers.
+			const ADDRESS = `${'me'}@${'devjakob.com'}`
+
+			document.addEventListener('astro:page-load', () => {
+				// Real mailto for middle-click, "copy link" and anyone without the modal.
+				document
+					.querySelectorAll<HTMLAnchorElement>('a[data-contact-link]')
+					.forEach((link) => (link.href = `mailto:${ADDRESS}`))
+				const address = document.querySelector('[data-compose-address]')
+				if (address) address.textContent = ADDRESS
+			})
+
+			function composeDialog() {
+				return document.getElementById('contact-modal') as HTMLDialogElement | null
+			}
+
+			// Delegated on document: page swaps replace <body>, the listeners survive.
+			document.addEventListener('click', (event) => {
+				const target = event.target as Element | null
+				if (!target?.closest) return
+				const dialog = composeDialog()
+
+				const link = target.closest('a[data-contact-link]')
+				if (link) {
+					const e = event as MouseEvent
+					if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+					if (!dialog || typeof dialog.showModal !== 'function') return
+					event.preventDefault()
+					dialog.showModal()
+					const empty = [...dialog.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+						'input, textarea'
+					)].find((field) => !field.value)
+					;(empty ?? dialog.querySelector('textarea'))?.focus()
+					return
+				}
+
+				if (!dialog?.open) return
+				if (target === dialog || target.closest('[data-compose-close]')) {
+					dialog.close()
+					return
+				}
+
+				const copy = target.closest('[data-compose-copy]')
+				if (copy) {
+					const label = copy.querySelector('[data-compose-copy-label]')
+					navigator.clipboard
+						?.writeText(ADDRESS)
+						.then(() => {
+							if (!label) return
+							label.textContent = 'Copied!'
+							window.setTimeout(() => (label.textContent = 'Copy address'), 1500)
+						})
+						.catch(() => {})
+				}
+			})
+
+			document.addEventListener('submit', (event) => {
+				const form = event.target as HTMLFormElement | null
+				if (form?.id !== 'compose-form') return
+				event.preventDefault()
+				const data = new FormData(form)
+				const from = String(data.get('from') ?? '').trim()
+				const subject = String(data.get('subject') ?? '').trim() || 'Hello from devjakob.com'
+				let body = String(data.get('message') ?? '').trim()
+				if (from) body += `\n\n${from}`
+				window.location.href =
+					`mailto:${ADDRESS}?subject=${encodeURIComponent(subject)}` +
+					`&body=${encodeURIComponent(body)}`
+				window.setTimeout(() => {
+					composeDialog()?.close()
+					form.reset()
+				}, 400)
+			})
 		</script>
 
 		<script>
@@ -236,14 +311,20 @@ const personSchema = {
 							transitioning = false
 						})
 
+						const rect = fresh.getBoundingClientRect()
+						const x = rect.left + rect.width / 2
+						const y = rect.top + rect.height / 2
+						const endRadius = Math.hypot(
+							Math.max(x, window.innerWidth - x),
+							Math.max(y, window.innerHeight - y)
+						)
+
 						transition.ready.then(() => {
-							const endRadius = Math.hypot(window.innerWidth, window.innerHeight)
-							const origin = next === 'light' ? '100% 0%' : '0% 100%'
 							root.animate(
 								{
 									clipPath: [
-										`circle(0% at ${origin})`,
-										`circle(${endRadius}px at ${origin})`,
+										`circle(0px at ${x}px ${y}px)`,
+										`circle(${endRadius}px at ${x}px ${y}px)`,
 									],
 								},
 								{

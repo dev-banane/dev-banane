@@ -492,12 +492,11 @@
 	import { startCat } from '../lib/cat'
 
 	const PERCHES = [
-		'.btn',
+		'.btn:not(.btn--primary)',
 		'.profile-avatar',
 		'.um__bar',
 		'.post-link',
 		'.more-link',
-		'.card',
 		'.back',
 		'.prose h2',
 		'.prose h3',
@@ -507,10 +506,9 @@
 		'.comment-item',
 		'.link-item',
 		'.stat',
-		'.cover-wrap',
 		'.chat-composer',
 	].join(', ')
-	const EDIBLE = '.btn'
+	const EDIBLE = '.btn:not(.btn--primary)'
 
 	let stop: (() => void) | null = null
 	let pages = 0

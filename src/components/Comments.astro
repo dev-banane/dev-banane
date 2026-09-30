@@ -30,10 +30,10 @@ const MAX_TEXTAREA_PX = 240
 	data-initial-limit={String(INITIAL_COMMENT_LIMIT)}
 >
 	<div class="comments-header">
-		<h2 class="section-label">Comments</h2>
+		<h2 class="section-title">Comments</h2>
 		<button
 			id="comments-toggle"
-			class="toggle-btn"
+			class="btn btn--sm btn--icon toggle-btn"
 			aria-expanded="false"
 			aria-label="Add a comment"
 		>
@@ -153,7 +153,7 @@ const MAX_TEXTAREA_PX = 240
 					</div>
 
 					<div class="comment-actions">
-						<button type="submit" class="text-action" tabindex="-1">Post</button>
+						<button type="submit" class="btn btn--primary btn--sm" tabindex="-1">Post</button>
 						<span id="comment-status" class="comment-status" aria-live="polite"></span>
 					</div>
 
@@ -241,25 +241,6 @@ const MAX_TEXTAREA_PX = 240
 		align-items: center;
 		justify-content: space-between;
 		margin-bottom: 1.25rem;
-	}
-
-	.toggle-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 1.25rem;
-		height: 1.25rem;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		padding: 0;
-		flex-shrink: 0;
-		opacity: 0.6;
-		transition: opacity 0.15s ease;
-	}
-
-	.toggle-btn:hover {
-		opacity: 1;
 	}
 
 	.plus-icon {
@@ -535,28 +516,7 @@ const MAX_TEXTAREA_PX = 240
 		gap: 1rem;
 	}
 
-	.text-action {
-		background: none;
-		border: none;
-		padding: 0;
-		font-family: inherit;
-		font-size: 0.9375rem;
-		font-weight: 500;
-		color: var(--fg);
-		cursor: pointer;
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		text-decoration-color: var(--fg-dim);
-		transition:
-			text-decoration-color 0.15s ease,
-			opacity 0.15s ease;
-	}
-
-	.text-action:hover {
-		text-decoration-color: var(--fg);
-	}
-
-	.text-action:disabled {
+	.comment-actions .btn:disabled {
 		opacity: 0.5;
 		cursor: default;
 	}

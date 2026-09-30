@@ -6,12 +6,14 @@ import Layout from '../layouts/Layout.astro'
 import ThemeToggle from '../components/ThemeToggle.astro'
 import WorkShowcase from '../components/WorkShowcase.astro'
 import Uptime from '../components/Uptime.astro'
-import { socials } from '../data/site'
+import Footer from '../components/Footer.astro'
+import { socials, experience, CHAT_ENABLED } from '../data/site'
 import { featuredProjects } from '../data/projects'
 import { fetchPostList } from '../lib/posts'
+import { getPFControlStats, formatFloor } from '../lib/pfcontrol-stats'
 import { env } from 'cloudflare:workers'
 
-const posts = await fetchPostList(env.MEDIA)
+const [posts, pfStats] = await Promise.all([fetchPostList(env.MEDIA), getPFControlStats()])
 const HOMEPAGE_POSTS = 5
 const visiblePosts = posts.slice(0, HOMEPAGE_POSTS)
 const remainingPosts = posts.length - visiblePosts.length
@@ -40,17 +42,21 @@ function formatDate(iso: string) {
 ---
 
 <Layout
-	title="Jakob Pütz"
-	description="Jakob Pütz (Jakob Puetz, devjakob), 17-year-old full-stack developer from Aachen, Germany. Building Weavay, Petal and PFControl. TypeScript, Next.js, Postgres."
+	title="Jakob Pütz · Full-stack developer"
+	description="Jakob Pütz (Jakob Puetz, devjakob), 17-year-old full-stack developer from Aachen, Germany. Creator of PFControl, building Weavay and Petal. TypeScript, React, Next.js, Postgres, Cloudflare."
 	schema={workSchema}
 >
-	<div class="page">
+	<main class="page">
 		<div class="inner">
-			<article class="about">
+			<section class="about" aria-labelledby="name">
 				<div class="name-row" data-enter style="--d:0">
 					<div>
-						<h1 class="name">Jakob Pütz</h1>
-						<p class="role">Full-stack developer · Aachen, Germany</p>
+						<h1 class="name" id="name">Jakob Pütz</h1>
+						<p class="role">
+							<span>Full-stack developer</span>
+							<span class="role__sep" aria-hidden="true">·</span>
+							<span>Aachen, Germany</span>
+						</p>
 					</div>
 					<div class="name-row__right">
 						<ThemeToggle />
@@ -66,78 +72,103 @@ function formatDate(iso: string) {
 
 				<div class="prose" data-enter style="--d:1">
 					<p>
-						Hey, I'm a 17-year-old developer. I've been building software since my early
-						teens, and what started as curiosity quickly turned into a serious passion
-						for making things people actually use.
-					</p>
-					<p>
-						Right now I'm building <a
-							href="/work/weavay"
-							class="link"
-							data-astro-prefetch>Weavay</a
-						>, an email client that treats your mail as a living graph of the people and
-						threads it touches instead of a folder tree, and <a
+						I build and ship products people actually use. I started <a
 							href="/work/pfcontrol"
 							class="link"
 							data-astro-prefetch>PFControl</a
-						>, an ATC strip management platform I've been working on since I was 15 with
-						thousands of registered users and ~500 daily actives. <a
+						>, a flight-strip platform for virtual air traffic controllers, at 15. Today
+						it has {formatFloor(pfStats.registeredUsers)} registered users and around 500 daily actives.
+					</p>
+					<p>
+						Right now I'm building <a href="/work/weavay" class="link" data-astro-prefetch
+							>Weavay</a
+						>, an email client that threads mail into real conversations, and <a
 							href="/work/petal"
 							class="link"
 							data-astro-prefetch>Petal</a
-						>, a unified AI workspace, is in the mix too.
-					</p>
-					<p>
-						I work across the full stack with TypeScript, Next.js, Postgres, and
-						whatever else the problem needs. Outside of code I'm interested in aviation,
-						space as well as photography.
-						<br />
-						<a href="#" class="link" id="contact-link">Feel free to contact me!</a>
+						>, a memory-first AI workspace. I work across the stack with TypeScript,
+						React, Postgres and Cloudflare. I'm 17, self-taught, and into aviation,
+						space and photography when I'm not coding.
 					</p>
 				</div>
 
-				<div class="socials" data-enter style="--d:2">
+				<div class="actions" data-enter style="--d:2">
+					<a href="#" class="btn btn--primary" data-contact-link>
+						<Icon name="mail-02" class="btn-icon" size={18} />
+						Get in touch
+					</a>
+					{
+						CHAT_ENABLED && (
+							<a href="/chat" class="btn" data-astro-prefetch>
+								<Icon name="ai-chat-02" class="btn-icon" size={18} />
+								Ask my AI
+							</a>
+						)
+					}
 					{
 						socials.map((s) => (
 							<a
 								href={s.href}
 								target="_blank"
 								rel="noopener noreferrer me"
-								class="btn btn--social"
+								class="btn"
 								aria-label={s.label}
 							>
 								<Icon name={s.icon} class="btn-icon" size={18} />
-								{s.label}
+								<span class="btn-label">{s.label}</span>
 							</a>
 						))
 					}
-					<a
-						href="https://tools.devjakob.com"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="btn btn--social"
-						aria-label="Tools"
-					>
-						<Icon name="link-02" class="btn-icon" size={18} />
-						Tools
-					</a>
 				</div>
 
 				<address class="sr-only" aria-hidden="true">
 					Jakob Pütz, also known as Jakob Puetz, devjakob, and dev-banane, web developer
 					based in Aachen, Germany.
 				</address>
-			</article>
+			</section>
 
-			<div data-enter style="--d:3">
-				<Uptime variant="unified" />
-			</div>
+			<WorkShowcase />
 
-			<section class="writing" aria-labelledby="writing-heading">
-				<header class="writing-head" data-enter style="--d:4">
-					<p class="writing-lede" id="writing-heading">
-						Notes on what I build and how it works.
-					</p>
+			<section class="experience" aria-labelledby="experience-heading" data-reveal>
+				<header class="section-head">
+					<h2 class="section-title" id="experience-heading">Experience</h2>
+					<p class="section-lede">Where I build things when it isn't a side project.</p>
+				</header>
+
+				<ol class="xp-list">
+					{
+						experience.map((xp) => (
+							<li class="xp">
+								<div class="xp__main">
+									<p class="xp__title">
+										{xp.role}
+										<span class="xp__at">at</span>
+										{xp.href ? (
+											<a
+												href={xp.href}
+												class="link"
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												{xp.org}
+											</a>
+										) : (
+											xp.org
+										)}
+									</p>
+									<p class="xp__summary">{xp.summary}</p>
+								</div>
+								<span class="xp__period">{xp.period}</span>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section class="writing" aria-labelledby="writing-heading" data-reveal>
+				<header class="section-head">
+					<h2 class="section-title" id="writing-heading">Writing</h2>
+					<p class="section-lede">Notes on what I build and how it works.</p>
 				</header>
 
 				{
@@ -146,8 +177,8 @@ function formatDate(iso: string) {
 					) : (
 						<Fragment>
 							<ul class="post-list">
-								{visiblePosts.map((p, i) => (
-									<li data-enter style={`--d:${5 + Math.min(i, 3)}`}>
+								{visiblePosts.map((p) => (
+									<li>
 										<a
 											href={`/posts/${p.slug}`}
 											class="post-link"
@@ -161,14 +192,8 @@ function formatDate(iso: string) {
 							</ul>
 
 							{remainingPosts > 0 && (
-								<a
-									href="/posts"
-									class="more-link"
-									data-enter
-									style="--d:8"
-									data-astro-prefetch
-								>
-									Show more
+								<a href="/posts" class="more-link" data-astro-prefetch>
+									All {posts.length} posts
 									<Icon name="arrow-right-01" size={15} class="more-link__icon" />
 								</a>
 							)}
@@ -177,14 +202,24 @@ function formatDate(iso: string) {
 				}
 			</section>
 
-			<WorkShowcase />
+			<section class="status" aria-labelledby="status-heading" data-reveal>
+				<header class="section-head">
+					<h2 class="section-title" id="status-heading">Status</h2>
+					<p class="section-lede">
+						Everything I run is monitored around the clock. 90 days of history.
+					</p>
+				</header>
+				<Uptime variant="unified" />
+			</section>
 		</div>
-	</div>
+	</main>
+
+	<Footer />
 </Layout>
 
 <style>
 	.page {
-		padding: 3.5rem 1.5rem 7rem;
+		padding: 3.5rem 1.5rem 5rem;
 	}
 
 	.inner {
@@ -231,9 +266,27 @@ function formatDate(iso: string) {
 	}
 
 	.role {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 0.4rem;
 		font-size: 0.9375rem;
 		color: var(--fg-muted);
 		margin-top: 0.5rem;
+	}
+
+	.role span {
+		white-space: nowrap;
+	}
+
+	@media (max-width: 420px) {
+		.role__sep {
+			display: none;
+		}
+
+		.role {
+			flex-direction: column;
+			row-gap: 0.1rem;
+		}
 	}
 
 	.prose {
@@ -241,6 +294,7 @@ function formatDate(iso: string) {
 		display: flex;
 		flex-direction: column;
 		gap: 1.1rem;
+		max-width: 42rem;
 	}
 
 	.prose p {
@@ -249,32 +303,90 @@ function formatDate(iso: string) {
 		color: var(--fg-muted);
 	}
 
-	.socials {
+	.actions {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.5rem;
 		margin-top: 2rem;
 	}
 
-	.writing {
-		margin-top: 4.5rem;
+	@media (max-width: 480px) {
+		.actions .btn-label {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip: rect(0 0 0 0);
+			white-space: nowrap;
+		}
+
+		.actions .btn:has(.btn-label) {
+			width: 2.5rem;
+			padding: 0;
+		}
 	}
 
-	.writing-head {
-		padding-bottom: 0.5rem;
+	.experience,
+	.writing,
+	.status {
+		margin-top: 5rem;
 	}
 
-	.writing-lede {
-		margin-top: 0.6rem;
+	.status :global(.uptime) {
+		margin-top: 0;
+	}
+
+	.xp-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.xp {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 1rem 0;
+		border-top: 1px solid var(--border);
+	}
+
+	.xp:last-child {
+		border-bottom: 1px solid var(--border);
+	}
+
+	.xp__title {
 		font-size: 0.9375rem;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--fg);
+	}
+
+	.xp__at {
+		color: var(--fg-dim);
+		font-weight: 400;
+		margin: 0 0.15rem;
+	}
+
+	.xp__summary {
+		margin-top: 0.25rem;
+		font-size: 0.875rem;
 		line-height: 1.6;
 		color: var(--fg-muted);
+	}
+
+	.xp__period {
+		font-size: 0.8125rem;
+		color: var(--fg-dim);
+		white-space: nowrap;
+		flex-shrink: 0;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.post-list {
 		list-style: none;
 		padding: 0;
-		margin: 1rem 0 0;
+		margin: 0;
 	}
 
 	.post-link {
@@ -313,7 +425,7 @@ function formatDate(iso: string) {
 		margin-top: 1.1rem;
 		font-size: 0.8125rem;
 		font-weight: 500;
-		color: var(--fg-dim);
+		color: var(--fg-muted);
 		transition: color var(--dur-fast) var(--ease-out);
 	}
 
@@ -338,18 +450,7 @@ function formatDate(iso: string) {
 	}
 
 	.empty {
-		margin-top: 1rem;
 		font-size: 0.9rem;
 		color: var(--fg-dim);
 	}
 </style>
-
-<script>
-	function initContactLink() {
-		const link = document.getElementById('contact-link') as HTMLAnchorElement | null
-		if (!link) return
-		link.href = `mailto:${'me'}@${'devjakob.com'}`
-	}
-
-	document.addEventListener('astro:page-load', initContactLink)
-</script>

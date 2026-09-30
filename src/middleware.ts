@@ -1,4 +1,5 @@
 import { defineMiddleware } from 'astro:middleware'
+import { CHAT_ENABLED } from './data/site'
 
 const STYLE_SRC = import.meta.env.DEV
 	? "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
@@ -17,8 +18,19 @@ const SECURITY_HEADERS: Record<string, string> = {
 		`default-src 'self'; script-src 'self' https://challenges.cloudflare.com; ${STYLE_SRC}; style-src-attr 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests`,
 }
 
-export const onRequest = defineMiddleware(async (_context, next) => {
-	const response = await next()
+function chatDisabledResponse(pathname: string): Response | null {
+	if (CHAT_ENABLED) return null
+	if (pathname === '/chat' || pathname.startsWith('/chat/')) {
+		return new Response(null, { status: 302, headers: { Location: '/' } })
+	}
+	if (pathname === '/api/chat' || pathname.startsWith('/api/chat/')) {
+		return Response.json({ error: 'Chat is currently disabled.' }, { status: 404 })
+	}
+	return null
+}
+
+export const onRequest = defineMiddleware(async (context, next) => {
+	const response = chatDisabledResponse(context.url.pathname) ?? (await next())
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		if (!response.headers.has(name)) response.headers.set(name, value)
 	}

@@ -3,6 +3,7 @@ export const prerender = false
 
 import Layout from '../../layouts/Layout.astro'
 import TopBar from '../../components/TopBar.astro'
+import Footer from '../../components/Footer.astro'
 import { fetchPostList } from '../../lib/posts'
 import { env } from 'cloudflare:workers'
 
@@ -72,12 +73,14 @@ const blogSchema = {
 			}
 		</div>
 	</div>
+
+	<Footer width="40rem" />
 </Layout>
 
 <style>
 	.page {
 		min-height: 100vh;
-		padding: 3rem 1.5rem 6rem;
+		padding: 3rem 1.5rem 5rem;
 	}
 
 	.inner {

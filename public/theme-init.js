@@ -8,4 +8,5 @@
 	window.__applyTheme = applyTheme
 	applyTheme(localStorage.getItem('theme') || 'light')
 	document.documentElement.classList.add('js')
+	if (location.hash) document.documentElement.classList.add('no-enter')
 })()

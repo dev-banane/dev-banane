@@ -58,7 +58,7 @@ const cells = Array.from({ length: HISTORY_DAYS }, (_, i) => i)
 		<section class="uptime" data-variant={variant} data-endpoint={project ?? ''}>
 			{heading && (
 				<header class="uptime__head">
-					<h2 class="section-label">
+					<h2 class="section-title">
 						{variant === 'compact' ? (
 							<a class="uptime__more" href="/uptime">
 								{heading}

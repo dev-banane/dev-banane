@@ -1,54 +1,38 @@
 ---
-import ProjectCover from './ProjectCover.astro'
+import ProjectCard from './ProjectCard.astro'
 import Icon from './Icon.astro'
-import Tooltip from './Tooltip.astro'
-import { featuredProjects, statusIcon } from '../data/projects'
+import { featuredProjects } from '../data/projects'
 ---
 
 <section class="work" id="work" aria-labelledby="work-heading">
-	<header class="work__head" data-enter style="--d:8">
-		<p class="work__lede" id="work-heading">Things I've built and still maintain.</p>
+	<header class="section-head" data-enter style="--d:3">
+		<h2 class="section-title" id="work-heading">Selected work</h2>
+		<p class="section-lede">Products I've built and still run in production.</p>
 	</header>
 
 	<ul class="work__list">
 		{
 			featuredProjects.map((project, i) => (
-				<li class="work__item" data-enter style={`--d:${9 + (i % 2)}`}>
-					<a href={`/work/${project.slug}`} class="card" data-astro-prefetch>
-						<ProjectCover
-							project={project}
-							sizes="(min-width: 900px) 22rem, (min-width: 640px) 45vw, 100vw"
-						/>
-
-						<div class="card__body">
-							<div class="card__headline">
-								<h3 class="card__title">{project.title}</h3>
-								<Tooltip text={project.status}>
-									<span class="card__status" data-status={project.status}>
-										<Icon
-											name={statusIcon[project.status]}
-											size={19}
-											title={project.status}
-										/>
-									</span>
-								</Tooltip>
-							</div>
-							<p class="card__tagline">{project.tagline}</p>
-						</div>
-					</a>
+				<li class="work__item" data-enter style={`--d:${4 + Math.min(i, 3)}`}>
+					<ProjectCard project={project} />
 				</li>
 			))
 		}
 		{
 			featuredProjects.length % 2 === 1 && (
-				<li class="work__item" data-enter style={`--d:${9 + (featuredProjects.length % 2)}`}>
-					<a href="#" id="work-contact-link" class="card card--contact">
+				<li class="work__item work__item--contact" data-reveal>
+					<a href="#" data-contact-link class="card card--contact">
 						<div class="cover cover--contact">
-							<Icon name="mail-02" size={28} class="contact__icon" />
-							<h3 class="contact__title">Have an idea?</h3>
+							<Icon name="mail-02" size={26} class="contact__icon" />
+							<h3 class="contact__title">Have a project in mind?</h3>
 							<p class="contact__tagline">
-								Let's work together! Reach out and tell me about it.
+								I'm always up for building something with someone. Tell me about
+								it.
 							</p>
+							<span class="contact__cta">
+								Get in touch
+								<Icon name="arrow-right-01" size={14} />
+							</span>
 						</div>
 					</a>
 				</li>
@@ -57,31 +41,10 @@ import { featuredProjects, statusIcon } from '../data/projects'
 	</ul>
 </section>
 
-<script>
-	function initWorkContactLink() {
-		const link = document.getElementById('work-contact-link') as HTMLAnchorElement | null
-		if (!link) return
-		link.href = `mailto:${'me'}@${'devjakob.com'}`
-	}
-
-	document.addEventListener('astro:page-load', initWorkContactLink)
-</script>
-
 <style>
 	.work {
-		margin-top: 4.5rem;
+		margin-top: 5rem;
 		scroll-margin-top: 2rem;
-	}
-
-	.work__head {
-		padding-bottom: 1.5rem;
-	}
-
-	.work__lede {
-		margin-top: 0.6rem;
-		font-size: 0.9375rem;
-		line-height: 1.6;
-		color: var(--fg-muted);
 	}
 
 	.work__list {
@@ -89,7 +52,7 @@ import { featuredProjects, statusIcon } from '../data/projects'
 		margin: 0;
 		padding: 0;
 		display: grid;
-		gap: 2.5rem 1.75rem;
+		gap: 3rem 2rem;
 	}
 
 	@media (min-width: 640px) {
@@ -98,7 +61,7 @@ import { featuredProjects, statusIcon } from '../data/projects'
 		}
 	}
 
-	.card {
+	.card--contact {
 		display: block;
 	}
 
@@ -113,19 +76,14 @@ import { featuredProjects, statusIcon } from '../data/projects'
 		text-align: center;
 		padding: 1.5rem;
 		border-radius: 0.75rem;
-		border: 1px dashed var(--border);
+		border: 1px dashed var(--border-strong);
 		background: var(--bg-elevated);
-		transition:
-			border-color var(--dur) var(--ease-out),
-			transform var(--dur-slow) var(--ease-out),
-			box-shadow var(--dur-slow) var(--ease-out);
+		transition: border-color var(--dur) var(--ease-out);
 	}
 
 	.card--contact:hover .cover--contact,
 	.card--contact:focus-visible .cover--contact {
-		border-color: var(--border-strong);
-		transform: translateY(-4px);
-		box-shadow: var(--shadow-lift);
+		border-color: var(--fg-dim);
 	}
 
 	.contact__icon {
@@ -133,9 +91,9 @@ import { featuredProjects, statusIcon } from '../data/projects'
 	}
 
 	.contact__title {
-		font-size: 1rem;
+		font-size: 1.0625rem;
 		font-weight: 600;
-		letter-spacing: -0.01em;
+		letter-spacing: -0.015em;
 		color: var(--fg);
 	}
 
@@ -146,42 +104,21 @@ import { featuredProjects, statusIcon } from '../data/projects'
 		max-width: 20rem;
 	}
 
-	.card__body {
-		margin-top: 1rem;
-	}
-
-	.card__headline {
-		display: flex;
+	.contact__cta {
+		display: inline-flex;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.6rem;
-	}
-
-	.card__title {
-		font-size: 1rem;
-		font-weight: 600;
-		letter-spacing: -0.01em;
+		gap: 0.35rem;
+		margin-top: 0.4rem;
+		font-size: 0.8125rem;
+		font-weight: 500;
 		color: var(--fg);
 	}
 
-	.card__status {
-		display: flex;
-		flex-shrink: 0;
-		color: var(--fg-dim);
+	.contact__cta :global(svg) {
+		transition: transform var(--dur-fast) var(--ease-out);
 	}
 
-	.card__status[data-status='Live'] {
-		color: var(--status-up);
-	}
-
-	.card__status[data-status='In development'] {
-		color: var(--status-degraded);
-	}
-
-	.card__tagline {
-		margin-top: 0.4rem;
-		font-size: 0.875rem;
-		line-height: 1.6;
-		color: var(--fg-muted);
+	.card--contact:hover .contact__cta :global(svg) {
+		transform: translateX(3px);
 	}
 </style>
