@@ -25,6 +25,7 @@ const TECH = {
   R2: { set: 'logos', icon: 'cloudflare-icon' },
   React: { set: 'logos', icon: 'react' },
   Redis: { set: 'logos', icon: 'redis' },
+  Rust: { set: 'simple-icons', icon: 'rust' },
   'Tailwind CSS': { set: 'logos', icon: 'tailwindcss-icon' },
   TypeScript: { set: 'logos', icon: 'typescript-icon' },
   Vite: { set: 'logos', icon: 'vitejs' },
@@ -35,6 +36,7 @@ const TECH = {
   'shadcn/ui': { set: 'simple-icons', icon: 'shadcnui' },
   'three.js': { set: 'simple-icons', icon: 'threedotjs' },
   'tree-sitter': { set: 'hugeicons', icon: 'hierarchy-square-01' },
+  wgpu: { set: 'simple-icons', icon: 'wgpu' },
 };
 
 const sets = {};

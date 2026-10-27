@@ -19,7 +19,6 @@ const MISS_TTL_S = 60;
 type Envelope<T> = { v: T | null };
 
 const memo = new Map<string, { at: number; value: unknown }>();
-const inflight = new Map<string, Promise<unknown>>();
 
 function kv(): KVNamespace | undefined {
   return (env as { CONTENT_CACHE?: KVNamespace }).CONTENT_CACHE;
@@ -29,16 +28,7 @@ export async function readThrough<T>(key: string, load: () => Promise<T | null>)
   const hit = memo.get(key);
   if (hit && Date.now() - hit.at < MEMO_TTL_MS) return hit.value as T | null;
 
-  const pending = inflight.get(key);
-  if (pending) return (await pending) as T | null;
-
-  const work = resolve(key, load);
-  inflight.set(key, work);
-  try {
-    return await work;
-  } finally {
-    inflight.delete(key);
-  }
+  return resolve(key, load);
 }
 
 async function resolve<T>(key: string, load: () => Promise<T | null>): Promise<T | null> {

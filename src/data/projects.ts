@@ -85,6 +85,26 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    slug: 'neoomsi',
+    title: 'neoOMSI',
+    tagline: 'OMSI 2, rebuilt for modern systems: your existing maps, buses and scripts on a new 64-bit engine.',
+    summary: [
+      "neoOMSI is a free, community-driven reimplementation of the bus simulator OMSI 2. It loads maps, buses and scripts straight from your own OMSI 2 install and runs them on a new multithreaded 64-bit engine written in Rust, rendering through wgpu on DirectX 12, Vulkan or Metal. That means no more 32-bit memory ceiling, and builds for Windows, macOS and Linux.",
+      "I'm part of the development team. I built neoomsi.com, the project's website and documentation portal: a React and Tailwind app prerendered by Vite and served from a Cloudflare Worker. In the engine itself I work on gameplay features that go beyond the original game.",
+    ],
+    period: 'Since 2026',
+    role: 'Development team, website and gameplay',
+    status: 'In development',
+    stack: ['Rust', 'wgpu', 'TypeScript', 'React', 'Vite', 'Tailwind CSS', 'Cloudflare Workers'],
+    cover: '/assets/work/neoomsi.webp',
+    coverAlt: 'The neoomsi.com homepage',
+    links: [
+      { label: 'neoomsi.com', href: 'https://neoomsi.com' },
+      { label: 'GitHub', href: 'https://github.com/neoOMSI/neoOMSI' },
+    ],
+    featured: true,
+  },
+  {
     slug: 'fsd',
     title: 'FSD + WebEye',
     tagline: 'A classic flight-sim network server, brought back to life with a live traffic map.',
