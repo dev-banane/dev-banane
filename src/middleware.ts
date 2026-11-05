@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware'
 import { CHAT_ENABLED } from './data/site'
+import { cachedPage } from './lib/page-cache'
 
 const STYLE_SRC = import.meta.env.DEV
 	? "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com"
@@ -29,10 +30,21 @@ function chatDisabledResponse(pathname: string): Response | null {
 	return null
 }
 
-export const onRequest = defineMiddleware(async (context, next) => {
-	const response = chatDisabledResponse(context.url.pathname) ?? (await next())
+function withSecurityHeaders(response: Response): Response {
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
 		if (!response.headers.has(name)) response.headers.set(name, value)
 	}
 	return response
+}
+
+type CfContext = { waitUntil(promise: Promise<unknown>): void }
+
+export const onRequest = defineMiddleware(async (context, next) => {
+	const blocked = chatDisabledResponse(context.url.pathname)
+	if (blocked) return withSecurityHeaders(blocked)
+	if (context.isPrerendered) return withSecurityHeaders(await next())
+	const cfContext = (context.locals as { cfContext?: CfContext }).cfContext
+	return cachedPage(context.request, cfContext?.waitUntil.bind(cfContext), async () =>
+		withSecurityHeaders(await next())
+	)
 })

@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { purgeContentCache } from '../../lib/content-cache';
+import { purgePageCache } from '../../lib/page-cache';
 
 export const prerender = false;
 
@@ -26,7 +27,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const purged = await purgeContentCache();
+    const [purged] = await Promise.all([purgeContentCache(), purgePageCache()]);
     return Response.json({ ok: true, purged });
   } catch (err) {
     console.error('[revalidate] purge failed:', err);

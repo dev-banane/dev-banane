@@ -1,5 +1,5 @@
 ---
-export const prerender = false
+export const prerender = true
 
 import Icon from '../../components/Icon.astro'
 import Layout from '../../layouts/Layout.astro'
@@ -10,13 +10,14 @@ import StatusBadge from '../../components/StatusBadge.astro'
 import Uptime from '../../components/Uptime.astro'
 import Footer from '../../components/Footer.astro'
 import TechStack from '../../components/TechStack.astro'
-import { projects } from '../../data/projects'
+import { projects, type Project } from '../../data/projects'
 import { getPFControlStats, formatFloor } from '../../lib/pfcontrol-stats'
 
-const project = projects.find((p) => p.slug === Astro.params.slug)
-if (!project) {
-	return new Response('Project not found', { status: 404 })
+export function getStaticPaths() {
+	return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }))
 }
+
+const { project } = Astro.props as { project: Project }
 
 let highlights = project.highlights
 if (project.slug === 'pfcontrol') {
@@ -28,8 +29,6 @@ if (project.slug === 'pfcontrol') {
 		{ label: 'Daily active users', value: '~500' },
 	]
 }
-
-Astro.response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=3600')
 
 const canonical = `https://devjakob.com/work/${project.slug}`
 const description = `${project.title}. ${project.tagline} Built by Jakob Pütz.`
